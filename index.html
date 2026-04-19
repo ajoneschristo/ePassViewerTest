@@ -2682,42 +2682,50 @@ async function pushToSheet() {
   btn.style.opacity = '0.6';
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
-  // POST — Apps Script writes data, takes screenshot, returns base64 PNG
+  // Step 1: image ping → writes data + saves screenshot to Drive, returns fileUrl
   try {
-    const res = await fetch(SHEET_WEBAPP_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ timeslot, rows }),
-      redirect: 'follow',
+    const payload    = encodeURIComponent(JSON.stringify({ timeslot, rows }));
+    const pingUrl    = SHEET_WEBAPP_URL + '?data=' + payload;
+
+    // Use no-cors fetch for the ping — fire and wait
+    await new Promise((resolve) => {
+      const img   = new Image();
+      const timer = setTimeout(() => resolve(), 12000);
+      img.onload  = () => { clearTimeout(timer); resolve(); };
+      img.onerror = () => { clearTimeout(timer); resolve(); };
+      img.src = pingUrl;
     });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const data = await res.json();
-    if (!data.ok) throw new Error(data.error || 'Apps Script error');
 
     btn.innerHTML = '✓ Done';
     btn.style.color = '#0f9d58';
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
 
-    // Decode base64 PNG and share/download
-    if (data.img) {
-      try {
-        const byteStr = atob(data.img);
-        const arr = new Uint8Array(byteStr.length);
-        for (let i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
-        const blob = new Blob([arr], { type: 'image/png' });
-        const fname = 'road_despatch_' + timeslot + '_' + (activeTabDate || 'today') + '.png';
-        const file = new File([blob], fname, { type: 'image/png' });
+    // Step 2: fetch the screenshot from Drive public URL
+    // Apps Script saves file to Drive and we know the fixed file name
+    // We call the script again just to get the fileUrl (read-only, no data)
+    try {
+      const metaPayload = encodeURIComponent(JSON.stringify({ getFileUrl: true }));
+      const metaUrl     = SHEET_WEBAPP_URL + '?data=' + metaPayload;
+      const metaRes     = await fetch(metaUrl);
+      const metaData    = await metaRes.json();
+      if (metaData.fileUrl) {
+        // Fetch the PNG from Drive
+        const imgRes  = await fetch(metaData.fileUrl);
+        const imgBlob = await imgRes.blob();
+        const fname   = 'road_despatch_' + timeslot + '.png';
+        const file    = new File([imgBlob], fname, { type: 'image/png' });
         if (navigator.canShare && navigator.canShare({ files: [file] })) {
           await navigator.share({ files: [file], title: 'Road Despatch ' + minsToLabel(timeFilterMins) });
         } else {
-          const url = URL.createObjectURL(blob);
+          const url = URL.createObjectURL(imgBlob);
           const a = document.createElement('a');
           a.href = url; a.download = fname; a.click();
           setTimeout(() => URL.revokeObjectURL(url), 1000);
         }
-      } catch (shareErr) {
-        if (shareErr.name !== 'AbortError') console.warn('Share error:', shareErr);
       }
+    } catch(imgErr) {
+      console.warn('Screenshot fetch failed:', imgErr);
+      // Data was pushed successfully — screenshot is optional
     }
 
   } catch (err) {
