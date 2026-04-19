@@ -565,132 +565,303 @@ body {
 
 /* ── SHEET FOOTER ── */
 /* ── SETTINGS MODAL ──────────────────────────────── */
+/* ── Custom Time Picker ─────────────────────────── */
+.stt-time-picker {
+  position: relative; display: inline-flex;
+  align-items: center; gap: 6px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 8px; padding: 6px 10px; cursor: pointer;
+  transition: border-color .15s, box-shadow .15s;
+  font-family: var(--mono); font-size: 13px;
+  color: var(--text); user-select: none;
+  width: 100%; box-sizing: border-box;
+}
+.stt-time-picker:hover { border-color: var(--mid); }
+.stt-time-picker.open { border-color: var(--amber); box-shadow: 0 0 0 3px var(--amber-lo); }
+.stt-time-picker-val { flex: 1; letter-spacing: .5px; }
+.stt-time-picker-icon { color: var(--border); font-size: 10px; flex-shrink: 0; }
+.stt-clock-popup {
+  display: none; position: fixed;
+  background: var(--surface); border: 1.5px solid var(--border);
+  border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,.28);
+  z-index: 9999; padding: 16px; width: 248px;
+}
+.stt-time-picker.open .stt-clock-popup { display: block; }
+.stt-clock-header {
+  display: flex; align-items: center;
+  gap: 8px; margin-bottom: 10px;
+}
+.stt-clock-display {
+  font-family: var(--mono); font-size: 28px; font-weight: 700;
+  color: var(--text); letter-spacing: 1px; flex: 1;
+}
+.stt-clock-display span.active { color: var(--amber); }
+.stt-clock-ampm { display: flex; flex-direction: column; gap: 4px; }
+.stt-ampm-btn {
+  background: none; border: 1.5px solid var(--border);
+  border-radius: 6px; font-size: 10px; font-weight: 700;
+  padding: 4px 7px; cursor: pointer; color: var(--dim);
+  transition: all .12s; letter-spacing: .5px;
+}
+.stt-ampm-btn.active { background: var(--amber); border-color: var(--amber); color: #fff; }
+.stt-clock-svg { display: block; margin: 0 auto; cursor: crosshair; }
+.stt-clock-face { fill: var(--bg); stroke: var(--border); stroke-width: 1.5; }
+.stt-clock-center { fill: var(--amber); }
+.stt-clock-hand-h { stroke: var(--text); stroke-width: 3.5; stroke-linecap: round; }
+.stt-clock-hand-m { stroke: var(--amber); stroke-width: 2.5; stroke-linecap: round; }
+.stt-clock-tick { stroke: var(--border); stroke-width: 1; }
+.stt-clock-tick.major { stroke: var(--dim); stroke-width: 1.5; }
+.stt-clock-num { font-size: 9px; fill: var(--dim); text-anchor: middle; dominant-baseline: central; font-family: var(--mono); font-weight: 600; }
+.stt-clock-mode { display: flex; gap: 4px; margin-top: 8px; justify-content: center; }
+.stt-clock-mode-btn {
+  font-size: 10px; font-weight: 700; letter-spacing: .5px;
+  padding: 3px 12px; border-radius: 5px; cursor: pointer;
+  border: 1.5px solid var(--border); color: var(--dim); background: none;
+  transition: all .12s;
+}
+.stt-clock-mode-btn.active { border-color: var(--amber); color: var(--amber); background: var(--amber-lo); }
+.stt-clock-ok {
+  margin-top: 8px; width: 100%; padding: 7px;
+  background: var(--green); color: #fff; border: none;
+  border-radius: 8px; font-size: 12px; font-weight: 700;
+  cursor: pointer; transition: opacity .15s;
+}
+.stt-clock-ok:active { opacity: .8; }
+
+/* ═══════════════ SETTINGS MODAL ════════════════════ */
 .stt-overlay {
   display: none; position: fixed; inset: 0;
-  background: rgba(0,0,0,.6); z-index: 2000;
-  overflow-y: auto; padding: 16px;
+  background: rgba(0,0,0,.65);
+  backdrop-filter: blur(4px);
+  z-index: 2000;
+  overflow-y: auto;
+  padding: 24px 16px;
   box-sizing: border-box;
+  align-items: flex-start;
+  justify-content: center;
 }
 .stt-panel {
   background: var(--surface);
-  margin: 0 auto; max-width: 480px;
-  border-radius: 14px;
+  margin: 0 auto;
+  width: 100%;
+  max-width: 1020px;
+  border-radius: 16px;
   border: 1px solid var(--border);
+  box-shadow: 0 24px 80px rgba(0,0,0,.25);
   overflow: hidden;
   font-family: 'IBM Plex Sans', sans-serif;
 }
 .stt-header {
   display: flex; align-items: center;
   justify-content: space-between;
-  padding: 14px 16px 12px;
+  padding: 18px 24px 16px;
   border-bottom: 1px solid var(--border);
-  background: var(--bg);
 }
 .stt-title {
-  font-size: 13px; font-weight: 700;
-  color: var(--text); letter-spacing: .3px;
-  text-transform: uppercase;
+  font-size: 15px; font-weight: 700;
+  color: var(--text); letter-spacing: .2px;
+}
+.stt-title-sub {
+  font-size: 11px; color: var(--dim);
+  font-weight: 400; margin-top: 1px;
 }
 .stt-close {
   background: none; border: none; cursor: pointer;
-  color: var(--dim); font-size: 18px; line-height: 1;
-  padding: 2px 4px; border-radius: 4px;
-  transition: color .15s;
+  color: var(--dim); font-size: 20px; line-height: 1;
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  transition: background .15s, color .15s;
 }
-.stt-close:hover { color: var(--text); }
-.stt-body { padding: 14px 16px; }
-.stt-section {
-  margin-bottom: 14px;
+.stt-close:hover { background: var(--bg); color: var(--text); }
+.stt-body {
+  padding: 24px;
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 0 32px;
 }
-.stt-section:last-of-type { margin-bottom: 0; }
+.stt-col-full { grid-column: 1 / -1; }
+.stt-section { margin-bottom: 20px; }
+.stt-section:last-child { margin-bottom: 0; }
 .stt-label {
   display: block;
-  font-size: 10px; font-weight: 600;
-  color: var(--dim); text-transform: uppercase;
-  letter-spacing: .7px; margin-bottom: 5px;
+  font-size: 11px; font-weight: 700;
+  color: var(--mid); text-transform: uppercase;
+  letter-spacing: .8px; margin-bottom: 6px;
 }
 .stt-input {
   width: 100%; box-sizing: border-box;
-  padding: 8px 10px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
+  padding: 9px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: 8px;
   background: var(--bg);
   color: var(--text);
   font-size: 13px;
   font-family: 'IBM Plex Sans', sans-serif;
-  transition: border-color .15s;
+  transition: border-color .15s, box-shadow .15s;
   outline: none;
 }
-.stt-input:focus { border-color: var(--amber); }
-.stt-col-grid {
-  display: grid; grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
+.stt-input:focus {
+  border-color: var(--amber);
+  box-shadow: 0 0 0 3px var(--amber-lo);
 }
-.stt-col-item { text-align: center; }
-.stt-col-time {
-  font-size: 10px; color: var(--dim);
-  margin-bottom: 4px; font-weight: 600;
-  text-transform: uppercase; letter-spacing: .5px;
+.stt-section-hdr {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
 }
-.stt-col-input {
-  width: 100%; box-sizing: border-box;
-  padding: 7px 4px;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  background: var(--bg); color: var(--text);
-  font-size: 15px; font-family: var(--mono);
-  text-align: center; text-transform: uppercase;
-  outline: none; transition: border-color .15s;
+.stt-section-hdr .stt-label { margin-bottom: 0; }
+.stt-add-btn {
+  font-size: 11px; font-weight: 700;
+  color: var(--green); background: var(--green-lo);
+  border: 1px solid var(--green);
+  border-radius: 6px; padding: 4px 10px;
+  cursor: pointer; letter-spacing: .3px;
+  transition: opacity .15s;
+  white-space: nowrap;
 }
-.stt-col-input:focus { border-color: var(--amber); }
-.stt-row-table {
-  width: 100%; border-collapse: collapse;
-  font-size: 12px;
-  border: 1px solid var(--border);
-  border-radius: 8px; overflow: hidden;
+.stt-add-btn:active { opacity: .75; }
+
+/* ── Slots Table ── */
+.stt-slots-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: visible;
 }
-.stt-row-table thead tr {
+.stt-slots-head {
+  display: grid;
+  grid-template-columns: 24px 1fr 80px 1fr 36px;
   background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 4px;
 }
-.stt-row-table th {
-  padding: 6px 10px;
-  color: var(--dim); font-weight: 600;
-  font-size: 10px; text-transform: uppercase;
-  letter-spacing: .6px;
+.stt-slots-head span {
+  padding: 7px 8px;
+  font-size: 10px; font-weight: 700;
+  color: var(--dim); text-transform: uppercase; letter-spacing: .6px;
 }
-.stt-row-table th:last-child { text-align: center; }
-.stt-row-table td {
-  padding: 5px 10px;
+.stt-slot-row {
+  display: grid;
+  grid-template-columns: 24px 1fr 80px 1fr 36px;
+  align-items: center;
   border-top: 1px solid var(--border);
+  padding: 5px 4px;
+  gap: 4px;
+  transition: transform .18s cubic-bezier(.25,.46,.45,.94);
+  will-change: transform;
+}
+.stt-slot-row:first-child { border-top: none; }
+.stt-slot-row:nth-child(even) { background: var(--bg); }
+
+/* ── Mines Table ── */
+.stt-mines-wrap {
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.stt-mines-head {
+  display: grid;
+  grid-template-columns: 24px 120px 90px 60px 1fr 36px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
+  padding: 0 4px;
+}
+.stt-mines-head span {
+  padding: 7px 8px;
+  font-size: 10px; font-weight: 700;
+  color: var(--dim); text-transform: uppercase; letter-spacing: .6px;
+}
+.stt-mine-row {
+  display: grid;
+  grid-template-columns: 24px 120px 90px 60px 1fr 36px;
+  align-items: center;
+  border-top: 1px solid var(--border);
+  padding: 4px;
+  gap: 4px;
+  transition: transform .18s cubic-bezier(.25,.46,.45,.94);
+  will-change: transform;
+}
+.stt-mine-row:first-child { border-top: none; }
+.stt-mine-row:nth-child(even) { background: var(--bg); }
+.stt-mine-row.is-total { background: var(--amber-lo) !important; }
+
+/* shared input inside tables */
+.stt-cell-input {
+  width: 100%; box-sizing: border-box;
+  padding: 6px 8px;
+  border: 1.5px solid transparent;
+  border-radius: 6px;
+  background: transparent;
   color: var(--text);
+  font-size: 12px;
+  font-family: 'IBM Plex Sans', sans-serif;
+  outline: none;
+  transition: border-color .15s, background .15s;
 }
-.stt-row-table tr:nth-child(even) td { background: var(--bg); }
-.stt-row-num {
-  width: 56px; padding: 4px 6px;
-  border: 1px solid var(--border); border-radius: 5px;
-  background: var(--bg); color: var(--text);
-  font-size: 12px; font-family: var(--mono);
-  text-align: center; outline: none;
-  transition: border-color .15s; display: block; margin: 0 auto;
+.stt-cell-input:focus {
+  border-color: var(--amber);
+  background: var(--surface);
 }
-.stt-row-num:focus { border-color: var(--amber); }
-.stt-divider {
-  height: 1px; background: var(--border);
-  margin: 14px -16px;
+.stt-cell-input.mono { font-family: var(--mono); }
+.stt-cell-input.center { text-align: center; text-transform: uppercase; }
+.stt-cell-input[type="number"] { text-align: center; font-family: var(--mono); }
+.stt-cell-input[type="time"] { font-family: var(--mono); font-size: 12px; }
+.stt-total-label {
+  padding: 6px 8px;
+  font-size: 12px; font-weight: 700;
+  color: var(--amber);
+}
+.stt-drag-handle {
+  display: flex; align-items: center; justify-content: center;
+  cursor: grab; color: var(--dim); font-size: 14px;
+  width: 24px; height: 100%; border-radius: 4px;
+  transition: color .12s; user-select: none; flex-shrink: 0;
+}
+.stt-drag-handle:hover { color: var(--amber); }
+.stt-row-dragging {
+  opacity: 0.25;
+  pointer-events: none;
+}
+.stt-row-drag-over {
+  border-top: 2.5px solid var(--amber) !important;
+}
+.stt-drag-ghost {
+  position: fixed; z-index: 9998;
+  pointer-events: none;
+  opacity: .88;
+  border-radius: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,.22);
+  background: var(--surface);
+  border: 1.5px solid var(--amber);
+  transform: scale(1.02);
+  transition: transform .1s;
+  overflow: hidden;
+}
+.stt-del-btn {
+  background: none; border: none;
+  color: var(--dim); font-size: 13px;
+  cursor: pointer; width: 28px; height: 28px;
+  border-radius: 6px; margin: 0 auto; display: flex;
+  align-items: center; justify-content: center;
+  transition: background .15s, color .15s;
+}
+.stt-del-btn:hover { background: #fde8e8; color: #c0392b; }
+.stt-hint {
+  font-size: 11px; color: var(--dim);
+  margin-top: 6px; line-height: 1.4;
 }
 .stt-status {
   font-size: 12px; color: var(--dim);
-  min-height: 16px; margin-bottom: 10px;
-  text-align: center;
+  min-height: 16px; text-align: center;
+  padding: 0 24px 4px;
 }
 .stt-footer {
-  display: flex; gap: 8px;
-  padding: 12px 16px 14px;
+  display: flex; gap: 10px; align-items: center;
+  padding: 14px 24px 18px;
   border-top: 1px solid var(--border);
-  background: var(--bg);
+  justify-content: flex-end;
 }
 .stt-btn-save {
-  flex: 1; padding: 10px;
+  padding: 10px 28px;
   background: var(--green); color: #fff;
   border: none; border-radius: 8px;
   font-size: 13px; font-weight: 700;
@@ -699,14 +870,14 @@ body {
 }
 .stt-btn-save:active { opacity: .8; }
 .stt-btn-cancel {
-  padding: 10px 16px;
+  padding: 10px 18px;
   background: none;
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: 8px;
   font-size: 13px; color: var(--mid);
-  cursor: pointer; transition: border-color .15s;
+  cursor: pointer; transition: border-color .15s, color .15s;
 }
-.stt-btn-cancel:hover { border-color: var(--mid); }
+.stt-btn-cancel:hover { border-color: var(--mid); color: var(--text); }
 
 .sheet-footer {
   display: flex;
@@ -2011,26 +2182,14 @@ function finishLoad() {
     }
   }
 
-  // Apply smart default time filter based on current time
-  const nowMins = (() => {
-    const n = new Date();
-    return n.getHours() * 60 + n.getMinutes();
-  })();
-  const T1100 = 11 * 60;       // 11:00 AM
-  const T1330 = 13 * 60 + 30;  // 1:30 PM
-  const T1630 = 16 * 60 + 30;  // 4:30 PM
-  const T1730 = 17 * 60 + 30;  // 5:30 PM
-
-  if (nowMins >= T1100 && nowMins < T1330) {
-    timeFilterMins = T1100;
-  } else if (nowMins >= T1330 && nowMins < T1630) {
-    timeFilterMins = T1330;
-  } else if (nowMins >= T1630 && nowMins < T1730) {
-    timeFilterMins = T1630;
-  } else if (nowMins >= T1730) {
-    timeFilterMins = T1730;
-  } else {
-    timeFilterMins = null; // before 11 AM — no filter
+  // Apply smart default time filter based on current time + settings slots
+  const nowMins = (() => { const n = new Date(); return n.getHours() * 60 + n.getMinutes(); })();
+  timeFilterMins = null;
+  // Sort slots by autoFrom descending — pick the last one whose autoFrom has passed
+  const sortedSlots = [...(appSettings.slots || [])].sort((a, b) => minsFrom24(b.autoFrom || b.time) - minsFrom24(a.autoFrom || a.time));
+  for (const s of sortedSlots) {
+    const fromMins = minsFrom24(s.autoFrom || s.time);
+    if (nowMins >= fromMins) { timeFilterMins = minsFrom24(s.time); break; }
   }
 
   if (timeFilterMins !== null) {
@@ -2774,50 +2933,49 @@ async function pushToSheet() {
     return;
   }
 
-  // ── 3. Guard: time filter must be 11:00 AM, 1:30 PM, or 5:30 PM ──
-  const T1100 = 11 * 60;
-  const T1330 = 13 * 60 + 30;
-  const T1730 = 17 * 60 + 30;
+  // ── 3. Guard: time filter must match a configured slot ──
+  const slots = appSettings.slots || [];
   const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
 
   if (timeFilterMins === null) {
-    alert('No time filter is active.\nPlease set the time filter to 11:00 AM, 1:30 PM, or 5:30 PM before pushing.');
+    alert('No time filter is active.\nSet the time filter to one of your configured slots before pushing.');
     return;
   }
-  if (timeFilterMins !== T1100 && timeFilterMins !== T1330 && timeFilterMins !== T1730) {
-    alert('Time filter is set to ' + minsToLabel(timeFilterMins) + '.\nOnly 11:00 AM, 1:30 PM, and 5:30 PM can be pushed to the sheet.');
+  const activeSlot = slots.find(s => minsFrom24(s.time) === timeFilterMins);
+  if (activeSlot && !activeSlot.col) {
+    alert('The active time slot (' + minsToLabel(timeFilterMins) + ') has no sheet column configured.\nThis slot is for time filtering only — not for pushing to the sheet.');
+    return;
+  }
+  if (!activeSlot) {
+    const slotLabels = slots.map(s => s.label || label12h(s.time)).join(', ');
+    alert('Time filter (' + minsToLabel(timeFilterMins) + ') does not match any configured slot.\nConfigured slots: ' + slotLabels);
     return;
   }
   if (timeFilterMins > nowMins) {
     alert('Time filter (' + minsToLabel(timeFilterMins) + ') is in the future.\nCannot push future data to the sheet.');
     return;
   }
+  const col = activeSlot.col;
 
-  // ── 4. Guard: report date must be today, and data must reach the filter time ──
+  // ── 4. Guard: report date must be today, data must reach filter time ──
   const today = new Date();
   const todayStr = String(today.getDate()).padStart(2,'0') + '-' +
     ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][today.getMonth()] +
-    '-' + today.getFullYear(); // e.g. "19-Apr-2026"
+    '-' + today.getFullYear();
 
   if (currentTabMaxDateStr && currentTabMaxDateStr !== todayStr) {
     alert('Report date is ' + currentTabMaxDateStr + ', not today (' + todayStr + ').\nOnly today\'s report can be pushed to the sheet.');
     return;
   }
-
   if (currentTabMaxMins < timeFilterMins) {
-    alert(
-      'Data is only available until ' + minsToLabel(currentTabMaxMins) +
-      ', but the time filter is set to ' + minsToLabel(timeFilterMins) + '.\n\n' +
-      'Please wait for the report to update and re-upload before pushing.'
-    );
+    alert('Data is only available until ' + minsToLabel(currentTabMaxMins) +
+      ', but the time filter is set to ' + minsToLabel(timeFilterMins) + '.\n\nPlease wait for the report to update and re-upload.');
     return;
   }
 
-  const timeslot = timeFilterMins === T1100 ? '1100'
-                 : timeFilterMins === T1330 ? '1330'
-                 :                            '1730';
+  const timeslot = activeSlot.time.replace(':', '');
 
-  // ── 4. Build rows using settings row map ────────────
+  // ── 5. Build colAcc from raw rows ────────────────────
   const colAcc = {};
   const n = rowGross.length;
   for (let i = 0; i < n; i++) {
@@ -2826,43 +2984,40 @@ async function pushToSheet() {
     const doNum = rowDO[i];
     if (!doNum || !mclhoDB[doNum]) continue;
     const code = mclhoDB[doNum].collieryCode;
-    if (!COLLIERY_MAP[code]) continue;
     if (!colAcc[code]) colAcc[code] = { g: 0, t: 0 };
     colAcc[code].g += rowGross[i];
     colAcc[code].t += rowTar[i];
   }
 
-  // Build payload using settings rows + cols
-  const settingsRows = appSettings.rows || {};
-  const col = timeslot === '1100' ? (appSettings.col1100 || 'L')
-            : timeslot === '1330' ? (appSettings.col1330 || 'M')
-            :                       (appSettings.col1730 || 'N');
-
+  // ── 6. Build pushRows from settings.mines ───────────
+  const mines = appSettings.mines || [];
   const pushRows = [];
-  let cfNet = 0, mclNet = 0;
-  for (const row of SS_ROWS) {
-    const rowNum = settingsRows[row.label];
-    if (!rowNum) continue;
+  let subtotal = 0, grandTotal = 0;
+
+  for (const mine of mines) {
+    if (!mine.sheetRow) continue;
     let qty = 0;
-    if (row.isMCLTotal) {
-      qty = Math.round(mclNet);
-    } else if (row.isCFTotal) {
-      qty = Math.round(cfNet);
-      mclNet += cfNet; cfNet = 0;
+    if (mine.isGrandTotal) {
+      qty = Math.round(grandTotal);
+    } else if (mine.isTotal) {
+      qty = Math.round(subtotal);
+      grandTotal += subtotal;
+      subtotal = 0;
     } else {
+      const codes = (mine.colCodes || '').split(',').map(c => c.trim()).filter(Boolean);
       let g = 0, t = 0;
-      for (const code of row.codes) {
+      for (const code of codes) {
         const acc = colAcc[code];
         if (acc) { g += acc.g; t += acc.t; }
       }
       qty = Math.round(g - t);
-      cfNet += qty;
+      subtotal += qty;
     }
-    pushRows.push({ label: row.label, col, row: rowNum, qty });
+    pushRows.push({ label: mine.label, col, row: mine.sheetRow, qty, sheetName: appSettings.sheetName || 'Rake and Road Despatch' });
   }
 
   if (pushRows.length === 0) {
-    alert('No row numbers configured.\nPlease open Settings (⚙) and set the row numbers for each mine.');
+    alert('No rows configured.\nPlease open Settings (⚙) and configure the mines/rows.');
     return;
   }
 
@@ -3144,6 +3299,137 @@ function downloadBlob(blob) {
 // ═══════════════════════════════════════════════════════
 //  SETTINGS — GitHub-backed config
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+//  CUSTOM TIME PICKER
+// ═══════════════════════════════════════════════════════
+let _activeTimePicker = null;
+
+function createTimePicker(value, onChange) {
+  let h24 = 11, m = 0;
+  if (value) { const p = value.split(':'); h24 = parseInt(p[0])||0; m = parseInt(p[1])||0; }
+  let ampm = h24 < 12 ? 'AM' : 'PM';
+  let h12  = h24 % 12 || 12;
+  let mode = 'hour';
+
+  function get24() { return (ampm==='AM'?(h12===12?0:h12):(h12===12?12:h12+12))*60+m; }
+  function valStr() { const t=get24(); return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0'); }
+  function dispStr() { return h12+':'+String(m).padStart(2,'0')+' '+ampm; }
+
+  const wrap   = document.createElement('div'); wrap.className = 'stt-time-picker';
+  const valSpan= document.createElement('span'); valSpan.className='stt-time-picker-val';
+  const icon   = document.createElement('span'); icon.className='stt-time-picker-icon'; icon.textContent='\u23f0';
+  const hidden = document.createElement('input'); hidden.type='hidden';
+  const popup  = document.createElement('div'); popup.className='stt-clock-popup';
+
+  const hdr = document.createElement('div'); hdr.className='stt-clock-header';
+  const disp= document.createElement('div'); disp.className='stt-clock-display';
+  const ampmWrap = document.createElement('div'); ampmWrap.className='stt-clock-ampm';
+  const amBtn = document.createElement('button'); amBtn.className='stt-ampm-btn'; amBtn.type='button'; amBtn.textContent='AM';
+  const pmBtn = document.createElement('button'); pmBtn.className='stt-ampm-btn'; pmBtn.type='button'; pmBtn.textContent='PM';
+  amBtn.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); ampm='AM'; update(); });
+  pmBtn.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); ampm='PM'; update(); });
+  ampmWrap.append(amBtn, pmBtn); hdr.append(disp, ampmWrap);
+
+  const R=88, CX=100, CY=100, NS='http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS,'svg');
+  svg.setAttribute('viewBox','0 0 200 200'); svg.setAttribute('width','216'); svg.setAttribute('height','216');
+  svg.className='stt-clock-svg';
+  const face=document.createElementNS(NS,'circle'); face.setAttribute('cx',CX); face.setAttribute('cy',CY); face.setAttribute('r',R); face.setAttribute('class','stt-clock-face'); svg.appendChild(face);
+  for (let i=0;i<60;i++) {
+    const ang=(i/60)*2*Math.PI-Math.PI/2, isMaj=i%5===0;
+    const r1=isMaj?R-10:R-5;
+    const ln=document.createElementNS(NS,'line');
+    ln.setAttribute('x1',CX+Math.cos(ang)*r1); ln.setAttribute('y1',CY+Math.sin(ang)*r1);
+    ln.setAttribute('x2',CX+Math.cos(ang)*(R-2)); ln.setAttribute('y2',CY+Math.sin(ang)*(R-2));
+    ln.setAttribute('class','stt-clock-tick'+(isMaj?' major':'')); svg.appendChild(ln);
+    if (isMaj) {
+      const hn=i/5||12, nr=R-22;
+      const txt=document.createElementNS(NS,'text');
+      txt.setAttribute('x',CX+Math.cos(ang)*nr); txt.setAttribute('y',CY+Math.sin(ang)*nr);
+      txt.setAttribute('class','stt-clock-num'); txt.textContent=hn; svg.appendChild(txt);
+    }
+  }
+  const handH=document.createElementNS(NS,'line'); handH.setAttribute('class','stt-clock-hand-h'); svg.appendChild(handH);
+  const handM=document.createElementNS(NS,'line'); handM.setAttribute('class','stt-clock-hand-m'); svg.appendChild(handM);
+  const ctr=document.createElementNS(NS,'circle'); ctr.setAttribute('cx',CX); ctr.setAttribute('cy',CY); ctr.setAttribute('r','5'); ctr.setAttribute('class','stt-clock-center'); svg.appendChild(ctr);
+
+  const modeRow=document.createElement('div'); modeRow.className='stt-clock-mode';
+  const hBtn=document.createElement('button'); hBtn.className='stt-clock-mode-btn'; hBtn.type='button'; hBtn.textContent='HH';
+  const mBtn=document.createElement('button'); mBtn.className='stt-clock-mode-btn'; mBtn.type='button'; mBtn.textContent='MM';
+  hBtn.addEventListener('mousedown', e=>{e.preventDefault();e.stopPropagation();mode='hour';update();});
+  mBtn.addEventListener('mousedown', e=>{e.preventDefault();e.stopPropagation();mode='min';update();});
+  modeRow.append(hBtn,mBtn);
+  const okBtn=document.createElement('button'); okBtn.className='stt-clock-ok'; okBtn.type='button'; okBtn.textContent='Done';
+  okBtn.addEventListener('mousedown', e=>{e.preventDefault();e.stopPropagation();wrap.classList.remove('open');_activeTimePicker=null;});
+
+  popup.append(hdr,svg,modeRow,okBtn);
+  wrap.append(valSpan,icon,popup,hidden);
+
+  svg.addEventListener('mousedown', e=>{
+    e.preventDefault(); e.stopPropagation();
+    const rect=svg.getBoundingClientRect();
+    const px=e.clientX-rect.left-rect.width/2;
+    const py=e.clientY-rect.top-rect.height/2;
+    const ang=Math.atan2(py,px)+Math.PI/2;
+    const norm=((ang/(2*Math.PI))+1)%1;
+    if (mode==='hour') { h12=Math.round(norm*12)||12; mode='min'; }
+    else { m=Math.round(norm*60)%60; }
+    update();
+  });
+
+  function drawHands() {
+    const hAng=((h12%12)/12+m/720)*2*Math.PI-Math.PI/2;
+    const mAng=(m/60)*2*Math.PI-Math.PI/2;
+    handH.setAttribute('x1',CX); handH.setAttribute('y1',CY);
+    handH.setAttribute('x2',CX+Math.cos(hAng)*R*0.52); handH.setAttribute('y2',CY+Math.sin(hAng)*R*0.52);
+    handM.setAttribute('x1',CX); handM.setAttribute('y1',CY);
+    handM.setAttribute('x2',CX+Math.cos(mAng)*R*0.72); handM.setAttribute('y2',CY+Math.sin(mAng)*R*0.72);
+    handH.style.opacity=mode==='hour'?'1':'0.3';
+    handM.style.opacity=mode==='min'?'1':'0.3';
+  }
+
+  function update() {
+    hidden.value=valStr(); valSpan.textContent=dispStr();
+    disp.innerHTML='<span class="'+(mode==='hour'?'active':'')+'">'+String(h12).padStart(2,'0')+'</span>'
+      +'<span style="color:var(--dim)">:</span>'
+      +'<span class="'+(mode==='min'?'active':'')+'">'+String(m).padStart(2,'0')+'</span>'
+      +'<span style="font-size:13px;color:var(--dim);margin-left:4px;">'+ampm+'</span>';
+    amBtn.classList.toggle('active',ampm==='AM'); pmBtn.classList.toggle('active',ampm==='PM');
+    hBtn.classList.toggle('active',mode==='hour'); mBtn.classList.toggle('active',mode==='min');
+    drawHands();
+    if (onChange) onChange(valStr());
+  }
+  update();
+
+  wrap.addEventListener('mousedown', e=>{
+    if (popup.contains(e.target)) return;
+    e.preventDefault();
+    const isOpen=wrap.classList.contains('open');
+    if (_activeTimePicker&&_activeTimePicker!==wrap) _activeTimePicker.classList.remove('open');
+    if (!isOpen) {
+      const rect=wrap.getBoundingClientRect();
+      popup.style.left=rect.left+'px';
+      popup.style.top=(rect.bottom+8)+'px';
+      if (rect.bottom+320>window.innerHeight) popup.style.top=(rect.top-320)+'px';
+      wrap.classList.add('open'); _activeTimePicker=wrap;
+    } else { wrap.classList.remove('open'); _activeTimePicker=null; }
+  });
+
+  return { el:wrap, getValue:valStr, setValue(v) {
+    if (!v) return;
+    const p=v.split(':'); h24=parseInt(p[0])||0; m=parseInt(p[1])||0;
+    ampm=h24<12?'AM':'PM'; h12=h24%12||12; update();
+  }};
+}
+
+// Close picker on outside mousedown
+document.addEventListener('mousedown', e => {
+  if (_activeTimePicker && !_activeTimePicker.contains(e.target)) {
+    _activeTimePicker.classList.remove('open');
+    _activeTimePicker = null;
+  }
+});
+
 const SETTINGS_GH = {
   owner:  'ajoneschristo',
   repo:   'epass-settings',
@@ -3153,18 +3439,188 @@ const SETTINGS_GH = {
   api:    'https://api.github.com',
 };
 
+// ── Default settings ────────────────────────────────
 let appSettings = {
   sheetUrl:  '',
+  sheetName: 'Rake and Road Despatch',
   scriptUrl: SHEET_WEBAPP_URL,
-  col1100:   'L', col1330: 'M', col1730: 'N',
-  rows: {
-    'Samleswari':7,'Lajkura':8,'Int. LBL':9,'Kulda':10,'Garjanbahal':11,
-    'Basundhara(W)':12,'Siarmal':0,'Orient':13,'IBCF':14,'Jagannath':16,'Ananta':17,
-    'Bhubaneswari':18,'Bharatpur':19,'Lingaraj':20,'Hingula':21,'Balram':22,
-    'Kaniha':23,'Nandira':24,'TCF':25,'MCL':27,
-  }
+  // slots: [{label, time, col, autoFrom}]
+  // time: "HH:MM" 24h, col: sheet column, autoFrom: "HH:MM" when this slot auto-activates
+  slots: [
+    { label: '11:00 AM', time: '11:00', col: 'L', autoFrom: '11:00' },
+    { label: '1:30 PM',  time: '13:30', col: 'M', autoFrom: '13:30' },
+    { label: '5:30 PM',  time: '17:30', col: 'N', autoFrom: '17:30' },
+  ],
+  // mines: [{label, colCodes, sheetRow, collieryName}]
+  // colCodes: comma-separated colliery codes e.g. "5065" or "5151,5150"
+  mines: [
+    { label: 'Samleswari',    colCodes: '5065',       sheetRow: 7,  collieryName: 'Samleswari OCP' },
+    { label: 'Lajkura',       colCodes: '5064',       sheetRow: 8,  collieryName: 'Lajkura OCP' },
+    { label: 'Int. LBL',      colCodes: '5158',       sheetRow: 9,  collieryName: 'Integrated LBL OCP' },
+    { label: 'Kulda',         colCodes: '5026',       sheetRow: 10, collieryName: 'Kulda OCP' },
+    { label: 'Garjanbahal',   colCodes: '5035',       sheetRow: 11, collieryName: 'Garjanbahal OCP' },
+    { label: 'Basundhara(W)', colCodes: '5025',       sheetRow: 12, collieryName: 'Basundhara (W) OCP' },
+    { label: 'Siarmal',       colCodes: '5162',       sheetRow: 0,  collieryName: 'Siarmal OCP' },
+    { label: 'Orient',        colCodes: '5151,5150',  sheetRow: 13, collieryName: 'Orient UG Mine + HBI' },
+    { label: 'IBCF',          colCodes: '',           sheetRow: 14, collieryName: 'IB Coalfield Total', isTotal: true },
+    { label: 'Jagannath',     colCodes: '5075',       sheetRow: 16, collieryName: 'Jagannath OCP' },
+    { label: 'Ananta',        colCodes: '5046',       sheetRow: 17, collieryName: 'Ananta OCP' },
+    { label: 'Bhubaneswari',  colCodes: '5077',       sheetRow: 18, collieryName: 'Bhubaneswari OCP' },
+    { label: 'Bharatpur',     colCodes: '5044',       sheetRow: 19, collieryName: 'Bharatpur OCP' },
+    { label: 'Lingaraj',      colCodes: '5114',       sheetRow: 20, collieryName: 'Lingaraj OCP' },
+    { label: 'Hingula',       colCodes: '5054',       sheetRow: 21, collieryName: 'Hingula OCP' },
+    { label: 'Balram',        colCodes: '5055',       sheetRow: 22, collieryName: 'Balram OCP' },
+    { label: 'Kaniha',        colCodes: '5094',       sheetRow: 23, collieryName: 'Kaniha OCP' },
+    { label: 'Nandira',       colCodes: '5165',       sheetRow: 24, collieryName: 'Nandira UG Mine' },
+    { label: 'TCF',           colCodes: '',           sheetRow: 25, collieryName: 'Talcher Coalfield Total', isTotal: true },
+    { label: 'MCL',           colCodes: '',           sheetRow: 27, collieryName: 'MCL Total', isGrandTotal: true },
+  ],
 };
 let _settingsSha = null;
+
+// ── Helpers ──────────────────────────────────────────
+function minsFrom24(hhmm) {
+  // "13:30" → 810
+  const [h, m] = hhmm.split(':').map(Number);
+  return h * 60 + m;
+}
+
+function label12h(hhmm) {
+  // "13:30" → "1:30 PM"
+  const [h, m] = hhmm.split(':').map(Number);
+  const ap = h < 12 ? 'AM' : 'PM';
+  const h12 = h % 12 || 12;
+  return h12 + ':' + String(m).padStart(2,'0') + ' ' + ap;
+}
+
+// ═══════════════════════════════════════════════════════
+//  DRAG-AND-DROP ROW REORDERING (live flow animation)
+// ═══════════════════════════════════════════════════════
+let _dragRow = null, _dragType = null, _dragGhost = null;
+
+function makeDraggable(row, type) {
+  const handle = row.querySelector('.stt-drag-handle');
+  if (!handle) return;
+
+  handle.addEventListener('mousedown', e => {
+    if (e.button !== 0) return;
+    e.preventDefault();
+    _dragRow  = row;
+    _dragType = type;
+
+    const rect = row.getBoundingClientRect();
+    const rowH = rect.height;
+    const offsetY = e.clientY - rect.top;
+
+    // Build ghost from actual input values — simple pill with row content
+    const vals = [...row.querySelectorAll('input:not([type="hidden"])')].map(i => i.value).filter(Boolean);
+    _dragGhost = document.createElement('div');
+    _dragGhost.textContent = vals.join('  ·  ');
+    _dragGhost.style.cssText = [
+      'font-family:var(--mono)',
+      'font-size:13px',
+      'color:var(--text)',
+      'background:var(--surface)',
+      'border:1.5px solid var(--amber)',
+      'border-radius:8px',
+      'padding:8px 14px',
+      'box-shadow:0 8px 28px rgba(0,0,0,.22)',
+      'white-space:nowrap',
+      'max-width:480px',
+      'overflow:hidden',
+      'text-overflow:ellipsis',
+    ].join(';');
+    _dragGhost.className = 'stt-drag-ghost';
+    _dragGhost.style.width  = rect.width + 'px';
+    _dragGhost.style.height = rowH + 'px';
+    _dragGhost.style.left   = rect.left + 'px';
+    _dragGhost.style.top    = rect.top + 'px';
+    document.body.appendChild(_dragGhost);
+
+    row.classList.add('stt-row-dragging');
+
+    const sel = type === 'slots' ? '.stt-slot-row' : '.stt-mine-row';
+    const containerId = type === 'slots' ? 'slotsTableBody' : 'minesTableBody';
+
+    function getRows() {
+      return [...document.getElementById(containerId).querySelectorAll(sel)];
+    }
+
+    let lastInsertIdx = -1;
+
+    function updateFlow(clientY) {
+      const rows = getRows();
+      const dragIdx = rows.indexOf(_dragRow);
+
+      // Find insertion index based on cursor position
+      let insertIdx = rows.length;
+      for (let i = 0; i < rows.length; i++) {
+        if (rows[i] === _dragRow) continue;
+        const rr = rows[i].getBoundingClientRect();
+        if (clientY < rr.top + rr.height / 2) { insertIdx = i; break; }
+      }
+
+      if (insertIdx === lastInsertIdx) return;
+      lastInsertIdx = insertIdx;
+
+      // Shift rows: rows between drag position and insert point move by ±rowH
+      rows.forEach((r, i) => {
+        if (r === _dragRow) { r.style.transform = ''; return; }
+        // Row needs to shift down (make room above drag origin)
+        if (dragIdx < insertIdx && i > dragIdx && i < insertIdx) {
+          r.style.transform = 'translateY(-' + rowH + 'px)';
+        // Row needs to shift up (make room below drag origin)
+        } else if (dragIdx > insertIdx && i >= insertIdx && i < dragIdx) {
+          r.style.transform = 'translateY(' + rowH + 'px)';
+        } else {
+          r.style.transform = '';
+        }
+      });
+    }
+
+    const onMove = ev => {
+      ev.preventDefault();
+      _dragGhost.style.top = (ev.clientY - offsetY) + 'px';
+      updateFlow(ev.clientY);
+    };
+
+    const onUp = ev => {
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+
+      // Clear all transforms immediately before re-render
+      getRows().forEach(r => { r.style.transform = ''; });
+
+      // Fade out ghost
+      if (_dragGhost) {
+        _dragGhost.style.transition = 'opacity .15s';
+        _dragGhost.style.opacity = '0';
+        setTimeout(() => { if (_dragGhost) { _dragGhost.remove(); _dragGhost = null; } }, 150);
+      }
+
+      if (!_dragRow) return;
+      _dragRow.classList.remove('stt-row-dragging');
+
+      const rows = getRows();
+      const dragIdx   = rows.indexOf(_dragRow);
+      const insertIdx = lastInsertIdx < 0 ? rows.length : lastInsertIdx;
+
+      if (dragIdx !== insertIdx && dragIdx !== insertIdx - 1) {
+        const arr = type === 'slots' ? appSettings.slots : appSettings.mines;
+        const [moved] = arr.splice(dragIdx, 1);
+        const insertAt = insertIdx > dragIdx ? insertIdx - 1 : insertIdx;
+        arr.splice(insertAt, 0, moved);
+        if (type === 'slots') renderSlotsTable(); else renderMinesTable();
+      }
+
+      lastInsertIdx = -1;
+      _dragRow = null; _dragType = null;
+    };
+
+    document.addEventListener('mousemove', onMove);
+    document.addEventListener('mouseup', onUp);
+  });
+}
 
 async function loadSettingsFromGitHub() {
   try {
@@ -3176,31 +3632,22 @@ async function loadSettingsFromGitHub() {
     const data = await res.json();
     _settingsSha = data.sha;
     const parsed = JSON.parse(atob(data.content.replace(/\n/g,'')));
-    appSettings = Object.assign({}, appSettings, parsed);
-    if (appSettings.scriptUrl) SHEET_WEBAPP_URL = appSettings.scriptUrl;
+    // Merge — new schema takes priority
+    if (parsed.slots) appSettings.slots = parsed.slots;
+    if (parsed.mines) appSettings.mines = parsed.mines;
+    if (parsed.sheetUrl)  appSettings.sheetUrl  = parsed.sheetUrl;
+    if (parsed.sheetName) appSettings.sheetName = parsed.sheetName;
+    if (parsed.scriptUrl) { appSettings.scriptUrl = parsed.scriptUrl; SHEET_WEBAPP_URL = parsed.scriptUrl; }
   } catch(e) { /* use defaults */ }
 }
 
+// ── Settings Panel ───────────────────────────────────
 function openSettings() {
-  document.getElementById('cfg_sheetUrl').value  = appSettings.sheetUrl  || '';
-  document.getElementById('cfg_scriptUrl').value = appSettings.scriptUrl || SHEET_WEBAPP_URL;
-  document.getElementById('cfg_col1100').value   = appSettings.col1100   || 'L';
-  document.getElementById('cfg_col1330').value   = appSettings.col1330   || 'M';
-  document.getElementById('cfg_col1730').value   = appSettings.col1730   || 'N';
-
-  const tbody = document.getElementById('rowMapTable');
-  tbody.innerHTML = '';
-  SS_ROWS.forEach((r, i) => {
-    const tr = document.createElement('tr');
-    const rowNum = (appSettings.rows && appSettings.rows[r.label]) || '';
-    tr.innerHTML = `
-      <td>${r.label}</td>
-      <td style="text-align:center;">
-        <input data-label="${r.label}" type="number" min="1" max="999" value="${rowNum}" class="stt-row-num">
-      </td>`;
-    tbody.appendChild(tr);
-  });
-
+  document.getElementById('cfg_sheetUrl').value   = appSettings.sheetUrl   || '';
+  document.getElementById('cfg_sheetName').value  = appSettings.sheetName  || 'Rake and Road Despatch';
+  document.getElementById('cfg_scriptUrl').value  = appSettings.scriptUrl  || SHEET_WEBAPP_URL;
+  renderSlotsTable();
+  renderMinesTable();
   document.getElementById('settingsStatus').textContent = '';
   document.getElementById('settingsOverlay').style.display = 'block';
 }
@@ -3209,28 +3656,187 @@ function closeSettings() {
   document.getElementById('settingsOverlay').style.display = 'none';
 }
 
+function renderSlotsTable() {
+  const wrap = document.getElementById('slotsTableBody');
+  wrap.innerHTML = '';
+  (appSettings.slots || []).forEach((slot, i) => {
+    const row = document.createElement('div');
+    row.className = 'stt-slot-row';
+    row.dataset.idx = i;
+
+    const timePicker     = createTimePicker(slot.time || '', null);
+    const autoFromPicker = createTimePicker(slot.autoFrom || slot.time || '', null);
+    timePicker.el.dataset.slot  = i; timePicker.el.dataset.field  = 'time';
+    autoFromPicker.el.dataset.slot = i; autoFromPicker.el.dataset.field = 'autoFrom';
+
+    const colInput = document.createElement('input');
+    colInput.className = 'stt-cell-input mono center';
+    colInput.maxLength = 3;
+    colInput.value = slot.col || '';
+    colInput.dataset.slot = i; colInput.dataset.field = 'col';
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'stt-del-btn';
+    delBtn.title = 'Delete slot';
+    delBtn.textContent = '✕';
+    delBtn.onclick = () => deleteSlot(i);
+
+    const dragHandle = document.createElement('div');
+    dragHandle.className = 'stt-drag-handle';
+    dragHandle.innerHTML = '☰';
+    dragHandle.title = 'Drag to reorder';
+
+    row.appendChild(dragHandle);
+    row.appendChild(timePicker.el);
+    row.appendChild(colInput);
+    row.appendChild(autoFromPicker.el);
+    row.appendChild(delBtn);
+    makeDraggable(row, 'slots');
+    wrap.appendChild(row);
+  });
+}
+
+function renderMinesTable() {
+  const wrap = document.getElementById('minesTableBody');
+  wrap.innerHTML = '';
+  (appSettings.mines || []).forEach((mine, i) => {
+    const isSpecial = mine.isTotal || mine.isGrandTotal;
+    const row = document.createElement('div');
+    row.className = 'stt-mine-row' + (isSpecial ? ' is-total' : '');
+    row.dataset.idx = i;
+    const dh = document.createElement('div');
+    dh.className = 'stt-drag-handle'; dh.innerHTML = '☰'; dh.title = 'Drag to reorder';
+    row.appendChild(dh);
+    if (isSpecial) {
+      row.insertAdjacentHTML('beforeend', `
+        <div class="stt-total-label">${mine.label || ''}</div>
+        <input class="stt-cell-input mono" data-mine="${i}" data-field="colCodes" value="" disabled style="color:var(--dim);opacity:.4;">
+        <input class="stt-cell-input mono" type="number" data-mine="${i}" data-field="sheetRow" value="${mine.sheetRow > 0 ? mine.sheetRow : ''}" min="1" max="999">
+        <input class="stt-cell-input" data-mine="${i}" data-field="collieryName" value="${mine.collieryName || ''}" disabled style="opacity:.4;">
+        <div style="width:28px;"></div>`);
+    } else {
+      row.insertAdjacentHTML('beforeend', `
+        <input class="stt-cell-input" data-mine="${i}" data-field="label" value="${mine.label || ''}" >
+        <input class="stt-cell-input mono" data-mine="${i}" data-field="colCodes" value="${mine.colCodes || ''}" >
+        <input class="stt-cell-input mono" type="number" data-mine="${i}" data-field="sheetRow" value="${mine.sheetRow > 0 ? mine.sheetRow : ''}" min="1" max="999">
+        <input class="stt-cell-input" data-mine="${i}" data-field="collieryName" value="${mine.collieryName || ''}" >
+        <button class="stt-del-btn" onclick="deleteMine(${i})" title="Delete row">✕</button>`);
+    }
+    makeDraggable(row, 'mines');
+    wrap.appendChild(row);
+  });
+}
+
+function addSlot() {
+  appSettings.slots.push({ label: '', time: '', col: '' });
+  renderSlotsTable();
+  // Focus the new time input
+  const rows = document.querySelectorAll('#slotsTableBody .stt-slot-row');
+  if (rows.length) rows[rows.length-1].querySelector('input').focus();
+}
+
+function deleteSlot(i) {
+  if (appSettings.slots.length <= 3) { alert('Minimum 3 time slots required.'); return; }
+  if (!confirm('Delete this time slot?')) return;
+  appSettings.slots.splice(i, 1);
+  renderSlotsTable();
+}
+
+function addMine() {
+  // Insert before the last MCL grand total row
+  const insertAt = appSettings.mines.findIndex(m => m.isGrandTotal);
+  const newMine = { label: '', colCodes: '', sheetRow: 0, collieryName: '' };
+  if (insertAt >= 0) appSettings.mines.splice(insertAt, 0, newMine);
+  else appSettings.mines.push(newMine);
+  renderMinesTable();
+  // Focus the new label input
+  const rows = document.querySelectorAll('#minesTableBody .stt-mine-row');
+  const newRow = rows[insertAt >= 0 ? insertAt : rows.length - 1];
+  if (newRow) newRow.querySelector('input').focus();
+}
+
+function deleteMine(i) {
+  const mine = appSettings.mines[i];
+  if (mine.isTotal || mine.isGrandTotal) { alert('Subtotal/total rows cannot be deleted.'); return; }
+  if (!confirm(`Delete "${mine.label || 'this row'}"?`)) return;
+  appSettings.mines.splice(i, 1);
+  renderMinesTable();
+}
+
+function collectSettingsFromDOM() {
+  // Collect slots — time pickers use hidden inputs
+  const slots = [];
+  document.querySelectorAll('#slotsTableBody .stt-slot-row').forEach(row => {
+    const timeEl     = row.querySelector('[data-field="time"] input[type="hidden"]');
+    const autoFromEl = row.querySelector('[data-field="autoFrom"] input[type="hidden"]');
+    const colEl      = row.querySelector('[data-field="col"]');
+    const time     = timeEl     ? timeEl.value.trim()     : '';
+    const autoFrom = autoFromEl ? autoFromEl.value.trim() : time;
+    const col      = colEl      ? colEl.value.trim().toUpperCase() : '';
+    if (time) slots.push({ label: label12h(time), time, col: col || '', autoFrom });
+  });
+
+  // Collect mines
+  const mines = [];
+  document.querySelectorAll('#minesTableBody .stt-mine-row').forEach(row => {
+    const i = parseInt(row.dataset.idx);
+    const orig = appSettings.mines[i] || {};
+    const isSpecial = orig.isTotal || orig.isGrandTotal;
+    const labelEl = row.querySelector('[data-field="label"]');
+    const label = isSpecial ? (orig.label || '') : (labelEl ? labelEl.value.trim() : '');
+    const colCodesEl = row.querySelector('[data-field="colCodes"]');
+    const colCodes = (colCodesEl && !colCodesEl.disabled) ? colCodesEl.value.trim() : (orig.colCodes || '');
+    const sheetRow = parseInt(row.querySelector('[data-field="sheetRow"]').value) || 0;
+    const collieryNameEl = row.querySelector('[data-field="collieryName"]');
+    const collieryName = (collieryNameEl && !collieryNameEl.disabled) ? collieryNameEl.value.trim() : (orig.collieryName || '');
+    if (label) {
+      const entry = { label, colCodes, sheetRow, collieryName };
+      if (orig.isTotal)      entry.isTotal = true;
+      if (orig.isGrandTotal) entry.isGrandTotal = true;
+      mines.push(entry);
+    }
+  });
+
+  return {
+    sheetUrl:  document.getElementById('cfg_sheetUrl').value.trim(),
+    sheetName: document.getElementById('cfg_sheetName').value.trim() || 'Rake and Road Despatch',
+    scriptUrl: document.getElementById('cfg_scriptUrl').value.trim(),
+    slots,
+    mines,
+  };
+}
+
 async function saveSettings() {
   const status = document.getElementById('settingsStatus');
   status.textContent = 'Saving…'; status.style.color = 'var(--mid)';
 
-  const newSettings = {
-    sheetUrl:  document.getElementById('cfg_sheetUrl').value.trim(),
-    scriptUrl: document.getElementById('cfg_scriptUrl').value.trim(),
-    col1100:   (document.getElementById('cfg_col1100').value.trim() || 'L').toUpperCase(),
-    col1330:   (document.getElementById('cfg_col1330').value.trim() || 'M').toUpperCase(),
-    col1730:   (document.getElementById('cfg_col1730').value.trim() || 'N').toUpperCase(),
-    rows: {},
-  };
-  document.querySelectorAll('#rowMapTable input[data-label]').forEach(inp => {
-    const val = parseInt(inp.value);
-    if (val > 0) newSettings.rows[inp.dataset.label] = val;
-  });
+  const newSettings = collectSettingsFromDOM();
+  // Validate slots
+  if (newSettings.slots.length < 3) {
+    status.textContent = 'At least 3 complete time slots required.'; status.style.color = '#e05'; return;
+  }
+  const slotTimes = newSettings.slots.map(s => s.time);
+  if (new Set(slotTimes).size !== slotTimes.length) {
+    status.textContent = 'Duplicate slot times found. Each slot must have a unique time.'; status.style.color = '#e05'; return;
+  }
+  for (const s of newSettings.slots) {
+    if (!s.time) { status.textContent = 'All slots need a time.'; status.style.color = '#e05'; return; }
+    if (s.col && !/^[A-Z]+$/.test(s.col)) { status.textContent = 'Column must be a letter (e.g. L, M, N).'; status.style.color = '#e05'; return; }
+    const autoMins = minsFrom24(s.autoFrom || s.time);
+    const slotMins = minsFrom24(s.time);
+    if (autoMins > slotMins) { status.textContent = `"Auto-activate from" (${s.autoFrom}) cannot be after slot time (${s.time}).`; status.style.color = '#e05'; return; }
+  }
+  // Validate mines
+  if (!newSettings.sheetUrl) { status.textContent = 'Google Sheet URL is required.'; status.style.color = '#e05'; return; }
+  if (!newSettings.scriptUrl) { status.textContent = 'Apps Script URL is required.'; status.style.color = '#e05'; return; }
+  const rowNums = newSettings.mines.filter(m => m.sheetRow > 0).map(m => m.sheetRow);
+  const dupRows = rowNums.filter((r, i) => rowNums.indexOf(r) !== i);
+  if (dupRows.length) { status.textContent = 'Duplicate row numbers: ' + [...new Set(dupRows)].join(', '); status.style.color = '#e05'; return; }
 
   try {
     const content = btoa(unescape(encodeURIComponent(JSON.stringify(newSettings, null, 2))));
     const body = { message: 'Update settings', content, branch: SETTINGS_GH.branch };
     if (_settingsSha) body.sha = _settingsSha;
-
     const res = await fetch(
       `${SETTINGS_GH.api}/repos/${SETTINGS_GH.owner}/${SETTINGS_GH.repo}/contents/${SETTINGS_GH.path}`,
       { method: 'PUT', headers: { Authorization: 'token ' + SETTINGS_GH.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
@@ -3255,58 +3861,83 @@ loadDbFromGitHub();
 <!-- ═══════════════ SETTINGS MODAL ═══════════════ -->
 <div id="settingsOverlay" class="stt-overlay" onclick="if(event.target===this)closeSettings()">
   <div class="stt-panel">
+
     <div class="stt-header">
-      <span class="stt-title">⚙ Sheet Settings</span>
+      <div>
+        <div class="stt-title">⚙ Sheet Settings</div>
+        <div class="stt-title-sub">Configure the Google Sheet integration</div>
+      </div>
       <button class="stt-close" onclick="closeSettings()">✕</button>
     </div>
+
     <div class="stt-body">
 
-      <div class="stt-section">
-        <label class="stt-label">Google Sheet URL</label>
-        <input id="cfg_sheetUrl" class="stt-input" type="url" placeholder="https://docs.google.com/spreadsheets/d/…">
-      </div>
+      <!-- Left column: URLs -->
+      <div>
+        <div class="stt-section">
+          <label class="stt-label">Google Sheet URL</label>
+          <input id="cfg_sheetUrl" class="stt-input" type="url" placeholder="https://docs.google.com/spreadsheets/d/…">
+        </div>
+        <div class="stt-section">
+          <label class="stt-label">Sheet Tab Name</label>
+          <input id="cfg_sheetName" class="stt-input" type="text" placeholder="Rake and Road Despatch">
+        </div>
+        <div class="stt-section">
+          <label class="stt-label">Apps Script Web App URL</label>
+          <input id="cfg_scriptUrl" class="stt-input" type="url" placeholder="https://script.google.com/macros/s/…">
+        </div>
 
-      <div class="stt-section">
-        <label class="stt-label">Apps Script Web App URL</label>
-        <input id="cfg_scriptUrl" class="stt-input" type="url" placeholder="https://script.google.com/macros/s/…">
-      </div>
-
-      <div class="stt-section">
-        <label class="stt-label">Despatch Columns</label>
-        <div class="stt-col-grid">
-          <div class="stt-col-item">
-            <div class="stt-col-time">11:00 AM</div>
-            <input id="cfg_col1100" class="stt-col-input" maxlength="2" placeholder="L">
+        <!-- Time Slots -->
+        <div class="stt-section">
+          <div class="stt-section-hdr">
+            <label class="stt-label">Time Slots &amp; Columns</label>
+            <button class="stt-add-btn" onclick="addSlot()">+ Add Slot</button>
           </div>
-          <div class="stt-col-item">
-            <div class="stt-col-time">1:30 PM</div>
-            <input id="cfg_col1330" class="stt-col-input" maxlength="2" placeholder="M">
+          <div class="stt-slots-wrap">
+            <div class="stt-slots-head">
+              <span></span>
+              <span>Report Time</span>
+              <span style="text-align:center;">Column</span>
+              <span>Auto-activate From</span>
+              <span></span>
+            </div>
+            <div id="slotsTableBody"></div>
           </div>
-          <div class="stt-col-item">
-            <div class="stt-col-time">5:30 PM</div>
-            <input id="cfg_col1730" class="stt-col-input" maxlength="2" placeholder="N">
-          </div>
+          <div class="stt-hint">Column is optional — leave blank to use a slot for auto-filter only without pushing to the sheet. Auto-activate From: when the app opens at or after this time, this slot becomes the default filter.</div>
         </div>
       </div>
 
-      <div class="stt-section">
-        <label class="stt-label">Sheet Row Numbers</label>
-        <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;">
-          <table class="stt-row-table">
-            <thead>
-              <tr><th style="text-align:left;">Mine</th><th>Row #</th></tr>
-            </thead>
-            <tbody id="rowMapTable"></tbody>
-          </table>
+      <!-- Right column: Mines -->
+      <div>
+        <div class="stt-section" style="height:100%;">
+          <div class="stt-section-hdr">
+            <label class="stt-label">Sheet Rows / Collieries</label>
+            <button class="stt-add-btn" onclick="addMine()">+ Add Row</button>
+          </div>
+          <div class="stt-mines-wrap">
+            <div class="stt-mines-head">
+              <span></span>
+              <span>Label</span>
+              <span>Code(s)</span>
+              <span style="text-align:center;">Row #</span>
+              <span>Colliery Name</span>
+              <span></span>
+            </div>
+            <div id="minesTableBody"></div>
+          </div>
+          <div class="stt-hint">Codes: comma-separated for combined rows (e.g. 5151,5150). Leave blank for subtotal/total rows.</div>
         </div>
       </div>
 
-      <div id="settingsStatus" class="stt-status"></div>
     </div>
+
+    <div id="settingsStatus" class="stt-status"></div>
+
     <div class="stt-footer">
-      <button class="stt-btn-save" onclick="saveSettings()">Save to GitHub</button>
       <button class="stt-btn-cancel" onclick="closeSettings()">Cancel</button>
+      <button class="stt-btn-save" onclick="saveSettings()">Save</button>
     </div>
+
   </div>
 </div>
 </body>
