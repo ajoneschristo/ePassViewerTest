@@ -2729,9 +2729,6 @@ async function pushToSheet() {
   btn.style.opacity = '0.6';
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
-  // Open sheet NOW before async — Android blocks window.open after await
-  if (appSettings.sheetUrl) window.open(appSettings.sheetUrl, '_blank');
-
   try {
     // Hidden iframe form submit — works on all browsers including Android
     // Survives Google's redirect chain, no CORS issues
@@ -2770,6 +2767,21 @@ async function pushToSheet() {
     btn.innerHTML = '✓ Done';
     btn.style.color = '#0f9d58';
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
+
+    // Show sheet link — tap opens it (avoids Android popup blocker)
+    if (appSettings.sheetUrl) {
+      const existing = document.getElementById('sheetOpenLink');
+      if (existing) existing.remove();
+      const link = document.createElement('a');
+      link.id = 'sheetOpenLink';
+      link.href = appSettings.sheetUrl;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.textContent = 'Open Sheet →';
+      link.style.cssText = 'display:inline-block;margin-left:8px;font-size:12px;color:#0f9d58;text-decoration:underline;cursor:pointer;';
+      btn.parentNode.insertBefore(link, btn.nextSibling);
+      setTimeout(() => { if (link.parentNode) link.parentNode.removeChild(link); }, 30000);
+    }
 
   } catch (err) {
     alert('Push failed: ' + err.message);
