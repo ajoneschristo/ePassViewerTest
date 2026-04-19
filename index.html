@@ -1010,13 +1010,6 @@ body {
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
     </svg>
   </button>
-  <button class="theme-icon-btn" onclick="openSettings()" title="Settings">
-    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--mid)">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-    </svg>
-  </button>
 </header>
 
 
@@ -2724,32 +2717,37 @@ async function pushToSheet() {
     pushRows.push({ label: row.label, col, row: rowNum, qty });
   }
 
-  // ── 5. Fire image ping to Apps Script ───────────────
+  // 5. Fire push to Apps Script
   const btn = document.getElementById('sheetPushBtn');
   const origText = btn.innerHTML;
   btn.disabled = true;
   btn.style.opacity = '0.6';
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
+  // Open sheet NOW before async — Android blocks window.open after await
+  if (appSettings.sheetUrl) window.open(appSettings.sheetUrl, '_blank');
+
   try {
     const payload = encodeURIComponent(JSON.stringify({ timeslot, col, rows: pushRows }));
     const pingUrl = scriptUrl + '?data=' + payload;
-    await new Promise((resolve) => {
-      const img = new Image();
-      const timer = setTimeout(() => resolve(), 15000);
-      img.onload  = () => { clearTimeout(timer); resolve(); };
-      img.onerror = () => { clearTimeout(timer); resolve(); };
-      img.src = pingUrl;
-    });
+
+    // no-cors fetch — reliable on Android Chrome from https://
+    try {
+      await fetch(pingUrl, { mode: 'no-cors' });
+    } catch(fetchErr) {
+      // Fallback: image ping
+      await new Promise((resolve) => {
+        const img = new Image();
+        const timer = setTimeout(() => resolve(), 15000);
+        img.onload  = () => { clearTimeout(timer); resolve(); };
+        img.onerror = () => { clearTimeout(timer); resolve(); };
+        img.src = pingUrl;
+      });
+    }
 
     btn.innerHTML = '✓ Done';
     btn.style.color = '#0f9d58';
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
-
-    // ── 6. Open sheet in browser ─────────────────────
-    if (appSettings.sheetUrl) {
-      window.open(appSettings.sheetUrl, '_blank');
-    }
 
   } catch (err) {
     alert('Push failed: ' + err.message);
