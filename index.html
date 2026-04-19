@@ -2730,13 +2730,24 @@ async function pushToSheet() {
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
   try {
-    // no-cors POST — works on all browsers including Android Chrome
-    // text/plain skips preflight, no-cors follows redirects silently
-    await fetch(scriptUrl, {
+    // Fire GET (image ping, works on desktop) + POST no-cors simultaneously
+    const pushData = JSON.stringify({ timeslot, col, rows: pushRows });
+    // GET via image ping for desktop
+    const getUrl = scriptUrl + '?data=' + encodeURIComponent(pushData);
+    const img = new Image();
+    img.src = getUrl;
+    // POST no-cors for Android
+    fetch(scriptUrl, {
       method: 'POST',
       mode: 'no-cors',
       headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ timeslot, col, rows: pushRows }),
+      body: pushData,
+    }).catch(() => {});
+    // Wait for whichever resolves first
+    await new Promise((resolve) => {
+      const timer = setTimeout(resolve, 15000);
+      img.onload  = () => { clearTimeout(timer); resolve(); };
+      img.onerror = () => { clearTimeout(timer); resolve(); };
     });
 
     btn.innerHTML = '✓ Done';
