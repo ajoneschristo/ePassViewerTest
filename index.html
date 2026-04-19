@@ -1065,6 +1065,13 @@ body {
         <div class="toggle-thumb"></div>
       </div>
     </button>
+    <button class="theme-icon-btn" id="settingsBtn" onclick="openSettings()" title="Settings">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--mid)">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+      </svg>
+    </button>
     <button class="open-new-btn" onclick="document.getElementById('fileInput').click()">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2600,12 +2607,18 @@ async function pushToSheet() {
     return;
   }
 
-  // ── 2. Guard: time filter must be 11:00 AM, 1:30 PM, or 5:30 PM ──
+  // ── 2. Guard: Apps Script URL must be configured ────
+  const scriptUrl = appSettings.scriptUrl || SHEET_WEBAPP_URL;
+  if (!scriptUrl) {
+    alert('Apps Script URL not configured.\nPlease open Settings (⚙) and enter the Web App URL.');
+    return;
+  }
+
+  // ── 3. Guard: time filter must be 11:00 AM, 1:30 PM, or 5:30 PM ──
   const T1100 = 11 * 60;
   const T1330 = 13 * 60 + 30;
   const T1730 = 17 * 60 + 30;
-  const now   = new Date();
-  const nowMins = now.getHours() * 60 + now.getMinutes();
+  const nowMins = new Date().getHours() * 60 + new Date().getMinutes();
 
   if (timeFilterMins === null) {
     alert('No time filter is active.\nPlease set the time filter to 11:00 AM, 1:30 PM, or 5:30 PM before pushing.');
@@ -2615,7 +2628,6 @@ async function pushToSheet() {
     alert('Time filter is set to ' + minsToLabel(timeFilterMins) + '.\nOnly 11:00 AM, 1:30 PM, and 5:30 PM can be pushed to the sheet.');
     return;
   }
-  // Block if filter is set to a future time
   if (timeFilterMins > nowMins) {
     alert('Time filter (' + minsToLabel(timeFilterMins) + ') is in the future.\nCannot push future data to the sheet.');
     return;
@@ -2625,20 +2637,7 @@ async function pushToSheet() {
                  : timeFilterMins === T1330 ? '1330'
                  :                            '1730';
 
-  // ── 3. Get or prompt for Web App URL ─────────────────
-  if (!SHEET_WEBAPP_URL) {
-    const url = prompt(
-      'Enter your Apps Script Web App URL:\n' +
-      '(Extensions → Apps Script → Deploy → Manage deployments → copy URL)'
-    );
-    if (!url || !url.startsWith('https://')) {
-      alert('Invalid URL. Push cancelled.');
-      return;
-    }
-    SHEET_WEBAPP_URL = url.trim();
-  }
-
-  // ── 4. Compute qty per SS_ROW — mirrors updateStats loop exactly ──
+  // ── 4. Build rows using settings row map ────────────
   const colAcc = {};
   const n = rowGross.length;
   for (let i = 0; i < n; i++) {
@@ -2653,40 +2652,45 @@ async function pushToSheet() {
     colAcc[code].t += rowTar[i];
   }
 
-  const rows = [];
-  let cfNet = 0, mclNet = 0;
+  // Build payload using settings rows + cols
+  const settingsRows = appSettings.rows || {};
+  const col = timeslot === '1100' ? (appSettings.col1100 || 'L')
+            : timeslot === '1330' ? (appSettings.col1330 || 'M')
+            :                       (appSettings.col1730 || 'N');
 
+  const pushRows = [];
+  let cfNet = 0, mclNet = 0;
   for (const row of SS_ROWS) {
+    const rowNum = settingsRows[row.label];
+    if (!rowNum) continue;
+    let qty = 0;
     if (row.isMCLTotal) {
-      rows.push({ label: 'MCL', qty: Math.round(mclNet) });
+      qty = Math.round(mclNet);
     } else if (row.isCFTotal) {
-      rows.push({ label: row.label, qty: Math.round(cfNet) });
-      mclNet += cfNet;
-      cfNet = 0;
+      qty = Math.round(cfNet);
+      mclNet += cfNet; cfNet = 0;
     } else {
       let g = 0, t = 0;
       for (const code of row.codes) {
         const acc = colAcc[code];
         if (acc) { g += acc.g; t += acc.t; }
       }
-      const net = g - t;
-      cfNet += net;
-      rows.push({ label: row.label, qty: Math.round(net) });
+      qty = Math.round(g - t);
+      cfNet += qty;
     }
+    pushRows.push({ label: row.label, col, row: rowNum, qty });
   }
 
-  // ── 5. Send to Apps Script ───────────────────────────
+  // ── 5. Fire image ping to Apps Script ───────────────
   const btn = document.getElementById('sheetPushBtn');
   const origText = btn.innerHTML;
   btn.disabled = true;
   btn.style.opacity = '0.6';
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
-  // Step 1: image ping → writes data + generates PDF into Apps Script cache
-  const DRIVE_PDF_URL = 'https://drive.google.com/uc?export=download&id=1Jq0h6cqSM2bwwXl-iF15fPn0lWqdu_Ln&confirm=t';
   try {
-    const payload = encodeURIComponent(JSON.stringify({ timeslot, rows }));
-    const pingUrl = SHEET_WEBAPP_URL + '?data=' + payload;
+    const payload = encodeURIComponent(JSON.stringify({ timeslot, col, rows: pushRows }));
+    const pingUrl = scriptUrl + '?data=' + payload;
     await new Promise((resolve) => {
       const img = new Image();
       const timer = setTimeout(() => resolve(), 15000);
@@ -2699,31 +2703,9 @@ async function pushToSheet() {
     btn.style.color = '#0f9d58';
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
 
-    // Step 2: GET fetch to retrieve PDF base64 from cache
-    try {
-      const pdfPayload = encodeURIComponent(JSON.stringify({ getPdf: true }));
-      const pdfUrl     = SHEET_WEBAPP_URL + '?data=' + pdfPayload;
-      const pdfRes     = await fetch(pdfUrl);
-      const pdfData    = await pdfRes.json();
-      if (!pdfData.ok || !pdfData.pdf) throw new Error(pdfData.error || 'PDF not in cache');
-
-      // Decode base64 PDF and share/download
-      const byteStr = atob(pdfData.pdf);
-      const arr     = new Uint8Array(byteStr.length);
-      for (let i = 0; i < byteStr.length; i++) arr[i] = byteStr.charCodeAt(i);
-      const blob  = new Blob([arr], { type: 'application/pdf' });
-      const fname = 'road_despatch_' + timeslot + '.pdf';
-      const file  = new File([blob], fname, { type: 'application/pdf' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Road Despatch ' + minsToLabel(timeFilterMins) });
-      } else {
-        const url = URL.createObjectURL(blob);
-        const a   = document.createElement('a');
-        a.href = url; a.download = fname; a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }
-    } catch(pdfErr) {
-      if (pdfErr.name !== 'AbortError') alert('PDF step failed: ' + pdfErr.message);
+    // ── 6. Open sheet in browser ─────────────────────
+    if (appSettings.sheetUrl) {
+      window.open(appSettings.sheetUrl, '_blank');
     }
 
   } catch (err) {
@@ -2733,6 +2715,7 @@ async function pushToSheet() {
     btn.style.opacity = '';
   }
 }
+
 
 // ═══════════════════════════════════════════════════════
 //  EXPORT TO XLSX
@@ -2948,7 +2931,168 @@ function downloadBlob(blob) {
 }
 
 // ── Load DB from GitHub on startup ──────────────────────
+// ═══════════════════════════════════════════════════════
+//  SETTINGS — GitHub-backed config
+// ═══════════════════════════════════════════════════════
+const SETTINGS_GH = {
+  owner:  'ajoneschristo',
+  repo:   'epass-settings',
+  branch: 'main',
+  path:   'settings.json',
+  get token() { return atob('TWFGZ0EzeksyZUlyaE9Ud3c2V0VUQlh3ams2Q1VwRUpDRDZoX3BoZw==').split('').reverse().join(''); },
+  api:    'https://api.github.com',
+};
+
+let appSettings = {
+  sheetUrl:  '',
+  scriptUrl: SHEET_WEBAPP_URL,
+  col1100:   'L', col1330: 'M', col1730: 'N',
+  rows: {
+    'Samleswari':7,'Lajkura':8,'Int. LBL':9,'Kulda':10,'Garjanbahal':11,
+    'Basundhara(W)':12,'Orient':13,'IBCF':14,'Jagannath':16,'Ananta':17,
+    'Bhubaneswari':18,'Bharatpur':19,'Lingaraj':20,'Hingula':21,'Balram':22,
+    'Kaniha':23,'Nandira':24,'TCF':25,'MCL':27,
+  }
+};
+let _settingsSha = null;
+
+async function loadSettingsFromGitHub() {
+  try {
+    const res = await fetch(
+      `${SETTINGS_GH.api}/repos/${SETTINGS_GH.owner}/${SETTINGS_GH.repo}/contents/${SETTINGS_GH.path}`,
+      { headers: { Authorization: 'token ' + SETTINGS_GH.token, Accept: 'application/vnd.github.v3+json' } }
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    _settingsSha = data.sha;
+    const parsed = JSON.parse(atob(data.content.replace(/\n/g,'')));
+    appSettings = Object.assign({}, appSettings, parsed);
+    if (appSettings.scriptUrl) SHEET_WEBAPP_URL = appSettings.scriptUrl;
+  } catch(e) { /* use defaults */ }
+}
+
+function openSettings() {
+  document.getElementById('cfg_sheetUrl').value  = appSettings.sheetUrl  || '';
+  document.getElementById('cfg_scriptUrl').value = appSettings.scriptUrl || SHEET_WEBAPP_URL;
+  document.getElementById('cfg_col1100').value   = appSettings.col1100   || 'L';
+  document.getElementById('cfg_col1330').value   = appSettings.col1330   || 'M';
+  document.getElementById('cfg_col1730').value   = appSettings.col1730   || 'N';
+
+  const tbody = document.getElementById('rowMapTable');
+  tbody.innerHTML = '';
+  SS_ROWS.forEach((r, i) => {
+    const tr = document.createElement('tr');
+    tr.style.cssText = 'border-top:1px solid var(--border);' + (i%2===0 ? 'background:var(--bg)' : '');
+    const rowNum = (appSettings.rows && appSettings.rows[r.label]) || '';
+    tr.innerHTML = `
+      <td style="padding:6px 10px;color:var(--text);">${r.label}</td>
+      <td style="padding:6px 10px;text-align:center;">
+        <input data-label="${r.label}" type="number" min="1" max="999" value="${rowNum}"
+          style="width:60px;padding:4px;border:1px solid var(--border);border-radius:4px;background:var(--bg);color:var(--text);font-size:13px;text-align:center;">
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('settingsStatus').textContent = '';
+  document.getElementById('settingsOverlay').style.display = 'block';
+}
+
+function closeSettings() {
+  document.getElementById('settingsOverlay').style.display = 'none';
+}
+
+async function saveSettings() {
+  const status = document.getElementById('settingsStatus');
+  status.textContent = 'Saving…'; status.style.color = 'var(--mid)';
+
+  const newSettings = {
+    sheetUrl:  document.getElementById('cfg_sheetUrl').value.trim(),
+    scriptUrl: document.getElementById('cfg_scriptUrl').value.trim(),
+    col1100:   (document.getElementById('cfg_col1100').value.trim() || 'L').toUpperCase(),
+    col1330:   (document.getElementById('cfg_col1330').value.trim() || 'M').toUpperCase(),
+    col1730:   (document.getElementById('cfg_col1730').value.trim() || 'N').toUpperCase(),
+    rows: {},
+  };
+  document.querySelectorAll('#rowMapTable input[data-label]').forEach(inp => {
+    const val = parseInt(inp.value);
+    if (val > 0) newSettings.rows[inp.dataset.label] = val;
+  });
+
+  try {
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(newSettings, null, 2))));
+    const body = { message: 'Update settings', content, branch: SETTINGS_GH.branch };
+    if (_settingsSha) body.sha = _settingsSha;
+
+    const res = await fetch(
+      `${SETTINGS_GH.api}/repos/${SETTINGS_GH.owner}/${SETTINGS_GH.repo}/contents/${SETTINGS_GH.path}`,
+      { method: 'PUT', headers: { Authorization: 'token ' + SETTINGS_GH.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    );
+    if (!res.ok) throw new Error('GitHub ' + res.status);
+    const resp = await res.json();
+    _settingsSha = resp.content.sha;
+    appSettings = newSettings;
+    if (appSettings.scriptUrl) SHEET_WEBAPP_URL = appSettings.scriptUrl;
+    status.textContent = '✓ Saved'; status.style.color = 'var(--green)';
+    setTimeout(closeSettings, 1200);
+  } catch(e) {
+    status.textContent = 'Save failed: ' + e.message;
+    status.style.color = '#e05';
+  }
+}
+
+loadSettingsFromGitHub();
 loadDbFromGitHub();
-</script>
+<div id="settingsOverlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:2000;overflow-y:auto;" onclick="if(event.target===this)closeSettings()">
+  <div style="background:var(--surface);margin:20px auto;max-width:520px;border-radius:12px;padding:20px;font-family:'IBM Plex Sans',sans-serif;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+      <h2 style="margin:0;font-size:16px;color:var(--text);font-weight:700;">Sheet Settings</h2>
+      <button onclick="closeSettings()" style="background:none;border:none;cursor:pointer;color:var(--mid);font-size:20px;line-height:1;">✕</button>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;">Google Sheet URL</label>
+      <input id="cfg_sheetUrl" type="url" placeholder="https://docs.google.com/spreadsheets/d/..." style="width:100%;box-sizing:border-box;margin-top:4px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;">Apps Script Web App URL</label>
+      <input id="cfg_scriptUrl" type="url" placeholder="https://script.google.com/macros/s/..." style="width:100%;box-sizing:border-box;margin-top:4px;padding:8px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:13px;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;">Column Letters</label>
+      <div style="display:flex;gap:8px;margin-top:4px;">
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:11px;color:var(--mid);margin-bottom:3px;">11:00 AM</div>
+          <input id="cfg_col1100" maxlength="2" placeholder="L" style="width:100%;box-sizing:border-box;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:14px;text-align:center;text-transform:uppercase;">
+        </div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:11px;color:var(--mid);margin-bottom:3px;">1:30 PM</div>
+          <input id="cfg_col1330" maxlength="2" placeholder="M" style="width:100%;box-sizing:border-box;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:14px;text-align:center;text-transform:uppercase;">
+        </div>
+        <div style="flex:1;text-align:center;">
+          <div style="font-size:11px;color:var(--mid);margin-bottom:3px;">5:30 PM</div>
+          <input id="cfg_col1730" maxlength="2" placeholder="N" style="width:100%;box-sizing:border-box;padding:8px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);font-size:14px;text-align:center;text-transform:uppercase;">
+        </div>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:11px;color:var(--mid);text-transform:uppercase;letter-spacing:.5px;">Row Numbers</label>
+      <div style="margin-top:6px;border:1px solid var(--border);border-radius:8px;overflow:hidden;">
+        <table style="width:100%;border-collapse:collapse;font-size:13px;">
+          <thead>
+            <tr style="background:var(--bg);">
+              <th style="padding:7px 10px;text-align:left;color:var(--mid);font-weight:600;font-size:11px;">Mine</th>
+              <th style="padding:7px 10px;text-align:center;color:var(--mid);font-weight:600;font-size:11px;">Row #</th>
+            </tr>
+          </thead>
+          <tbody id="rowMapTable"></tbody>
+        </table>
+      </div>
+    </div>
+    <div id="settingsStatus" style="font-size:12px;color:var(--mid);min-height:18px;margin-bottom:10px;"></div>
+    <div style="display:flex;gap:8px;">
+      <button onclick="saveSettings()" style="flex:1;padding:10px;background:var(--green);color:#fff;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;">Save to GitHub</button>
+      <button onclick="closeSettings()" style="padding:10px 16px;background:none;border:1px solid var(--border);border-radius:8px;font-size:14px;color:var(--mid);cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
