@@ -1003,6 +1003,20 @@ body {
       <div class="toggle-thumb"></div>
     </div>
   </button>
+  <button class="theme-icon-btn" onclick="openSettings()" title="Settings">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--mid)">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+    </svg>
+  </button>
+  <button class="theme-icon-btn" onclick="openSettings()" title="Settings">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--mid)">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+    </svg>
+  </button>
 </header>
 
 
@@ -1707,6 +1721,7 @@ const SS_ROWS = [
   { label: 'Kulda',         codes: ['5026'] },
   { label: 'Garjanbahal',   codes: ['5035'] },
   { label: 'Basundhara(W)', codes: ['5025'] },
+  { label: 'Siarmal',       codes: ['5162'] },  // row to be configured in settings
   { label: 'Orient',        codes: ['5151','5150'] },  // Orient UG Mine + HBI
   { label: 'IBCF',          isCFTotal: true },
   { label: 'Jagannath',     codes: ['5075'] },
@@ -2949,7 +2964,7 @@ let appSettings = {
   col1100:   'L', col1330: 'M', col1730: 'N',
   rows: {
     'Samleswari':7,'Lajkura':8,'Int. LBL':9,'Kulda':10,'Garjanbahal':11,
-    'Basundhara(W)':12,'Orient':13,'IBCF':14,'Jagannath':16,'Ananta':17,
+    'Basundhara(W)':12,'Siarmal':0,'Orient':13,'IBCF':14,'Jagannath':16,'Ananta':17,
     'Bhubaneswari':18,'Bharatpur':19,'Lingaraj':20,'Hingula':21,'Balram':22,
     'Kaniha':23,'Nandira':24,'TCF':25,'MCL':27,
   }
