@@ -2701,31 +2701,27 @@ async function pushToSheet() {
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
 
     // Step 2: fetch the screenshot from Drive public URL
-    // Apps Script saves file to Drive and we know the fixed file name
-    // We call the script again just to get the fileUrl (read-only, no data)
     try {
       const metaPayload = encodeURIComponent(JSON.stringify({ getFileUrl: true }));
       const metaUrl     = SHEET_WEBAPP_URL + '?data=' + metaPayload;
       const metaRes     = await fetch(metaUrl);
       const metaData    = await metaRes.json();
-      if (metaData.fileUrl) {
-        // Fetch the PNG from Drive
-        const imgRes  = await fetch(metaData.fileUrl);
-        const imgBlob = await imgRes.blob();
-        const fname   = 'road_despatch_' + timeslot + '.png';
-        const file    = new File([imgBlob], fname, { type: 'image/png' });
-        if (navigator.canShare && navigator.canShare({ files: [file] })) {
-          await navigator.share({ files: [file], title: 'Road Despatch ' + minsToLabel(timeFilterMins) });
-        } else {
-          const url = URL.createObjectURL(imgBlob);
-          const a = document.createElement('a');
-          a.href = url; a.download = fname; a.click();
-          setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }
+      if (!metaData.fileUrl) { alert('No file URL returned: ' + JSON.stringify(metaData)); return; }
+      const imgRes  = await fetch(metaData.fileUrl);
+      if (!imgRes.ok) { alert('Drive fetch failed: HTTP ' + imgRes.status); return; }
+      const imgBlob = await imgRes.blob();
+      const fname   = 'road_despatch_' + timeslot + '.png';
+      const file    = new File([imgBlob], fname, { type: 'image/png' });
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: 'Road Despatch ' + minsToLabel(timeFilterMins) });
+      } else {
+        const url = URL.createObjectURL(imgBlob);
+        const a = document.createElement('a');
+        a.href = url; a.download = fname; a.click();
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
       }
     } catch(imgErr) {
-      console.warn('Screenshot fetch failed:', imgErr);
-      // Data was pushed successfully — screenshot is optional
+      alert('Screenshot step failed: ' + imgErr.message);
     }
 
   } catch (err) {
