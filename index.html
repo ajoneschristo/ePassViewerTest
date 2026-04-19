@@ -2683,7 +2683,7 @@ async function pushToSheet() {
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
   // Image ping — writes data + triggers PDF generation server-side
-  const DRIVE_PDF_URL = 'https://drive.google.com/uc?export=download&id=1Jq0h6cqSM2bwwXl-iF15fPn0lWqdu_Ln';
+  const DRIVE_PDF_URL = 'https://drive.google.com/uc?export=download&id=1Jq0h6cqSM2bwwXl-iF15fPn0lWqdu_Ln&confirm=t';
   try {
     const payload = encodeURIComponent(JSON.stringify({ timeslot, rows }));
     const pingUrl = SHEET_WEBAPP_URL + '?data=' + payload;
@@ -2699,22 +2699,11 @@ async function pushToSheet() {
     btn.style.color = '#0f9d58';
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
 
-    // Fetch PDF directly from Drive (public file, no auth needed)
+    // Open PDF directly in new tab — browser handles download natively
     try {
-      const pdfRes  = await fetch(DRIVE_PDF_URL);
-      const pdfBlob = await pdfRes.blob();
-      const fname   = 'road_despatch_' + timeslot + '.pdf';
-      const file    = new File([pdfBlob], fname, { type: 'application/pdf' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Road Despatch ' + minsToLabel(timeFilterMins) });
-      } else {
-        const url = URL.createObjectURL(pdfBlob);
-        const a = document.createElement('a');
-        a.href = url; a.download = fname; a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
-      }
+      window.open(DRIVE_PDF_URL, '_blank');
     } catch(pdfErr) {
-      if (pdfErr.name !== 'AbortError') alert('PDF download failed: ' + pdfErr.message);
+      alert('PDF open failed: ' + pdfErr.message);
     }
 
   } catch (err) {
