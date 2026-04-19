@@ -2736,7 +2736,8 @@ async function pushToSheet() {
     const payload = encodeURIComponent(JSON.stringify({ timeslot, col, rows: pushRows }));
     const pingUrl = scriptUrl + '?data=' + payload;
 
-    // Image ping — fires GET request, survives redirects, no CORS issues
+    // Fire both — fetch (Android) + image ping (fallback)
+    fetch(pingUrl, { mode: 'no-cors' }).catch(() => {});
     await new Promise((resolve) => {
       const img = new Image();
       const timer = setTimeout(() => resolve(), 15000);
