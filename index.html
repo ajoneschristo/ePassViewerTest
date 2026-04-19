@@ -2682,46 +2682,40 @@ async function pushToSheet() {
   btn.style.opacity = '0.6';
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
-  // Step 1: image ping → writes data + saves screenshot to Drive, returns fileUrl
+  // POST to Apps Script — writes data, generates PDF, returns Drive download URL
   try {
-    const payload    = encodeURIComponent(JSON.stringify({ timeslot, rows }));
-    const pingUrl    = SHEET_WEBAPP_URL + '?data=' + payload;
-
-    // Use no-cors fetch for the ping — fire and wait
-    await new Promise((resolve) => {
-      const img   = new Image();
-      const timer = setTimeout(() => resolve(), 12000);
-      img.onload  = () => { clearTimeout(timer); resolve(); };
-      img.onerror = () => { clearTimeout(timer); resolve(); };
-      img.src = pingUrl;
+    const res = await fetch(SHEET_WEBAPP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ timeslot, rows }),
+      redirect: 'follow',
     });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    if (!data.ok) throw new Error(data.error || 'Apps Script error');
 
     btn.innerHTML = '✓ Done';
     btn.style.color = '#0f9d58';
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
 
-    // Step 2: fetch the screenshot from Drive public URL
-    try {
-      const metaPayload = encodeURIComponent(JSON.stringify({ getFileUrl: true }));
-      const metaUrl     = SHEET_WEBAPP_URL + '?data=' + metaPayload;
-      const metaRes     = await fetch(metaUrl);
-      const metaData    = await metaRes.json();
-      if (!metaData.fileUrl) { alert('No file URL returned: ' + JSON.stringify(metaData)); return; }
-      const imgRes  = await fetch(metaData.fileUrl);
-      if (!imgRes.ok) { alert('Drive fetch failed: HTTP ' + imgRes.status); return; }
-      const imgBlob = await imgRes.blob();
-      const fname   = 'road_despatch_' + timeslot + '.png';
-      const file    = new File([imgBlob], fname, { type: 'image/png' });
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: 'Road Despatch ' + minsToLabel(timeFilterMins) });
-      } else {
-        const url = URL.createObjectURL(imgBlob);
-        const a = document.createElement('a');
-        a.href = url; a.download = fname; a.click();
-        setTimeout(() => URL.revokeObjectURL(url), 1000);
+    // Download/share the PDF from Drive
+    if (data.downloadUrl) {
+      try {
+        const pdfRes  = await fetch(data.downloadUrl);
+        const pdfBlob = await pdfRes.blob();
+        const fname   = 'road_despatch_' + timeslot + '.pdf';
+        const file    = new File([pdfBlob], fname, { type: 'application/pdf' });
+        if (navigator.canShare && navigator.canShare({ files: [file] })) {
+          await navigator.share({ files: [file], title: 'Road Despatch ' + minsToLabel(timeFilterMins) });
+        } else {
+          const url = URL.createObjectURL(pdfBlob);
+          const a = document.createElement('a');
+          a.href = url; a.download = fname; a.click();
+          setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+      } catch(shareErr) {
+        if (shareErr.name !== 'AbortError') console.warn('Share error:', shareErr);
       }
-    } catch(imgErr) {
-      alert('Screenshot step failed: ' + imgErr.message);
     }
 
   } catch (err) {
