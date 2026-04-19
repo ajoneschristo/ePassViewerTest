@@ -2717,6 +2717,11 @@ async function pushToSheet() {
     pushRows.push({ label: row.label, col, row: rowNum, qty });
   }
 
+  if (pushRows.length === 0) {
+    alert('No row numbers configured.\nPlease open Settings (⚙) and set the row numbers for each mine.');
+    return;
+  }
+
   // 5. Fire push to Apps Script
   const btn = document.getElementById('sheetPushBtn');
   const origText = btn.innerHTML;
@@ -2731,19 +2736,14 @@ async function pushToSheet() {
     const payload = encodeURIComponent(JSON.stringify({ timeslot, col, rows: pushRows }));
     const pingUrl = scriptUrl + '?data=' + payload;
 
-    // no-cors fetch — reliable on Android Chrome from https://
-    try {
-      await fetch(pingUrl, { mode: 'no-cors' });
-    } catch(fetchErr) {
-      // Fallback: image ping
-      await new Promise((resolve) => {
-        const img = new Image();
-        const timer = setTimeout(() => resolve(), 15000);
-        img.onload  = () => { clearTimeout(timer); resolve(); };
-        img.onerror = () => { clearTimeout(timer); resolve(); };
-        img.src = pingUrl;
-      });
-    }
+    // Image ping — fires GET request, survives redirects, no CORS issues
+    await new Promise((resolve) => {
+      const img = new Image();
+      const timer = setTimeout(() => resolve(), 15000);
+      img.onload  = () => { clearTimeout(timer); resolve(); };
+      img.onerror = () => { clearTimeout(timer); resolve(); };
+      img.src = pingUrl;
+    });
 
     btn.innerHTML = '✓ Done';
     btn.style.color = '#0f9d58';
