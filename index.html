@@ -2730,38 +2730,16 @@ async function pushToSheet() {
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
   try {
-    // Hidden iframe form submit — works on all browsers including Android
-    // Survives Google's redirect chain, no CORS issues
+    // XHR — most compatible across browsers including Android Chrome
     await new Promise((resolve) => {
-      const iframe = document.createElement('iframe');
-      iframe.name = 'pushFrame';
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      const form = document.createElement('form');
-      form.method = 'GET';
-      form.action = scriptUrl;
-      form.target = 'pushFrame';
-
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'data';
-      input.value = JSON.stringify({ timeslot, col, rows: pushRows });
-      form.appendChild(input);
-      document.body.appendChild(form);
-
-      const timer = setTimeout(() => {
-        cleanup(); resolve();
-      }, 15000);
-
-      iframe.onload = () => { clearTimeout(timer); cleanup(); resolve(); };
-
-      function cleanup() {
-        try { document.body.removeChild(form); } catch(e) {}
-        try { document.body.removeChild(iframe); } catch(e) {}
-      }
-
-      form.submit();
+      const xhr = new XMLHttpRequest();
+      const url = scriptUrl + '?data=' + encodeURIComponent(JSON.stringify({ timeslot, col, rows: pushRows }));
+      xhr.open('GET', url, true);
+      xhr.timeout = 15000;
+      xhr.onload  = () => resolve();
+      xhr.onerror = () => resolve();
+      xhr.ontimeout = () => resolve();
+      xhr.send();
     });
 
     btn.innerHTML = '✓ Done';
