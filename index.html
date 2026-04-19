@@ -2733,17 +2733,38 @@ async function pushToSheet() {
   if (appSettings.sheetUrl) window.open(appSettings.sheetUrl, '_blank');
 
   try {
-    const payload = encodeURIComponent(JSON.stringify({ timeslot, col, rows: pushRows }));
-    const pingUrl = scriptUrl + '?data=' + payload;
-
-    // Fire both — fetch (Android) + image ping (fallback)
-    fetch(pingUrl, { mode: 'no-cors' }).catch(() => {});
+    // Hidden iframe form submit — works on all browsers including Android
+    // Survives Google's redirect chain, no CORS issues
     await new Promise((resolve) => {
-      const img = new Image();
-      const timer = setTimeout(() => resolve(), 15000);
-      img.onload  = () => { clearTimeout(timer); resolve(); };
-      img.onerror = () => { clearTimeout(timer); resolve(); };
-      img.src = pingUrl;
+      const iframe = document.createElement('iframe');
+      iframe.name = 'pushFrame';
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = scriptUrl;
+      form.target = 'pushFrame';
+
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'data';
+      input.value = JSON.stringify({ timeslot, col, rows: pushRows });
+      form.appendChild(input);
+      document.body.appendChild(form);
+
+      const timer = setTimeout(() => {
+        cleanup(); resolve();
+      }, 15000);
+
+      iframe.onload = () => { clearTimeout(timer); cleanup(); resolve(); };
+
+      function cleanup() {
+        try { document.body.removeChild(form); } catch(e) {}
+        try { document.body.removeChild(iframe); } catch(e) {}
+      }
+
+      form.submit();
     });
 
     btn.innerHTML = '✓ Done';
