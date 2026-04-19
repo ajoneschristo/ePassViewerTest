@@ -2730,14 +2730,19 @@ async function pushToSheet() {
   btn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> Pushing…';
 
   try {
-    // Image ping — send data via GET, no CORS issues
+    // Script tag injection — works on all browsers including Android Chrome
+    // Browser always fetches script tags cross-origin regardless of response type
     await new Promise((resolve) => {
       const url = scriptUrl + '?data=' + encodeURIComponent(JSON.stringify({ timeslot, col, rows: pushRows }));
-      const img = new Image();
-      const timer = setTimeout(() => resolve(), 15000);
-      img.onload  = () => { clearTimeout(timer); resolve(); };
-      img.onerror = () => { clearTimeout(timer); resolve(); };
-      img.src = url;
+      const script = document.createElement('script');
+      const timer = setTimeout(() => { cleanup(); resolve(); }, 15000);
+      script.onload  = () => { clearTimeout(timer); cleanup(); resolve(); };
+      script.onerror = () => { clearTimeout(timer); cleanup(); resolve(); };
+      function cleanup() {
+        try { document.head.removeChild(script); } catch(e) {}
+      }
+      script.src = url;
+      document.head.appendChild(script);
     });
 
     btn.innerHTML = '✓ Done';
