@@ -368,7 +368,7 @@ body {
 .modal-backdrop {
   position: fixed; inset: 0;
   background: rgba(0,0,0,.72);
-  z-index: 200;
+  z-index: 3000;
   display: none;
   align-items: flex-end;        /* sheet slides up from bottom on mobile */
   justify-content: center;
@@ -566,6 +566,14 @@ body {
 /* ── SHEET FOOTER ── */
 /* ── SETTINGS MODAL ──────────────────────────────── */
 /* ── Custom Time Picker ─────────────────────────── */
+.stt-time-btn {
+  width: 100%; padding: 6px 10px;
+  background: var(--bg); border: 1.5px solid var(--border);
+  border-radius: 8px; cursor: pointer;
+  font-family: var(--mono); font-size: 13px; color: var(--text);
+  text-align: left; transition: border-color .15s;
+}
+.stt-time-btn:hover { border-color: var(--amber); }
 .stt-time-picker {
   position: relative; display: inline-flex;
   align-items: center; gap: 6px;
@@ -584,7 +592,7 @@ body {
   display: none; position: fixed;
   background: var(--surface); border: 1.5px solid var(--border);
   border-radius: 16px; box-shadow: 0 16px 48px rgba(0,0,0,.28);
-  z-index: 9999; padding: 16px; width: 248px;
+  z-index: 10000; padding: 16px; width: 248px;
 }
 .stt-time-picker.open .stt-clock-popup { display: block; }
 .stt-clock-header {
@@ -729,7 +737,7 @@ body {
 }
 .stt-slots-head {
   display: grid;
-  grid-template-columns: 24px 1fr 80px 1fr 36px;
+  grid-template-columns: 24px 1fr 72px 1fr 90px 36px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   padding: 0 4px;
@@ -741,13 +749,12 @@ body {
 }
 .stt-slot-row {
   display: grid;
-  grid-template-columns: 24px 1fr 80px 1fr 36px;
+  grid-template-columns: 24px 1fr 72px 1fr 90px 36px;
   align-items: center;
   border-top: 1px solid var(--border);
   padding: 5px 4px;
   gap: 4px;
   transition: transform .18s cubic-bezier(.25,.46,.45,.94);
-  will-change: transform;
 }
 .stt-slot-row:first-child { border-top: none; }
 .stt-slot-row:nth-child(even) { background: var(--bg); }
@@ -778,7 +785,6 @@ body {
   padding: 4px;
   gap: 4px;
   transition: transform .18s cubic-bezier(.25,.46,.45,.94);
-  will-change: transform;
 }
 .stt-mine-row:first-child { border-top: none; }
 .stt-mine-row:nth-child(even) { background: var(--bg); }
@@ -1509,6 +1515,12 @@ body {
             <path d="M19 3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2zm-7 14l-5-5 1.41-1.41L11 13.17V7h2v6.17l2.59-2.59L17 12l-5 5z"/>
           </svg>
           Sheet
+        </button>
+        <button class="share-btn" id="screenshotBtn" onclick="downloadScreenshot()" title="Download screenshot" style="border-color:var(--mid);color:var(--mid);">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:13px;height:13px;flex-shrink:0;">
+            <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+          </svg>
+          JPG
         </button>
       </div>
     </div>
@@ -2598,17 +2610,15 @@ let clockAP = 'AM';
 let clockMode = 'hour';
 let clockDragging = false;
 
-function openClock() {
-  if (timeFilterMins !== null) {
-    const h24 = Math.floor(timeFilterMins / 60);
-    clockM  = timeFilterMins % 60;
-    clockAP = h24 < 12 ? 'AM' : 'PM';
-    clockH  = h24 % 12 || 12;
-  } else {
-    clockH = 12; clockM = 0; clockAP = 'AM';
-  }
-  clockMode = 'hour';
-  renderClock();
+let _clockCallback = null;
+function openClock(initMins, callback) {
+  _clockCallback = callback || null;
+  const mins = (initMins !== undefined && initMins !== null) ? initMins : timeFilterMins;
+  if (mins !== null && mins !== undefined) {
+    const h24 = Math.floor(mins/60);
+    clockM = mins%60; clockAP = h24<12?'AM':'PM'; clockH = h24%12||12;
+  } else { clockH=12; clockM=0; clockAP='AM'; }
+  clockMode='hour'; renderClock();
   document.getElementById('modalBackdrop').classList.add('open');
 }
 
@@ -2707,12 +2717,14 @@ function addDot(face, x, y) {
 }
 
 const face = document.getElementById('clockFace');
+if (face) {
 face.addEventListener('mousedown',  e => { clockDragging = true; handleClockInput(e); });
 face.addEventListener('touchstart', e => { clockDragging = true; handleClockInput(e); e.preventDefault(); }, { passive: false });
 document.addEventListener('mousemove',  e => { if (clockDragging) handleClockInput(e); });
 document.addEventListener('touchmove',  e => { if (clockDragging) { handleClockInput(e); e.preventDefault(); } }, { passive: false });
 document.addEventListener('mouseup',    () => { if (clockDragging) { clockDragging = false; if (clockMode === 'hour') { clockMode = 'minute'; renderClock(); } } });
 document.addEventListener('touchend',   () => { if (clockDragging) { clockDragging = false; if (clockMode === 'hour') { clockMode = 'minute'; renderClock(); } } });
+} // end if (face)
 
 function handleClockInput(e) {
   const angle = angleFromEvent(e, face);
@@ -2722,15 +2734,15 @@ function handleClockInput(e) {
 }
 
 function applyTime() {
-  let h24 = clockH % 12;
-  if (clockAP === 'PM') h24 += 12;
-  timeFilterMins = h24 * 60 + clockM;
-  if (activeTabDate) tabTimeFilters[activeTabDate] = timeFilterMins;
-  document.getElementById('timePillVal').textContent = minsToLabel(timeFilterMins);
-  document.getElementById('timePillVal').className   = 'time-pill-val';
-  document.getElementById('timeClearBtn').style.display = 'inline';
-  closeClock();
-  updateStats();
+  let h24 = clockH%12; if (clockAP==='PM') h24+=12;
+  const mins = h24*60+clockM;
+  if (_clockCallback) { _clockCallback(mins); _clockCallback=null; closeClock(); return; }
+  timeFilterMins=mins;
+  if (activeTabDate) tabTimeFilters[activeTabDate]=timeFilterMins;
+  document.getElementById('timePillVal').textContent=minsToLabel(timeFilterMins);
+  document.getElementById('timePillVal').className='time-pill-val';
+  document.getElementById('timeClearBtn').style.display='inline';
+  closeClock(); updateStats();
 }
 
 // ═══════════════════════════════════════════════════════
@@ -2917,6 +2929,102 @@ async function shareReport() {
 
 
 // ═══════════════════════════════════════════════════════
+//  SCREENSHOT DOWNLOAD
+// ═══════════════════════════════════════════════════════
+let _lastActiveSlot = null;
+
+function updateScreenshotBtn() {
+  const ssBtn = document.getElementById('screenshotBtn');
+  if (!ssBtn) return;
+  const s = timeFilterMins !== null
+    ? (appSettings.slots || []).find(sl => minsFrom24(sl.time) === timeFilterMins)
+    : null;
+  if (s && s.driveFileId) {
+    ssBtn.style.borderColor = 'var(--amber)';
+    ssBtn.style.color = 'var(--amber)';
+    ssBtn.title = 'Download screenshot for ' + (s.label || s.time);
+  } else {
+    ssBtn.style.borderColor = 'var(--dim)';
+    ssBtn.style.color = 'var(--dim)';
+    ssBtn.title = s && s.screenshotRange ? 'Push data first to enable screenshot' : 'Set Screenshot Range in Settings';
+  }
+}
+
+async function downloadScreenshot(slot) {
+  // Find slot matching current time filter
+  let s = slot;
+  if (!s) {
+    if (timeFilterMins !== null) {
+      s = (appSettings.slots || []).find(sl => minsFrom24(sl.time) === timeFilterMins);
+    }
+    if (!s) s = _lastActiveSlot;
+  }
+  if (!s) { alert('No active time filter. Set a time filter first.'); return; }
+  if (!s.screenshotRange) {
+    alert('No screenshot range set for ' + (s.label || s.time) + '.\nOpen Settings \u2192 Time Slots and set a Screenshot Range (e.g. I5:O28).');
+    return;
+  }
+  if (!s.driveFileId) {
+    alert('No Drive file yet for ' + (s.label || s.time) + '.\nPush data once so Apps Script creates the Drive file, then this button will work independently.');
+    return;
+  }
+
+  const ssBtn = document.getElementById('screenshotBtn');
+  const origHTML = ssBtn ? ssBtn.innerHTML : '';
+  if (ssBtn) {
+    ssBtn.disabled = true; ssBtn.style.opacity = '.6';
+    ssBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" style="width:13px;height:13px;flex-shrink:0;animation:spin 1s linear infinite"><path d="M12 4V2A10 10 0 0 0 2 12h2a8 8 0 0 1 8-8z"/></svg> JPG';
+  }
+
+  const scriptUrl = appSettings.scriptUrl || SHEET_WEBAPP_URL;
+
+  try {
+    // Step 1: Ask Apps Script to refresh the Drive screenshot (fire + forget)
+    const pingPayload = encodeURIComponent(JSON.stringify({
+      screenshotOnly: true,
+      screenshotRange: s.screenshotRange,
+      slotLabel: s.label || s.time,
+      driveFileId: s.driveFileId,
+      sheetName: appSettings.sheetName || 'Rake and Road Despatch',
+    }));
+    const pingImg = new Image();
+    pingImg.src = scriptUrl + '?data=' + pingPayload;
+
+    // Step 2: Wait for Apps Script to export + save, then fetch from Drive
+    await new Promise(r => setTimeout(r, 4000));
+
+    const driveUrl = 'https://drive.google.com/uc?export=download&id=' + s.driveFileId + '&confirm=t';
+    const res = await fetch(driveUrl);
+    if (!res.ok) throw new Error('Drive fetch HTTP ' + res.status);
+    const blob = await res.blob();
+
+    // Convert to JPG via canvas
+    const img = new Image();
+    img.src = URL.createObjectURL(blob);
+    await new Promise(r => { img.onload = r; img.onerror = r; });
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || 800; canvas.height = img.naturalHeight || 600;
+    const ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(img, 0, 0);
+    URL.revokeObjectURL(img.src);
+
+    canvas.toBlob(jpgBlob => {
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(jpgBlob);
+      a.download = 'road_despatch_' + (s.label || s.time).replace(/[^a-zA-Z0-9]/g,'_') + '.jpg';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      if (ssBtn) { ssBtn.disabled = false; ssBtn.style.opacity = ''; ssBtn.innerHTML = origHTML; }
+    }, 'image/jpeg', 0.92);
+
+  } catch(e) {
+    if (ssBtn) { ssBtn.disabled = false; ssBtn.style.opacity = ''; ssBtn.innerHTML = origHTML; }
+    alert('Screenshot failed: ' + e.message);
+  }
+}
+
+// ═══════════════════════════════════════════════════════
 //  PUSH TO GOOGLE SHEET
 // ═══════════════════════════════════════════════════════
 async function pushToSheet() {
@@ -2956,6 +3064,7 @@ async function pushToSheet() {
     return;
   }
   const col = activeSlot.col;
+  _lastActiveSlot = activeSlot;
 
   // ── 4. Guard: report date must be today, data must reach filter time ──
   const today = new Date();
@@ -3031,7 +3140,13 @@ async function pushToSheet() {
   try {
     // Top-level navigation in hidden iframe — treated same as address bar by Android
     await new Promise((resolve) => {
-      const pushData = JSON.stringify({ timeslot, col, rows: pushRows });
+      const pushData = JSON.stringify({
+      timeslot, col, rows: pushRows,
+      sheetName: appSettings.sheetName || 'Rake and Road Despatch',
+      screenshotRange: activeSlot.screenshotRange || '',
+      slotLabel: activeSlot.label || activeSlot.time || timeslot,
+      driveFileId: activeSlot.driveFileId || '',
+    });
       const url = scriptUrl + '?data=' + encodeURIComponent(pushData);
 
       // Remove any existing push iframe
@@ -3056,7 +3171,15 @@ async function pushToSheet() {
 
     btn.innerHTML = '✓ Done';
     btn.style.color = '#0f9d58';
-    setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; }, 2500);
+    setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; btn.style.color = ''; }, 2500);
+
+    // Update screenshot button color after push
+    updateScreenshotBtn();
+
+    // Auto-download screenshot if configured
+    if (appSettings.autoScreenshot !== false && activeSlot && activeSlot.driveFileId) {
+      setTimeout(() => downloadScreenshot(activeSlot), 3000);
+    }
 
     // Show sheet link — tap opens it (avoids Android popup blocker)
     if (appSettings.sheetUrl) {
@@ -3302,133 +3425,39 @@ function downloadBlob(blob) {
 // ═══════════════════════════════════════════════════════
 //  CUSTOM TIME PICKER
 // ═══════════════════════════════════════════════════════
-let _activeTimePicker = null;
-
-function createTimePicker(value, onChange) {
-  let h24 = 11, m = 0;
-  if (value) { const p = value.split(':'); h24 = parseInt(p[0])||0; m = parseInt(p[1])||0; }
-  let ampm = h24 < 12 ? 'AM' : 'PM';
-  let h12  = h24 % 12 || 12;
-  let mode = 'hour';
-
-  function get24() { return (ampm==='AM'?(h12===12?0:h12):(h12===12?12:h12+12))*60+m; }
-  function valStr() { const t=get24(); return String(Math.floor(t/60)).padStart(2,'0')+':'+String(t%60).padStart(2,'0'); }
-  function dispStr() { return h12+':'+String(m).padStart(2,'0')+' '+ampm; }
-
-  const wrap   = document.createElement('div'); wrap.className = 'stt-time-picker';
-  const valSpan= document.createElement('span'); valSpan.className='stt-time-picker-val';
-  const icon   = document.createElement('span'); icon.className='stt-time-picker-icon'; icon.textContent='\u23f0';
-  const hidden = document.createElement('input'); hidden.type='hidden';
-  const popup  = document.createElement('div'); popup.className='stt-clock-popup';
-
-  const hdr = document.createElement('div'); hdr.className='stt-clock-header';
-  const disp= document.createElement('div'); disp.className='stt-clock-display';
-  const ampmWrap = document.createElement('div'); ampmWrap.className='stt-clock-ampm';
-  const amBtn = document.createElement('button'); amBtn.className='stt-ampm-btn'; amBtn.type='button'; amBtn.textContent='AM';
-  const pmBtn = document.createElement('button'); pmBtn.className='stt-ampm-btn'; pmBtn.type='button'; pmBtn.textContent='PM';
-  amBtn.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); ampm='AM'; update(); });
-  pmBtn.addEventListener('mousedown', e => { e.preventDefault(); e.stopPropagation(); ampm='PM'; update(); });
-  ampmWrap.append(amBtn, pmBtn); hdr.append(disp, ampmWrap);
-
-  const R=88, CX=100, CY=100, NS='http://www.w3.org/2000/svg';
-  const svg = document.createElementNS(NS,'svg');
-  svg.setAttribute('viewBox','0 0 200 200'); svg.setAttribute('width','216'); svg.setAttribute('height','216');
-  svg.className='stt-clock-svg';
-  const face=document.createElementNS(NS,'circle'); face.setAttribute('cx',CX); face.setAttribute('cy',CY); face.setAttribute('r',R); face.setAttribute('class','stt-clock-face'); svg.appendChild(face);
-  for (let i=0;i<60;i++) {
-    const ang=(i/60)*2*Math.PI-Math.PI/2, isMaj=i%5===0;
-    const r1=isMaj?R-10:R-5;
-    const ln=document.createElementNS(NS,'line');
-    ln.setAttribute('x1',CX+Math.cos(ang)*r1); ln.setAttribute('y1',CY+Math.sin(ang)*r1);
-    ln.setAttribute('x2',CX+Math.cos(ang)*(R-2)); ln.setAttribute('y2',CY+Math.sin(ang)*(R-2));
-    ln.setAttribute('class','stt-clock-tick'+(isMaj?' major':'')); svg.appendChild(ln);
-    if (isMaj) {
-      const hn=i/5||12, nr=R-22;
-      const txt=document.createElementNS(NS,'text');
-      txt.setAttribute('x',CX+Math.cos(ang)*nr); txt.setAttribute('y',CY+Math.sin(ang)*nr);
-      txt.setAttribute('class','stt-clock-num'); txt.textContent=hn; svg.appendChild(txt);
-    }
+function createTimePicker(initVal, onChange) {
+  function toMins(hhmm) {
+    if (!hhmm) return null;
+    const [h,m] = hhmm.split(':').map(Number); return h*60+m;
   }
-  const handH=document.createElementNS(NS,'line'); handH.setAttribute('class','stt-clock-hand-h'); svg.appendChild(handH);
-  const handM=document.createElementNS(NS,'line'); handM.setAttribute('class','stt-clock-hand-m'); svg.appendChild(handM);
-  const ctr=document.createElementNS(NS,'circle'); ctr.setAttribute('cx',CX); ctr.setAttribute('cy',CY); ctr.setAttribute('r','5'); ctr.setAttribute('class','stt-clock-center'); svg.appendChild(ctr);
-
-  const modeRow=document.createElement('div'); modeRow.className='stt-clock-mode';
-  const hBtn=document.createElement('button'); hBtn.className='stt-clock-mode-btn'; hBtn.type='button'; hBtn.textContent='HH';
-  const mBtn=document.createElement('button'); mBtn.className='stt-clock-mode-btn'; mBtn.type='button'; mBtn.textContent='MM';
-  hBtn.addEventListener('mousedown', e=>{e.preventDefault();e.stopPropagation();mode='hour';update();});
-  mBtn.addEventListener('mousedown', e=>{e.preventDefault();e.stopPropagation();mode='min';update();});
-  modeRow.append(hBtn,mBtn);
-  const okBtn=document.createElement('button'); okBtn.className='stt-clock-ok'; okBtn.type='button'; okBtn.textContent='Done';
-  okBtn.addEventListener('mousedown', e=>{e.preventDefault();e.stopPropagation();wrap.classList.remove('open');_activeTimePicker=null;});
-
-  popup.append(hdr,svg,modeRow,okBtn);
-  wrap.append(valSpan,icon,popup,hidden);
-
-  svg.addEventListener('mousedown', e=>{
-    e.preventDefault(); e.stopPropagation();
-    const rect=svg.getBoundingClientRect();
-    const px=e.clientX-rect.left-rect.width/2;
-    const py=e.clientY-rect.top-rect.height/2;
-    const ang=Math.atan2(py,px)+Math.PI/2;
-    const norm=((ang/(2*Math.PI))+1)%1;
-    if (mode==='hour') { h12=Math.round(norm*12)||12; mode='min'; }
-    else { m=Math.round(norm*60)%60; }
-    update();
+  function fromMins(mins) {
+    if (mins===null||mins===undefined) return '';
+    return String(Math.floor(mins/60)).padStart(2,'0')+':'+String(mins%60).padStart(2,'0');
+  }
+  function fmt(hhmm) {
+    if (!hhmm) return '—';
+    const [h24,m]=hhmm.split(':').map(Number);
+    const ap=h24<12?'AM':'PM', h12=h24%12||12;
+    return h12+':'+String(m).padStart(2,'0')+' '+ap;
+  }
+  let cur = initVal||'';
+  const hidden=document.createElement('input'); hidden.type='hidden'; hidden.value=cur;
+  const btn=document.createElement('button'); btn.type='button'; btn.className='stt-time-btn';
+  btn.textContent=fmt(cur);
+  btn.addEventListener('click', e=>{
+    e.stopPropagation();
+    openClock(toMins(cur), mins=>{
+      cur=fromMins(mins); hidden.value=cur; btn.textContent=fmt(cur);
+      if(onChange) onChange(cur);
+    });
   });
-
-  function drawHands() {
-    const hAng=((h12%12)/12+m/720)*2*Math.PI-Math.PI/2;
-    const mAng=(m/60)*2*Math.PI-Math.PI/2;
-    handH.setAttribute('x1',CX); handH.setAttribute('y1',CY);
-    handH.setAttribute('x2',CX+Math.cos(hAng)*R*0.52); handH.setAttribute('y2',CY+Math.sin(hAng)*R*0.52);
-    handM.setAttribute('x1',CX); handM.setAttribute('y1',CY);
-    handM.setAttribute('x2',CX+Math.cos(mAng)*R*0.72); handM.setAttribute('y2',CY+Math.sin(mAng)*R*0.72);
-    handH.style.opacity=mode==='hour'?'1':'0.3';
-    handM.style.opacity=mode==='min'?'1':'0.3';
-  }
-
-  function update() {
-    hidden.value=valStr(); valSpan.textContent=dispStr();
-    disp.innerHTML='<span class="'+(mode==='hour'?'active':'')+'">'+String(h12).padStart(2,'0')+'</span>'
-      +'<span style="color:var(--dim)">:</span>'
-      +'<span class="'+(mode==='min'?'active':'')+'">'+String(m).padStart(2,'0')+'</span>'
-      +'<span style="font-size:13px;color:var(--dim);margin-left:4px;">'+ampm+'</span>';
-    amBtn.classList.toggle('active',ampm==='AM'); pmBtn.classList.toggle('active',ampm==='PM');
-    hBtn.classList.toggle('active',mode==='hour'); mBtn.classList.toggle('active',mode==='min');
-    drawHands();
-    if (onChange) onChange(valStr());
-  }
-  update();
-
-  wrap.addEventListener('mousedown', e=>{
-    if (popup.contains(e.target)) return;
-    e.preventDefault();
-    const isOpen=wrap.classList.contains('open');
-    if (_activeTimePicker&&_activeTimePicker!==wrap) _activeTimePicker.classList.remove('open');
-    if (!isOpen) {
-      const rect=wrap.getBoundingClientRect();
-      popup.style.left=rect.left+'px';
-      popup.style.top=(rect.bottom+8)+'px';
-      if (rect.bottom+320>window.innerHeight) popup.style.top=(rect.top-320)+'px';
-      wrap.classList.add('open'); _activeTimePicker=wrap;
-    } else { wrap.classList.remove('open'); _activeTimePicker=null; }
-  });
-
-  return { el:wrap, getValue:valStr, setValue(v) {
-    if (!v) return;
-    const p=v.split(':'); h24=parseInt(p[0])||0; m=parseInt(p[1])||0;
-    ampm=h24<12?'AM':'PM'; h12=h24%12||12; update();
-  }};
+  const wrap=document.createElement('div');
+  wrap.style.cssText='display:flex;align-items:center;width:100%;';
+  wrap.appendChild(btn); wrap.appendChild(hidden);
+  return { el:wrap, getValue:()=>cur, setValue(v){cur=v||'';hidden.value=cur;btn.textContent=fmt(cur);} };
 }
 
-// Close picker on outside mousedown
-document.addEventListener('mousedown', e => {
-  if (_activeTimePicker && !_activeTimePicker.contains(e.target)) {
-    _activeTimePicker.classList.remove('open');
-    _activeTimePicker = null;
-  }
-});
+
 
 const SETTINGS_GH = {
   owner:  'ajoneschristo',
@@ -3444,12 +3473,13 @@ let appSettings = {
   sheetUrl:  '',
   sheetName: 'Rake and Road Despatch',
   scriptUrl: SHEET_WEBAPP_URL,
+  autoScreenshot: true,  // auto-download screenshot after push
   // slots: [{label, time, col, autoFrom}]
   // time: "HH:MM" 24h, col: sheet column, autoFrom: "HH:MM" when this slot auto-activates
   slots: [
-    { label: '11:00 AM', time: '11:00', col: 'L', autoFrom: '11:00' },
-    { label: '1:30 PM',  time: '13:30', col: 'M', autoFrom: '13:30' },
-    { label: '5:30 PM',  time: '17:30', col: 'N', autoFrom: '17:30' },
+    { label: '11:00 AM', time: '11:00', col: 'L', autoFrom: '11:00', screenshotRange: '', driveFileId: '' },
+    { label: '1:30 PM',  time: '13:30', col: 'M', autoFrom: '13:30', screenshotRange: '', driveFileId: '' },
+    { label: '5:30 PM',  time: '17:30', col: 'N', autoFrom: '17:30', screenshotRange: '', driveFileId: '' },
   ],
   // mines: [{label, colCodes, sheetRow, collieryName}]
   // colCodes: comma-separated colliery codes e.g. "5065" or "5151,5150"
@@ -3637,6 +3667,7 @@ async function loadSettingsFromGitHub() {
     if (parsed.mines) appSettings.mines = parsed.mines;
     if (parsed.sheetUrl)  appSettings.sheetUrl  = parsed.sheetUrl;
     if (parsed.sheetName) appSettings.sheetName = parsed.sheetName;
+    if (parsed.autoScreenshot !== undefined) appSettings.autoScreenshot = parsed.autoScreenshot;
     if (parsed.scriptUrl) { appSettings.scriptUrl = parsed.scriptUrl; SHEET_WEBAPP_URL = parsed.scriptUrl; }
   } catch(e) { /* use defaults */ }
 }
@@ -3644,6 +3675,15 @@ async function loadSettingsFromGitHub() {
 // ── Settings Panel ───────────────────────────────────
 function openSettings() {
   document.getElementById('cfg_sheetUrl').value   = appSettings.sheetUrl   || '';
+  function updateToggleUI(checked) {
+    document.getElementById('autoScreenshotTrack').style.background = checked ? 'var(--green)' : 'var(--border)';
+    document.getElementById('autoScreenshotThumb').style.transform  = checked ? 'translateX(18px)' : '';
+  }
+  const asChk = document.getElementById('cfg_autoScreenshot');
+  asChk.checked = appSettings.autoScreenshot !== false;
+  updateToggleUI(asChk.checked);
+  asChk.onchange = () => updateToggleUI(asChk.checked);
+  document.getElementById('autoScreenshotTrack').onclick = () => { asChk.checked = !asChk.checked; asChk.onchange(); };
   document.getElementById('cfg_sheetName').value  = appSettings.sheetName  || 'Rake and Road Despatch';
   document.getElementById('cfg_scriptUrl').value  = appSettings.scriptUrl  || SHEET_WEBAPP_URL;
   renderSlotsTable();
@@ -3686,10 +3726,19 @@ function renderSlotsTable() {
     dragHandle.innerHTML = '☰';
     dragHandle.title = 'Drag to reorder';
 
+    const rangeInput = document.createElement('input');
+    rangeInput.className = 'stt-cell-input mono center';
+    rangeInput.value = slot.screenshotRange || '';
+    rangeInput.placeholder = '';
+    rangeInput.dataset.slot = i; rangeInput.dataset.field = 'screenshotRange';
+    rangeInput.style.textTransform = 'uppercase';
+    rangeInput.style.fontSize = '11px';
+
     row.appendChild(dragHandle);
     row.appendChild(timePicker.el);
     row.appendChild(colInput);
     row.appendChild(autoFromPicker.el);
+    row.appendChild(rangeInput);
     row.appendChild(delBtn);
     makeDraggable(row, 'slots');
     wrap.appendChild(row);
@@ -3773,7 +3822,11 @@ function collectSettingsFromDOM() {
     const time     = timeEl     ? timeEl.value.trim()     : '';
     const autoFrom = autoFromEl ? autoFromEl.value.trim() : time;
     const col      = colEl      ? colEl.value.trim().toUpperCase() : '';
-    if (time) slots.push({ label: label12h(time), time, col: col || '', autoFrom });
+    const rangeEl = row.querySelector('[data-field="screenshotRange"]');
+    const screenshotRange = rangeEl ? rangeEl.value.trim().toUpperCase() : '';
+    // Preserve driveFileId from existing settings (set by Apps Script)
+    const existingSlot = (appSettings.slots || [])[parseInt(row.dataset.idx)] || {};
+    if (time) slots.push({ label: label12h(time), time, col: col || '', autoFrom, screenshotRange, driveFileId: existingSlot.driveFileId || '' });
   });
 
   // Collect mines
@@ -3801,6 +3854,7 @@ function collectSettingsFromDOM() {
     sheetUrl:  document.getElementById('cfg_sheetUrl').value.trim(),
     sheetName: document.getElementById('cfg_sheetName').value.trim() || 'Rake and Road Despatch',
     scriptUrl: document.getElementById('cfg_scriptUrl').value.trim(),
+    autoScreenshot: document.getElementById('cfg_autoScreenshot').checked,
     slots,
     mines,
   };
@@ -3887,6 +3941,18 @@ loadDbFromGitHub();
           <input id="cfg_scriptUrl" class="stt-input" type="url" placeholder="https://script.google.com/macros/s/…">
         </div>
 
+        <div class="stt-section" style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg);border-radius:8px;border:1.5px solid var(--border);">
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--text);">Auto-download screenshot after push</div>
+            <div style="font-size:11px;color:var(--dim);margin-top:2px;">Downloads the screenshot range automatically when you tap Sheet</div>
+          </div>
+          <label style="position:relative;display:inline-block;width:40px;height:22px;flex-shrink:0;margin-left:16px;">
+            <input type="checkbox" id="cfg_autoScreenshot" style="opacity:0;width:0;height:0;position:absolute;">
+            <span id="autoScreenshotTrack" style="position:absolute;cursor:pointer;inset:0;background:var(--border);border-radius:11px;transition:background .2s;"></span>
+            <span id="autoScreenshotThumb" style="position:absolute;left:3px;top:3px;width:16px;height:16px;background:#fff;border-radius:50%;transition:transform .2s;pointer-events:none;"></span>
+          </label>
+        </div>
+
         <!-- Time Slots -->
         <div class="stt-section">
           <div class="stt-section-hdr">
@@ -3899,6 +3965,7 @@ loadDbFromGitHub();
               <span>Report Time</span>
               <span style="text-align:center;">Column</span>
               <span>Auto-activate From</span>
+              <span style="text-align:center;">Screenshot Range</span>
               <span></span>
             </div>
             <div id="slotsTableBody"></div>
