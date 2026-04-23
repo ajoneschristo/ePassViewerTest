@@ -737,7 +737,7 @@ body {
 }
 .stt-slots-head {
   display: grid;
-  grid-template-columns: 24px 1fr 72px 1fr 90px 36px;
+  grid-template-columns: 24px 1fr 72px 1fr 90px 120px 36px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
   padding: 0 4px;
@@ -749,7 +749,7 @@ body {
 }
 .stt-slot-row {
   display: grid;
-  grid-template-columns: 24px 1fr 72px 1fr 90px 36px;
+  grid-template-columns: 24px 1fr 72px 1fr 90px 120px 36px;
   align-items: center;
   border-top: 1px solid var(--border);
   padding: 5px 4px;
@@ -3001,28 +3001,15 @@ async function downloadScreenshot(slot) {
     const pingImg = new Image();
     pingImg.src = scriptUrl + '?data=' + pingPayload;
 
-    // Step 2: Wait for Apps Script to export + save, then get file ID
-    await new Promise(r => setTimeout(r, 4000));
+    // Step 2: Wait for Apps Script to export + save to Drive
+    await new Promise(r => setTimeout(r, 5000));
 
-    // Get file ID from Apps Script (may be newly created)
-    let fileId = s.driveFileId;
-    try {
-      const idPayload = encodeURIComponent(JSON.stringify({ getFileId: true, slotLabel: s.label || s.time }));
-      const idRes = await fetch(scriptUrl + '?data=' + idPayload);
-      const idData = await idRes.json();
-      if (idData.driveFileId) {
-        fileId = idData.driveFileId;
-        // Save back to settings if new
-        if (fileId !== s.driveFileId) {
-          const slotIdx = (appSettings.slots || []).findIndex(sl => sl.time === s.time);
-          if (slotIdx >= 0) { appSettings.slots[slotIdx].driveFileId = fileId; s.driveFileId = fileId; }
-          saveSettingsSilent();
-        }
-      }
-    } catch(e) { /* use existing fileId */ }
-
-    if (!fileId) throw new Error('Could not get Drive file ID from Apps Script');
-    const driveUrl = 'https://drive.google.com/uc?export=download&id=' + fileId + '&confirm=t';
+    if (!s.driveFileId) {
+      alert('Drive file ID not set for ' + (s.label || s.time) + '.\n\nTo set it up:\n1. Open Settings \u2192 push data once using the Sheet button\n2. The Drive file ID will be saved automatically.');
+      if (ssBtn) { ssBtn.disabled = false; ssBtn.style.opacity = ''; ssBtn.innerHTML = origHTML; }
+      return;
+    }
+    const driveUrl = 'https://drive.google.com/uc?export=download&id=' + s.driveFileId + '&confirm=t';
     const res = await fetch(driveUrl);
     if (!res.ok) throw new Error('Drive fetch HTTP ' + res.status);
     const blob = await res.blob();
@@ -3202,27 +3189,27 @@ async function pushToSheet() {
     btn.style.color = '#0f9d58';
     setTimeout(() => { btn.innerHTML = origText; btn.disabled = false; btn.style.opacity = ''; btn.style.color = ''; }, 2500);
 
-    // Fetch driveFileId from Apps Script (it was created during push) and save to settings
-    if (activeSlot && activeSlot.screenshotRange) {
-      try {
-        const idPayload = encodeURIComponent(JSON.stringify({
-          getFileId: true,
-          slotLabel: activeSlot.label || activeSlot.time,
-        }));
-        const idRes  = await fetch(scriptUrl + '?data=' + idPayload);
-        const idData = await idRes.json();
-        if (idData.driveFileId && idData.driveFileId !== activeSlot.driveFileId) {
-          // Update in appSettings and save to GitHub
-          const slotIdx = (appSettings.slots || []).findIndex(s => s.time === activeSlot.time);
-          if (slotIdx >= 0) {
-            appSettings.slots[slotIdx].driveFileId = idData.driveFileId;
-            activeSlot.driveFileId = idData.driveFileId;
-            _lastActiveSlot = activeSlot;
-            // Silently save updated settings to GitHub
-            saveSettingsSilent();
+    // After push: Apps Script created/updated Drive file.
+    // Use PropertiesService ping to get the file ID back.
+    if (activeSlot && activeSlot.screenshotRange && !activeSlot.driveFileId) {
+      // Wait a bit then fetch file ID via a separate GET (CORS allows reading from script.google.com in some cases)
+      setTimeout(async () => {
+        try {
+          const idPayload = encodeURIComponent(JSON.stringify({ getFileId: true, slotLabel: activeSlot.label || activeSlot.time }));
+          const idRes  = await fetch(scriptUrl + '?data=' + idPayload);
+          const idData = await idRes.json();
+          if (idData.driveFileId) {
+            const slotIdx = (appSettings.slots || []).findIndex(s => s.time === activeSlot.time);
+            if (slotIdx >= 0) {
+              appSettings.slots[slotIdx].driveFileId = idData.driveFileId;
+              activeSlot.driveFileId = idData.driveFileId;
+              _lastActiveSlot = activeSlot;
+              saveSettingsSilent();
+              updateScreenshotBtn();
+            }
           }
-        }
-      } catch(e) { /* non-fatal */ }
+        } catch(e) { /* CORS blocked - user must set driveFileId manually via Settings */ }
+      }, 4000);
     }
 
     updateScreenshotBtn();
@@ -3785,11 +3772,19 @@ function renderSlotsTable() {
     rangeInput.style.textTransform = 'uppercase';
     rangeInput.style.fontSize = '11px';
 
+    const driveInput = document.createElement('input');
+    driveInput.className = 'stt-cell-input mono';
+    driveInput.value = slot.driveFileId || '';
+    driveInput.dataset.slot = i; driveInput.dataset.field = 'driveFileId';
+    driveInput.style.fontSize = '10px';
+    driveInput.title = 'Google Drive file ID — auto-filled after first push, or paste manually from Drive file URL';
+
     row.appendChild(dragHandle);
     row.appendChild(timePicker.el);
     row.appendChild(colInput);
     row.appendChild(autoFromPicker.el);
     row.appendChild(rangeInput);
+    row.appendChild(driveInput);
     row.appendChild(delBtn);
     makeDraggable(row, 'slots');
     wrap.appendChild(row);
@@ -3876,8 +3871,9 @@ function collectSettingsFromDOM() {
     const rangeEl = row.querySelector('[data-field="screenshotRange"]');
     const screenshotRange = rangeEl ? rangeEl.value.trim().toUpperCase() : '';
     // Preserve driveFileId from existing settings (set by Apps Script)
-    const existingSlot = (appSettings.slots || [])[parseInt(row.dataset.idx)] || {};
-    if (time) slots.push({ label: label12h(time), time, col: col || '', autoFrom, screenshotRange, driveFileId: existingSlot.driveFileId || '' });
+    const driveEl = row.querySelector('[data-field="driveFileId"]');
+    const driveFileId = driveEl ? driveEl.value.trim() : ((appSettings.slots || [])[parseInt(row.dataset.idx)] || {}).driveFileId || '';
+    if (time) slots.push({ label: label12h(time), time, col: col || '', autoFrom, screenshotRange, driveFileId });
   });
 
   // Collect mines
@@ -4017,6 +4013,7 @@ loadDbFromGitHub();
               <span style="text-align:center;">Column</span>
               <span>Auto-activate From</span>
               <span style="text-align:center;">Screenshot Range</span>
+              <span style="font-size:9px;">Drive File ID</span>
               <span></span>
             </div>
             <div id="slotsTableBody"></div>
