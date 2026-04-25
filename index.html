@@ -1452,7 +1452,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B21</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B22</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3256,15 +3256,21 @@ async function shareReport() {
     // ── GSheet live table ──────────────────────────────
     const tbl = document.getElementById('ssTable').cloneNode(true);
     tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Mono,monospace;font-size:16px;background:${C.surface};border:1px solid ${C.edge};table-layout:auto;`;
-    // Replace gviz caption with a compact styled title caption
+    // Remove gviz caption; inject title as a spanning header row instead
+    // (html2canvas doesn't reliably render <caption> elements)
     tbl.querySelectorAll('caption').forEach(cap => cap.remove());
-    const cap = document.createElement('caption');
-    cap.style.cssText = `caption-side:top;padding:10px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:left;`;
-    cap.innerHTML =
+    const colCount = tbl.querySelector('tr') ? tbl.querySelector('tr').children.length : 7;
+    const titleThead = document.createElement('thead');
+    const titleTr    = document.createElement('tr');
+    const titleTd    = document.createElement('td');
+    titleTd.setAttribute('colspan', colCount);
+    titleTd.style.cssText = `padding:10px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:left;`;
+    titleTd.innerHTML =
       `<span style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:${C.dim};">Road Despatch dated&nbsp;&nbsp;</span>` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:15px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${displayDate}</span>` +
-      (shownTime && !ssViewOn ? `<span style="font-family:IBM Plex Mono,monospace;font-size:13px;color:${C.mid};margin-left:10px;">as of ${shownTime}</span>` : '');
-    tbl.insertBefore(cap, tbl.firstChild);
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:15px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${displayDate}</span>`;
+    titleTr.appendChild(titleTd);
+    titleThead.appendChild(titleTr);
+    tbl.insertBefore(titleThead, tbl.firstChild);
     tbl.querySelectorAll('th').forEach((th, i) => {
       sc(th, {
         fontSize:'11px', textTransform:'uppercase', letterSpacing:'.06em',
@@ -3301,14 +3307,20 @@ async function shareReport() {
     if (!tripsVisible) tbl.classList.add('hide-trips');
     else tbl.classList.remove('hide-trips');
 
-    // Compact title caption
-    const areaCap = document.createElement('caption');
-    areaCap.style.cssText = `caption-side:top;padding:10px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:left;`;
-    areaCap.innerHTML =
+    // Inject title as a spanning row (html2canvas skips <caption>)
+    const areaColCount = tbl.querySelector('tr') ? tbl.querySelector('tr').children.length : 3;
+    const areaTitleThead = document.createElement('thead');
+    const areaTitleTr    = document.createElement('tr');
+    const areaTitleTd    = document.createElement('td');
+    areaTitleTd.setAttribute('colspan', areaColCount);
+    areaTitleTd.style.cssText = `padding:10px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:left;`;
+    areaTitleTd.innerHTML =
       `<span style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:${C.dim};">MCL Road Despatch&nbsp;&nbsp;</span>` +
       `<span style="font-family:IBM Plex Mono,monospace;font-size:15px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${shownTime}</span>` +
       `<span style="font-family:IBM Plex Mono,monospace;font-size:13px;color:${C.mid};margin-left:10px;">${displayDate}</span>`;
-    tbl.insertBefore(areaCap, tbl.firstChild);
+    areaTitleTr.appendChild(areaTitleTd);
+    areaTitleThead.appendChild(areaTitleTr);
+    tbl.insertBefore(areaTitleThead, tbl.firstChild);
 
     const bodyFs   = tripsVisible ? '16px' : '20px';
     const totalFs  = tripsVisible ? '16px' : '20px';
