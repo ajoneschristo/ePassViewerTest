@@ -1347,11 +1347,11 @@ body {
 .ss-gsheet-table td {
   padding: 8px 12px;
   border-bottom: 1px solid var(--edge);
-  border-right: 1px solid var(--edge);  /* column gridline */
+  border-right: 1px solid var(--edge);
   white-space: nowrap;
   text-align: right;
   font-family: var(--mono);
-  font-size: 12.5px;
+  font-size: clamp(11px, 1.5vw, 14px);
   color: var(--text);
   transition: background .1s;
 }
@@ -1359,10 +1359,10 @@ body {
 .ss-gsheet-table td:first-child {
   text-align: left;
   font-family: var(--sans);
-  font-size: 12.5px;
+  font-size: clamp(11px, 1.5vw, 14px);
   font-weight: 500;
   color: var(--text);
-  border-right: 1px solid var(--line);  /* stronger separator after mine name */
+  border-right: 1px solid var(--line);
 }
 
 /* Zebra stripe */
@@ -1376,19 +1376,18 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 /* Last row no border */
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
 
-/* ── CF/MCL total rows (IBCF, TCF, MCL) ── */
 .ss-gsheet-table .gs-bold td {
   font-weight: 700;
   background: var(--raise);
   border-top: 2px solid var(--line);
   border-bottom: 1px solid var(--line);
-  font-size: 13px;
+  font-size: clamp(12px, 1.6vw, 15px);
   color: var(--text);
 }
 .ss-gsheet-table .gs-bold td:first-child {
   color: var(--amber);
   font-family: var(--sans);
-  font-size: 13px;
+  font-size: clamp(12px, 1.6vw, 15px);
   letter-spacing: .01em;
 }
 
@@ -1396,7 +1395,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 .ss-gsheet-table .gs-highest td {
   background: transparent;
   font-family: var(--mono);
-  font-size: 11.5px;
+  font-size: clamp(10px, 1.3vw, 13px);
   font-weight: 500;
   color: var(--blue);
   border-bottom: 2px solid var(--edge);
@@ -1405,7 +1404,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 }
 .ss-gsheet-table .gs-highest td:first-child {
   font-family: var(--sans);
-  font-size: 10px;
+  font-size: clamp(9px, 1.1vw, 11px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -1452,7 +1451,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B18</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B19</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2866,7 +2865,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
   // Known column headers — fallback when sheet cells are merged/null
   // Maps to columns I, J, K, L, M, N, O (7 columns)
-  const KNOWN_HEADERS = ['MINE', 'RDO Balance (in Lac)', 'Target', 'till 11.00 AM', 'till 1.30 PM', 'till 5.30 PM', 'Remarks'];
+  const KNOWN_HEADERS = ['MINE', 'RDO Balance (LT)', 'Target (T)', 'till 11.00 AM (T)', 'till 1.30 PM (T)', 'till 5.30 PM (T)', 'Remarks'];
 
   // ── Determine which columns are empty (ignoring Highest rows) ──
   const remarkColIdx = numCols - 1;
@@ -3230,13 +3229,19 @@ async function shareReport() {
   const dateLabel  = (!isMultiDay && reportDate !== shownDate) ? reportDate : '';
 
   // When Sheet view ON, use the sheet's own date (not the XLS file date)
-  const displayDate = (ssViewOn && gsSheetDate) ? gsSheetDate : shownDate;
-  const snapTitle   = ssViewOn ? 'MCL Road Despatch · Sheet' : 'MCL Road Despatch as of';
+  const rawSheetDate = (ssViewOn && gsSheetDate) ? gsSheetDate : shownDate;
 
-  // Dynamic width: 140px for mine col + 110px per numeric col, min 480px
-  const visColCount = gsEmptyColIndices.size > 0 && gsHideEmpty
-    ? (7 - gsEmptyColIndices.size)   // 7 = total cols in range
-    : 7;
+  // Reformat "25-Apr-26" → "25-Apr-2026"
+  function fmtShareDate(d) {
+    const m = d.match(/^(\d{1,2})-([A-Za-z]+)-(\d{2,4})$/);
+    if (!m) return d;
+    const year = m[3].length === 2 ? '20' + m[3] : m[3];
+    return m[1].padStart(2,'0') + '-' + m[2] + '-' + year;
+  }
+  const displayDate = fmtShareDate(rawSheetDate);
+
+  // Dynamic width: 140px mine col + 115px per other col, min 480
+  const visColCount = gsEmptyColIndices.size > 0 && gsHideEmpty ? (7 - gsEmptyColIndices.size) : 7;
   const snapWidth = ssViewOn ? Math.max(480, 140 + (visColCount - 1) * 115) : 520;
 
   const snap = document.createElement('div');
@@ -3245,12 +3250,18 @@ async function shareReport() {
   // Title
   const titleDiv = document.createElement('div');
   titleDiv.style.cssText = `margin-bottom:18px;padding-bottom:16px;border-bottom:2px solid ${C.edge};`;
-  titleDiv.innerHTML = `
-    ${dateLabel ? `<div style="font-family:IBM Plex Mono,monospace;font-size:14px;color:${C.dim};letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">${dateLabel}</div>` : ''}
-    <div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:600;color:${C.dim};letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">${snapTitle}</div>
-    <div style="font-family:IBM Plex Mono,monospace;font-size:34px;font-weight:700;color:${C.amber};letter-spacing:1px;line-height:1.05;margin-bottom:4px;">${ssViewOn ? displayDate : shownTime}</div>
-    ${ssViewOn ? '' : `<div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:400;color:${C.mid};letter-spacing:.5px;">${displayDate}</div>`}
-  `;
+
+  if (ssViewOn) {
+    titleDiv.innerHTML =
+      `<div style="font-family:IBM Plex Mono,monospace;font-size:22px;font-weight:600;color:${C.dim};letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Road Despatch dated</div>` +
+      `<div style="font-family:IBM Plex Mono,monospace;font-size:36px;font-weight:700;color:${C.amber};letter-spacing:1px;line-height:1.05;">${displayDate}</div>`;
+  } else {
+    titleDiv.innerHTML =
+      (dateLabel ? `<div style="font-family:IBM Plex Mono,monospace;font-size:14px;color:${C.dim};letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">${dateLabel}</div>` : '') +
+      `<div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:600;color:${C.dim};letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">MCL Road Despatch as of</div>` +
+      `<div style="font-family:IBM Plex Mono,monospace;font-size:34px;font-weight:700;color:${C.amber};letter-spacing:1px;line-height:1.05;margin-bottom:4px;">${shownTime}</div>` +
+      `<div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:400;color:${C.mid};letter-spacing:.5px;">${displayDate}</div>`;
+  }
   snap.appendChild(titleDiv);
 
   const sc = (el, extra) => Object.assign(el.style, extra);
