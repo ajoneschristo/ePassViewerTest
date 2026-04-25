@@ -1432,7 +1432,33 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 }
 body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 
-/* ── IB Coalfield mine rows — amber left accent ── */
+/* ── Column type colours ── */
+/* RDO Balance — muted blue/teal: it's a context figure, not an action figure */
+.ss-gsheet-table td.gs-col-balance,
+.ss-gsheet-table th.gs-col-balance { color: var(--mid); }
+
+/* Target — amber: it's a goal */
+.ss-gsheet-table td.gs-col-target  { color: var(--amber); }
+.ss-gsheet-table th.gs-col-target  { color: var(--amber); opacity: .8; }
+
+/* Despatch (actual) — green: it's achievement */
+.ss-gsheet-table td.gs-col-despatch { color: var(--green); }
+.ss-gsheet-table th.gs-col-despatch { color: var(--green); opacity: .8; }
+
+/* Remarks */
+.ss-gsheet-table td.gs-col-remarks,
+.ss-gsheet-table th.gs-col-remarks { color: var(--dim); font-size: .9em; }
+
+/* Override: bold/MCL rows keep their own colours for mine name, but keep col tint for numbers */
+.ss-gsheet-table .gs-bold td.gs-col-balance { color: var(--mid); }
+.ss-gsheet-table .gs-bold td.gs-col-target  { color: var(--amber); }
+.ss-gsheet-table .gs-bold td.gs-col-despatch { color: var(--green); }
+.ss-gsheet-table tr.gs-mcl td.gs-col-despatch { color: var(--green) !important; }
+
+/* Highest rows keep blue for all cols */
+.ss-gsheet-table .gs-highest td.gs-col-balance,
+.ss-gsheet-table .gs-highest td.gs-col-target,
+.ss-gsheet-table .gs-highest td.gs-col-despatch { color: var(--blue); }
 .ss-gsheet-table tr.gs-ib td:first-child { border-left: 3px solid var(--amber); }
 
 /* ── Talcher Coalfield mine rows — blue left accent ── */
@@ -1476,7 +1502,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B30</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B31</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2946,6 +2972,15 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     visibleCols.push(ci);
   }
 
+  // Column type class helper
+  function colClass(ci) {
+    if (ci === 0) return '';
+    if (ci === 1) return 'gs-col-balance';
+    if (ci === 2) return 'gs-col-target';
+    if (ci === remarkColIdx) return 'gs-col-remarks';
+    return 'gs-col-despatch';
+  }
+
   // ── Header ──
   if (numCols > 0) {
     const thead = document.createElement('thead');
@@ -2954,10 +2989,10 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       const th   = document.createElement('th');
       const cell = headerCells[ci];
       const col  = (dt.cols || [])[ci] || {};
-      // Priority: cell formatted value → cell raw value → known header → col id
       const txt  = fmtGvizCell(cell) || col.label || KNOWN_HEADERS[ci] || col.id || '';
       th.textContent = txt;
       if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
+      const cc = colClass(ci); if (cc) th.classList.add(cc);
       htr.appendChild(th);
     });
     thead.appendChild(htr);
@@ -3010,6 +3045,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       td.textContent = txt;
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
+      const cc = colClass(ci); if (cc) td.classList.add(cc);
       if (isMCL && pos === lastNumPos && txt) td.classList.add('gs-mcl-qty');
       tr.appendChild(td);
     });
@@ -3323,16 +3359,25 @@ async function shareReport() {
       });
       if (i === 0) { th.style.textAlign = 'left'; th.style.whiteSpace = 'nowrap'; }
       if (i === th.parentElement.children.length - 1) th.style.borderRight = 'none';
+      // Column type colours in snapshot
+      if (i === 1) th.style.color = C.mid;
+      if (i === 2) th.style.color = C.amber;
+      if (i >= 3 && i < th.parentElement.children.length - 1) th.style.color = C.green;
     });
     tbl.querySelectorAll('td').forEach(td => {
       sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, borderRight:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', verticalAlign:'middle', fontFamily:'IBM Plex Mono,monospace', fontSize:'17px'});
-      if (td === td.parentElement.children[0]) {
+      const colIdx = Array.from(td.parentElement.children).indexOf(td);
+      if (colIdx === 0) {
         td.style.textAlign = 'left';
         td.style.fontFamily = 'IBM Plex Sans,sans-serif';
         td.style.fontWeight = '500';
         td.style.borderRight = `1px solid ${C.line}`;
       }
       if (td === td.parentElement.children[td.parentElement.children.length - 1]) td.style.borderRight = 'none';
+      // Column type colours
+      if (colIdx === 1) td.style.color = C.mid;
+      if (colIdx === 2) td.style.color = C.amber;
+      if (colIdx >= 3 && colIdx < td.parentElement.children.length - 1) td.style.color = C.green;
     });
     tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'19px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, fontVariantNumeric:'tabular-nums'}));
     tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.amber; });
