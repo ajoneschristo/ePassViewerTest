@@ -2665,25 +2665,16 @@ async function fetchAndRenderGSheet() {
   }
 }
 
-// ── Render gviz DataTable into the ss-table element ──
-// ── Format a gviz cell value for display ──
-// ── Convert Excel/Sheets date serial to a formatted string ──
-function excelSerialToDate(serial) {
-  // Excel epoch: Jan 1 1900 = serial 1 (with leap year bug: serial 60 = Feb 29 1900, skip it)
-  const utc = (serial - 1) * 86400000 + new Date(Date.UTC(1899, 11, 31)).getTime();
-  const d   = new Date(utc);
-  return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit', timeZone:'UTC' });
-}
-
-// ── Is a number likely an Excel date serial? ──
-function isExcelDateSerial(val, colType) {
-  return colType === 'date'; // only trust explicit gviz date type, never guess from value
-}
-
-function fmtGvizVal(val, colType) {
+// ── Format a gviz cell for display — prefer the sheet's own formatted string ──
+function fmtGvizCell(cell) {
+  if (!cell) return '';
+  // cell.f = the formatted string as shown in Google Sheets (dates, currency, etc.)
+  // cell.v = the raw value
+  if (cell.f !== undefined && cell.f !== null && cell.f !== '') return cell.f;
+  const val = cell.v;
   if (val === null || val === undefined || val === '') return '';
-  // gviz returns dates as "Date(year,month,day)" strings (month is 0-based)
   if (typeof val === 'string') {
+    // gviz date string fallback
     const dm = val.match(/^Date\((\d+),(\d+),(\d+)\)$/);
     if (dm) {
       const d = new Date(+dm[1], +dm[2], +dm[3]);
@@ -2692,8 +2683,6 @@ function fmtGvizVal(val, colType) {
     return val;
   }
   if (typeof val === 'number') {
-    // Detect Excel date serial
-    if (isExcelDateSerial(val, colType)) return excelSerialToDate(val);
     return Number.isInteger(val)
       ? val.toLocaleString('en-IN')
       : val.toLocaleString('en-IN', { maximumFractionDigits: 2 });
@@ -2707,40 +2696,33 @@ function renderGSheetTable(dt, table) {
   const cols = dt.cols || [];
   const rows = dt.rows || [];
 
-  // gviz col labels are blank when sheet header rows are merged/styled.
-  // Strategy: scan rows from the top to find the column header row.
-  // A "column header row" = first row where the first cell is a non-empty string
-  // that looks like a label (not a number, not a date serial).
-  // Rows before it = title/date rows rendered as a caption.
-  // If no header row found, use all rows as data.
-
-  const colTypes = cols.map(c => c.type || '');
-
+  // Find the column header row: first row whose first cell text is "MINE" (case-insensitive)
+  // or more generally, the first row where ALL non-empty cells are strings (not numbers)
   let headerIdx = -1;
-  for (let i = 0; i < Math.min(rows.length, 5); i++) {
-    const cells = rows[i].c || [];
-    const first = cells[0] ? cells[0].v : null;
-    // A header row: first cell is a non-empty string, not a number
-    if (first !== null && typeof first === 'string' && first.trim() !== '') {
+  for (let i = 0; i < Math.min(rows.length, 6); i++) {
+    const cells   = rows[i].c || [];
+    const first   = cells[0];
+    const firstVal = first ? (first.f || first.v) : null;
+    if (firstVal !== null && typeof firstVal === 'string' && /mine/i.test(String(firstVal))) {
       headerIdx = i;
       break;
     }
   }
 
-  // Build caption from rows before the header (title / date rows)
+  // Rows before the header = caption rows (title, date, etc.)
   const captionRows = headerIdx > 0 ? rows.slice(0, headerIdx) : [];
-  const dataRows    = headerIdx >= 0 ? rows.slice(headerIdx + 1) : rows;
   const headerCells = headerIdx >= 0 ? (rows[headerIdx].c || []) : [];
+  const dataRows    = headerIdx >= 0 ? rows.slice(headerIdx + 1) : rows;
 
-  // Caption (title + date)
+  // Caption
   if (captionRows.length > 0) {
     const cap = document.createElement('caption');
     cap.style.cssText = 'caption-side:top;text-align:left;padding:8px 10px 4px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.03em;';
     const parts = [];
     for (const row of captionRows) {
       for (const cell of (row.c || [])) {
-        if (!cell || cell.v === null || cell.v === undefined || cell.v === '') continue;
-        parts.push(fmtGvizVal(cell.v, colTypes[0]));
+        const txt = fmtGvizCell(cell);
+        if (txt) parts.push(txt);
       }
     }
     cap.textContent = parts.join('  ·  ');
@@ -2753,7 +2735,7 @@ function renderGSheetTable(dt, table) {
     const htr   = document.createElement('tr');
     headerCells.forEach(cell => {
       const th = document.createElement('th');
-      th.textContent = cell ? fmtGvizVal(cell.v) : '';
+      th.textContent = fmtGvizCell(cell);
       htr.appendChild(th);
     });
     thead.appendChild(htr);
@@ -2763,19 +2745,17 @@ function renderGSheetTable(dt, table) {
   // Body rows
   const tbody = document.createElement('tbody');
   for (const row of dataRows) {
-    const tr    = document.createElement('tr');
     const cells = row.c || [];
+    if (cells.every(c => !c || (c.v === null && !c.f))) continue; // skip empty rows
 
-    // Skip completely empty rows
-    if (cells.every(c => !c || c.v === null || c.v === undefined || c.v === '')) continue;
+    const firstTxt = fmtGvizCell(cells[0]);
+    const isBold   = /ibcf|tcf|mcl|highest/i.test(firstTxt);
 
-    const firstVal = cells[0] && cells[0].v != null ? String(cells[0].v) : '';
-    const isBold   = /ibcf|tcf|mcl|highest/i.test(firstVal);
+    const tr = document.createElement('tr');
     if (isBold) tr.className = 'gs-bold';
-
-    cells.forEach((cell, i) => {
+    cells.forEach(cell => {
       const td = document.createElement('td');
-      td.textContent = cell ? fmtGvizVal(cell.v, colTypes[i]) : '';
+      td.textContent = fmtGvizCell(cell);
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
