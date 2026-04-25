@@ -1413,7 +1413,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 .ss-gsheet-table .gs-highest td {
   background: transparent;
   font-family: var(--mono);
-  font-size: clamp(10px, 1.3vw, 13px);
+  font-size: clamp(12px, 1.5vw, 14px);
   font-weight: 500;
   color: var(--blue);
   border-bottom: 2px solid var(--edge);
@@ -1422,7 +1422,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 }
 .ss-gsheet-table .gs-highest td:first-child {
   font-family: var(--sans);
-  font-size: clamp(9px, 1.1vw, 11px);
+  font-size: clamp(11px, 1.3vw, 12px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -1441,9 +1441,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 .ss-gsheet-table td.gs-col-target  { color: var(--amber); }
 .ss-gsheet-table th.gs-col-target  { color: var(--amber); opacity: .8; }
 
-/* Despatch (actual) — green: it's achievement */
-.ss-gsheet-table td.gs-col-despatch { color: var(--green); }
-.ss-gsheet-table th.gs-col-despatch { color: var(--green); opacity: .8; }
+/* Despatch — no special colour, inherits default */
 
 /* Remarks */
 .ss-gsheet-table td.gs-col-remarks,
@@ -1452,17 +1450,14 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 /* Override: bold/MCL rows keep their own colours for mine name, but keep col tint for numbers */
 .ss-gsheet-table .gs-bold td.gs-col-balance { color: var(--mid); }
 .ss-gsheet-table .gs-bold td.gs-col-target  { color: var(--amber); }
-.ss-gsheet-table .gs-bold td.gs-col-despatch { color: var(--green); }
-.ss-gsheet-table tr.gs-mcl td.gs-col-despatch { color: var(--green) !important; }
 
-/* Highest rows keep blue for all cols */
+/* Highest rows — override col colours to keep blue */
 .ss-gsheet-table .gs-highest td.gs-col-balance,
-.ss-gsheet-table .gs-highest td.gs-col-target,
-.ss-gsheet-table .gs-highest td.gs-col-despatch { color: var(--blue); }
+.ss-gsheet-table .gs-highest td.gs-col-target { color: var(--blue); }
 .ss-gsheet-table tr.gs-ib td:first-child { border-left: 3px solid var(--amber); }
 
-/* ── Talcher Coalfield mine rows — blue left accent ── */
-.ss-gsheet-table tr.gs-tc td:first-child { border-left: 3px solid var(--blue); }
+/* ── Talcher Coalfield mine rows — teal left accent (distinct from blue Highest) ── */
+.ss-gsheet-table tr.gs-tc td:first-child { border-left: 3px solid #2aaa88; }
 /* loading spinner */
 .gs-spinner {
   display: inline-block;
@@ -1502,7 +1497,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B31</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B32</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3362,7 +3357,6 @@ async function shareReport() {
       // Column type colours in snapshot
       if (i === 1) th.style.color = C.mid;
       if (i === 2) th.style.color = C.amber;
-      if (i >= 3 && i < th.parentElement.children.length - 1) th.style.color = C.green;
     });
     tbl.querySelectorAll('td').forEach(td => {
       sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, borderRight:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', verticalAlign:'middle', fontFamily:'IBM Plex Mono,monospace', fontSize:'17px'});
@@ -3377,7 +3371,6 @@ async function shareReport() {
       // Column type colours
       if (colIdx === 1) td.style.color = C.mid;
       if (colIdx === 2) td.style.color = C.amber;
-      if (colIdx >= 3 && colIdx < td.parentElement.children.length - 1) td.style.color = C.green;
     });
     tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'19px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, fontVariantNumeric:'tabular-nums'}));
     tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.amber; });
@@ -3390,7 +3383,7 @@ async function shareReport() {
     tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '10px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; td.style.paddingLeft = '22px'; });
     // CF accent borders
     tbl.querySelectorAll('tr.gs-ib td:first-child').forEach(td => { td.style.borderLeft = `3px solid ${C.amber}`; });
-    tbl.querySelectorAll('tr.gs-tc td:first-child').forEach(td => { td.style.borderLeft = `3px solid ${C.blue}`; });
+    tbl.querySelectorAll('tr.gs-tc td:first-child').forEach(td => { td.style.borderLeft = '3px solid #2aaa88'; });
     // Tabular nums for all data cells
     tbl.querySelectorAll('td').forEach(td => { td.style.fontVariantNumeric = 'tabular-nums'; });
     tbl.querySelectorAll('tr:last-child td').forEach(td => { td.style.borderBottom = 'none'; });
