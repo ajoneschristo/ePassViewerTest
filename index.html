@@ -2654,42 +2654,71 @@ async function fetchAndRenderGSheet() {
 }
 
 // ── Render gviz DataTable into the ss-table element ──
+// ── Format a gviz cell value for display ──
+function fmtGvizVal(val) {
+  if (val === null || val === undefined || val === '') return '';
+  // gviz returns dates as "Date(year,month,day)" strings (month is 0-based)
+  if (typeof val === 'string') {
+    const dm = val.match(/^Date\((\d+),(\d+),(\d+)\)$/);
+    if (dm) {
+      const d = new Date(+dm[1], +dm[2], +dm[3]);
+      return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit' });
+    }
+    return val;
+  }
+  if (typeof val === 'number') {
+    return Number.isInteger(val)
+      ? val.toLocaleString('en-IN')
+      : val.toLocaleString('en-IN', { maximumFractionDigits: 2 });
+  }
+  return String(val);
+}
+
 function renderGSheetTable(dt, table) {
   table.innerHTML = '';
 
-  // Header row (cols)
+  const cols  = dt.cols  || [];
+  const rows  = dt.rows  || [];
+
+  // gviz col labels are blank when the sheet header row is merged or styled.
+  // Detect this: if all col labels are empty, use the first data row as header.
+  const colLabels     = cols.map(c => (c.label || '').trim());
+  const hasColHeaders = colLabels.some(l => l !== '');
+  let headerLabels    = colLabels;
+  let dataRows        = rows;
+
+  if (!hasColHeaders && rows.length > 0) {
+    // First data row contains the actual column headings
+    const firstCells = rows[0].c || [];
+    headerLabels = firstCells.map(cell => cell ? fmtGvizVal(cell.v) : '');
+    dataRows     = rows.slice(1);
+  }
+
+  // Header
   const thead = document.createElement('thead');
   const htr   = document.createElement('tr');
-  (dt.cols || []).forEach((col, i) => {
+  headerLabels.forEach(label => {
     const th = document.createElement('th');
-    th.textContent = col.label || '';
+    th.textContent = label;
     htr.appendChild(th);
   });
   thead.appendChild(htr);
   table.appendChild(thead);
 
-  // Body rows
+  // Body
   const tbody = document.createElement('tbody');
-  for (const row of dt.rows) {
-    const tr   = document.createElement('tr');
+  for (const row of dataRows) {
+    const tr    = document.createElement('tr');
     const cells = row.c || [];
 
-    // Detect bold rows: if first cell value looks like a total label
     const firstVal = cells[0] && cells[0].v != null ? String(cells[0].v) : '';
-    const isBold   = /total|grand|mcl|cf\b/i.test(firstVal);
+    // Bold rows: CF/MCL totals and "Highest" rows
+    const isBold = /total|grand|mcl|ibcf|tcf|highest/i.test(firstVal);
     if (isBold) tr.className = 'gs-bold';
 
-    cells.forEach((cell, i) => {
+    cells.forEach(cell => {
       const td  = document.createElement('td');
-      const val = cell ? cell.v : null;
-      if (val === null || val === undefined || val === '') {
-        td.textContent = '';
-      } else if (typeof val === 'number') {
-        // Format numbers with commas, no decimals for integers
-        td.textContent = Number.isInteger(val) ? val.toLocaleString('en-IN') : val.toLocaleString('en-IN', { maximumFractionDigits: 2 });
-      } else {
-        td.textContent = String(val);
-      }
+      td.textContent = cell ? fmtGvizVal(cell.v) : '';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
