@@ -1474,7 +1474,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B37</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B38</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3326,8 +3326,8 @@ async function shareReport() {
     tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => { td.style.color = C.mid; td.style.fontWeight='800'; td.style.textTransform='uppercase'; td.style.letterSpacing='.02em'; });
     tbl.querySelectorAll('tr.gs-mcl td.gs-mcl-qty').forEach(td => { td.style.color = C.green; });
     // Highest rows — indented
-    tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'13px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px 5px 22px'}));
-    tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '10px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; td.style.paddingLeft = '22px'; });
+    tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'15px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px 5px 22px'}));
+    tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '12px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; td.style.paddingLeft = '22px'; });
     // CF accent borders
     // Tabular nums for all data cells
     tbl.querySelectorAll('td').forEach(td => { td.style.fontVariantNumeric = 'tabular-nums'; });
