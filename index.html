@@ -1369,7 +1369,7 @@ body {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B13</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B14</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1429,6 +1429,15 @@ body {
   <!-- Sheet view on home screen (shown when Sheet toggle ON, no file needed) -->
   <div id="ssGSheetWrapDrop" style="display:none;width:100%;max-width:900px;margin-top:8px;">
     <div id="ssGSheetStatusDrop" style="padding:18px 14px;text-align:center;font-size:13px;color:var(--dim);display:none;"></div>
+    <!-- Hide Empty toggle for drop screen -->
+    <div id="hideEmptyWrapDrop" style="display:none;padding:4px 10px 6px;display:flex;align-items:center;gap:6px;">
+      <div class="trips-switch-wrap" onclick="toggleHideEmpty()" style="display:flex;">
+        <span class="trips-switch-label">Hide Empty</span>
+        <div class="switch-track on" id="hideEmptyTrackDrop">
+          <div class="switch-thumb"></div>
+        </div>
+      </div>
+    </div>
     <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
       <table class="ss-table ss-gsheet-table" id="ssTableDrop" style="display:none;width:100%;border-collapse:collapse;"></table>
     </div>
@@ -1554,12 +1563,6 @@ body {
         <div class="area-view-wrap" onclick="toggleSpreadsheet()" title="Spreadsheet view">
           <span class="area-view-label">Sheet</span>
           <div class="switch-track on" id="ssViewTrack">
-            <div class="switch-thumb"></div>
-          </div>
-        </div>
-        <div class="trips-switch-wrap" onclick="toggleTrips()">
-          <span class="trips-switch-label">Trips</span>
-          <div class="switch-track" id="tripsSwitchTrack">
             <div class="switch-thumb"></div>
           </div>
         </div>
@@ -2784,7 +2787,8 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       const firstVal  = fmtGvizCell(rowCells[0]);
       const secondVal = fmtGvizCell(rowCells[1]);
       // Skip Highest rows — they fill future-time columns that are otherwise empty
-      const isHighestRow = !firstVal && /highest/i.test(secondVal);
+      const secondVal2 = rowCells[2] ? rowCells[2].v : null;
+      const isHighestRow = !firstVal && !secondVal && typeof secondVal2 === 'number';
       if (isHighestRow) return false;
       const cell = rowCells[ci];
       return cell && cell.v !== null && cell.v !== undefined && cell.v !== '';
@@ -2792,9 +2796,12 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     if (!hasData) gsEmptyColIndices.add(ci);
   }
 
-  // Show/hide the "Hide Empty" switch based on whether any empty cols exist
-  const hideWrap = document.getElementById('hideEmptyWrap');
-  if (hideWrap) hideWrap.style.display = gsEmptyColIndices.size > 0 ? '' : 'none';
+  // Show/hide both Hide Empty switches based on whether any empty cols exist
+  const hasEmpty = gsEmptyColIndices.size > 0;
+  ['hideEmptyWrap', 'hideEmptyWrapDrop'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = hasEmpty ? '' : 'none';
+  });
 
   // ── Caption (title · date) ──
   if (captionRows.length > 0) {
@@ -2848,11 +2855,10 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     const secondTxt  = fmtGvizCell(cells[1]);
     const firstEmpty = !firstTxt;
 
-    // Debug: log rows with empty first cell so we can trace Highest rows
-    if (firstEmpty && cells.length > 1) console.log('[GSheet] empty-first row:', JSON.stringify(cells.slice(0,3)));
-
-    // "Highest" rows: col I is empty (merged above), col J contains "Highest"
-    const isHighest = firstEmpty && /highest/i.test(secondTxt);
+    // "Highest" rows: gviz drops the merged "Highest" label entirely.
+    // These rows have col I=null, col J=null, col K=number (the Highest target value).
+    const isHighest = firstEmpty && !secondTxt && cells.length > 2 &&
+      cells[2] && typeof cells[2].v === 'number';
 
     // Bold total rows: IBCF / TCF / MCL in col I
     const isBold = !firstEmpty && /ibcf|tcf|mcl/i.test(firstTxt);
@@ -2864,9 +2870,10 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
       let txt   = fmtGvizCell(cells[ci]);
-      // For Highest rows, show "Highest" label in first visible column (merging cols I+J visually)
-      if (isHighest && pos === 0) txt = secondTxt; // col J has "Highest"
-      if (isHighest && pos === 1) txt = '';         // suppress col J value (already shown in pos 0)
+      // For Highest rows, gviz drops the "Highest" label (merged cell).
+      // Show it ourselves in the first column, suppress col J (which is blank).
+      if (isHighest && pos === 0) txt = 'Highest';
+      if (isHighest && pos === 1) txt = '';  // col J blank, skip it
       td.textContent = txt;
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
@@ -2902,6 +2909,8 @@ function toggleTrips() {
 function toggleHideEmpty() {
   gsHideEmpty = !gsHideEmpty;
   document.getElementById('hideEmptyTrack').classList.toggle('on', gsHideEmpty);
+  const dropTrack = document.getElementById('hideEmptyTrackDrop');
+  if (dropTrack) dropTrack.classList.toggle('on', gsHideEmpty);
   applyGSheetToAllTables();
 }
 
