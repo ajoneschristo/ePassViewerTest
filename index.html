@@ -1369,7 +1369,7 @@ body {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B9</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B11</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2625,6 +2625,21 @@ function parseSheetUrl(url) {
   };
 }
 
+// ── Parse a range string like "I6:O28" into parts ──
+function parseRange(range) {
+  const m = range.trim().match(/^([A-Z]+)(\d+):([A-Z]+)(\d+)$/i);
+  if (!m) return null;
+  return { startCol: m[1].toUpperCase(), startRow: parseInt(m[2]), endCol: m[3].toUpperCase(), endRow: parseInt(m[4]) };
+}
+
+// ── Expand range upward by n rows (but not below row 1) ──
+function expandRangeUp(range, n) {
+  const p = parseRange(range);
+  if (!p) return range;
+  const newStart = Math.max(1, p.startRow - n);
+  return `${p.startCol}${newStart}:${p.endCol}${p.endRow}`;
+}
+
 // ── Fetch live data from Google Sheet and render into both #ssTable and #ssTableDrop ──
 async function fetchAndRenderGSheet() {
   const statusEl     = document.getElementById('ssGSheetStatus');
@@ -2634,7 +2649,7 @@ async function fetchAndRenderGSheet() {
 
   const sheetUrl   = appSettings.sheetUrl   || '';
   const sheetName  = appSettings.sheetName  || 'Rake and Road Despatch';
-  const sheetRange = appSettings.sheetRange || 'I5:O28';
+  const sheetRange = appSettings.sheetRange || 'I6:O28';
 
   const showStatus = (html) => {
     [statusEl, statusElDrop].forEach(el => { el.style.display = ''; el.innerHTML = html; });
@@ -2652,11 +2667,17 @@ async function fetchAndRenderGSheet() {
     return;
   }
 
+  // Auto-expand the fetch range 3 rows above the user's range to capture date/title rows.
+  // The renderer uses the original start row to separate caption rows from data.
+  const fetchRange   = expandRangeUp(sheetRange, 3);
+  const parsedRange  = parseRange(sheetRange);
+  const dataStartRow = parsedRange ? parsedRange.startRow : null;
+
   // Show spinner
   showStatus('<span class="gs-spinner"></span>Fetching from Google Sheet…');
 
   const encodedSheet = encodeURIComponent(sheetName);
-  const encodedRange = encodeURIComponent(sheetRange);
+  const encodedRange = encodeURIComponent(fetchRange);
   const url = `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json&sheet=${encodedSheet}&range=${encodedRange}`;
 
   try {
@@ -2669,9 +2690,8 @@ async function fetchAndRenderGSheet() {
       showStatus('⚠ No data returned for range ' + sheetRange + '.');
       return;
     }
-    // Debug: log first 3 rows to console so we can inspect cell structure
-    renderGSheetTable(dt, table);
-    renderGSheetTable(dt, tableDrop);
+    renderGSheetTable(dt, table,     dataStartRow, fetchRange);
+    renderGSheetTable(dt, tableDrop, dataStartRow, fetchRange);
     [statusEl, statusElDrop].forEach(el => el.style.display = 'none');
     [table, tableDrop].forEach(t => t.style.display = '');
   } catch(e) {
@@ -2704,43 +2724,65 @@ function fmtGvizCell(cell) {
 }
 
 // Tracks which col indices are empty (populated after each fetch)
-let gsEmptyColIndices = new Set();
-let gsLastDt = null; // cache last fetched DataTable for re-render on toggle
+let gsEmptyColIndices  = new Set();
+let gsLastDt           = null;
+let gsLastDataStartRow = null;
+let gsLastFetchRange   = null;
 
-function renderGSheetTable(dt, table) {
+function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   table.innerHTML = '';
-  gsLastDt = dt;
+  gsLastDt         = dt;
+  gsLastDataStartRow = dataStartRow;
+  gsLastFetchRange   = fetchRange;
 
   const rows = dt.rows || [];
 
-  // ── Find header row: first row where first cell = "MINE" ──
-  // With range I6:O28, row 0 = col headers (MINE, RDO Balance…)
-  // With range I5:O28, row 0 = "Road Sale Despatch" title, row 1 = col headers
+  // ── Split rows into caption, header, data ──
+  // If dataStartRow is provided, we know exactly how many prefix rows were added
+  // by expandRangeUp — those are caption rows (title/date).
+  // The fetched range starts at (dataStartRow - 3) or row 1, whichever is larger.
+  // So prefix count = dataStartRow - actual fetch start row.
+  let prefixCount = 0;
+  if (dataStartRow && fetchRange) {
+    const fp = parseRange(fetchRange);
+    if (fp) prefixCount = dataStartRow - fp.startRow; // e.g. I3:O28 fetched for I6:O28 → 3 prefix rows
+  }
+
+  // Caption rows = the prefix rows fetched above the user's range
+  const captionRows = rows.slice(0, prefixCount);
+  // Remaining rows start at the user's range start — first is the MINE header row
+  const userRows    = rows.slice(prefixCount);
+
+  // Find MINE header within first few userRows
   let headerIdx = -1;
-  for (let i = 0; i < Math.min(rows.length, 6); i++) {
-    const cells = rows[i].c || [];
+  for (let i = 0; i < Math.min(userRows.length, 3); i++) {
+    const cells = userRows[i].c || [];
     const first = cells[0];
-    const txt = first ? String(first.f || first.v || '') : '';
+    const txt   = first ? String(first.f || first.v || '') : '';
     if (/mine/i.test(txt)) { headerIdx = i; break; }
   }
 
-  const captionRows = headerIdx > 0 ? rows.slice(0, headerIdx) : [];
-  const headerCells = headerIdx >= 0 ? (rows[headerIdx].c || []) : [];
-  const dataRows    = headerIdx >= 0 ? rows.slice(headerIdx + 1) : rows;
+  const headerCells = headerIdx >= 0 ? (userRows[headerIdx].c || []) : [];
+  const dataRows    = headerIdx >= 0 ? userRows.slice(headerIdx + 1) : userRows;
   const numCols     = headerCells.length || (dataRows[0] ? (dataRows[0].c || []).length : 0);
 
   // Known column headers — used as fallback when sheet cells are merged/null
   // Order matches sheet columns I→O
   const KNOWN_HEADERS = ['MINE', 'RDO Balance\n(in Lac)', 'Target', 'till 11.00 AM', 'till 1.30 PM', 'Remarks'];
 
-  // ── Determine which columns are "Remarks" (last col) and which are empty ──
-  const remarkColIdx = numCols - 1; // last column = Remarks
+  // ── Determine which columns are empty (ignoring Highest rows) ──
+  const remarkColIdx = numCols - 1;
   gsEmptyColIndices = new Set();
   for (let ci = 0; ci < numCols; ci++) {
-    if (ci === 0 || ci === remarkColIdx) continue; // never hide MINE or Remarks
+    if (ci === 0 || ci === remarkColIdx) continue;
     const hasData = dataRows.some(row => {
-      const cell = (row.c || [])[ci];
-      return cell && (cell.v !== null && cell.v !== undefined && cell.v !== '');
+      const cells    = row.c || [];
+      const firstVal = fmtGvizCell(cells[0]);
+      // Skip Highest rows — they fill future-time columns that are otherwise empty
+      const isHighestRow = !firstVal && cells.slice(1).some(c => c && c.v !== null && typeof c.v === 'number');
+      if (isHighestRow) return false;
+      const cell = cells[ci];
+      return cell && cell.v !== null && cell.v !== undefined && cell.v !== '';
     });
     if (!hasData) gsEmptyColIndices.add(ci);
   }
@@ -2796,21 +2838,25 @@ function renderGSheetTable(dt, table) {
     const cells = row.c || [];
     if (cells.every(c => !c || (c.v === null && !c.f))) continue;
 
-    const firstTxt = fmtGvizCell(cells[0]);
-    const isBold   = /ibcf|tcf|mcl|highest/i.test(firstTxt);
-    const isHighest = /highest/i.test(firstTxt);
+    const firstTxt  = fmtGvizCell(cells[0]);
+    const firstEmpty = !firstTxt; // no mine name in col I
+
+    // "Highest" rows: first cell is empty, but numeric data exists in later cols
+    const isHighest = firstEmpty && cells.slice(1).some(c => c && c.v !== null && typeof c.v === 'number');
+
+    // Bold total rows: IBCF / TCF / MCL detected by name
+    const isBold = !firstEmpty && /ibcf|tcf|mcl/i.test(firstTxt);
 
     const tr = document.createElement('tr');
-    if (isBold) tr.className = isHighest ? 'gs-highest' : 'gs-bold';
+    if (isHighest)    tr.className = 'gs-highest';
+    else if (isBold)  tr.className = 'gs-bold';
 
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
       const txt = fmtGvizCell(cells[ci]);
       td.textContent = txt;
-      // First col left-align, rest right-align
       if (pos > 0) td.style.textAlign = 'right';
-      // Dim empty data cells
-      if (!txt) td.style.color = 'var(--edge)';
+      if (!txt && !isHighest) td.style.color = 'var(--edge)';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -2822,8 +2868,8 @@ function applyGSheetToAllTables() {
   if (!gsLastDt) return;
   const t1 = document.getElementById('ssTable');
   const t2 = document.getElementById('ssTableDrop');
-  if (t1) renderGSheetTable(gsLastDt, t1);
-  if (t2) renderGSheetTable(gsLastDt, t2);
+  if (t1) renderGSheetTable(gsLastDt, t1, gsLastDataStartRow, gsLastFetchRange);
+  if (t2) renderGSheetTable(gsLastDt, t2, gsLastDataStartRow, gsLastFetchRange);
 }
 
 function toggleAreaView() {
@@ -4060,7 +4106,7 @@ loadDbFromGitHub();
         <div class="stt-section">
           <label class="stt-label">Sheet View Range</label>
           <input id="cfg_sheetRange" class="stt-input" type="text" placeholder="I6:O28" style="font-family:var(--mono);letter-spacing:.04em;">
-          <div class="stt-hint" style="margin-top:4px;">Range shown in Sheet view (e.g. I5:O28). Fetched live from your Google Sheet.</div>
+          <div class="stt-hint" style="margin-top:4px;">Data range (e.g. I6:O28). The app automatically fetches 3 rows above to capture the date — no need to include them manually.</div>
         </div>
         <div class="stt-section">
           <label class="stt-label">Apps Script Web App URL</label>
