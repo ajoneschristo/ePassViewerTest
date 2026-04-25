@@ -1394,21 +1394,20 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 }
 
 /* ── MCL grand total — stronger treatment ── */
-.ss-gsheet-table .gs-mcl td {
+.ss-gsheet-table tr.gs-mcl td {
   font-weight: 700;
-  background: var(--edge);
-  border-top: 3px solid var(--line);
+  background: var(--edge) !important;
+  border-top: 3px solid var(--line) !important;
   border-bottom: 1px solid var(--line);
   font-size: clamp(13px, 1.8vw, 16px);
   color: var(--text);
 }
-.ss-gsheet-table .gs-mcl td:first-child {
+.ss-gsheet-table tr.gs-mcl td:first-child {
   color: var(--amber);
   font-family: var(--sans);
   letter-spacing: .01em;
 }
-/* MCL despatch (last numeric col before remarks) shown in green */
-.ss-gsheet-table .gs-mcl td.gs-mcl-qty { color: var(--green); }
+.ss-gsheet-table tr.gs-mcl td.gs-mcl-qty { color: var(--green) !important; }
 
 /* ── Highest rows — indented ── */
 .ss-gsheet-table .gs-highest td {
@@ -1420,7 +1419,6 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
   border-bottom: 2px solid var(--edge);
   padding-top: 4px;
   padding-bottom: 6px;
-  padding-left: 20px;  /* indent all cells */
 }
 .ss-gsheet-table .gs-highest td:first-child {
   font-family: var(--sans);
@@ -1430,7 +1428,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
   letter-spacing: .08em;
   color: var(--dim);
   border-right: 1px solid var(--edge);
-  padding-left: 20px;  /* indent label */
+  padding-left: 20px;
 }
 body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 
@@ -1478,7 +1476,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B29</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B30</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2966,35 +2964,43 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     table.appendChild(thead);
   }
 
+  // ── Pre-label CF membership via forward scan ──
+  // Mines appear BEFORE their CF total. Scan forward: every non-bold mine row
+  // gets the label of the NEXT CF total it encounters.
+  const cfLabel = new Array(dataRows.length).fill(null);
+  let nextCF = null;
+  for (let i = dataRows.length - 1; i >= 0; i--) {
+    const c = dataRows[i].c || [];
+    const t = fmtGvizCell(c[0]);
+    if (/ibcf/i.test(t))      nextCF = 'ib';
+    else if (/tcf/i.test(t))  nextCF = 'tc';
+    else if (/mcl/i.test(t))  nextCF = null;
+    else if (t && nextCF)     cfLabel[i] = nextCF;
+  }
+
   // ── Body ──
   const tbody = document.createElement('tbody');
-  for (const row of dataRows) {
+  dataRows.forEach((row, rowIdx) => {
     const cells = row.c || [];
-    // Skip rows where ALL cells are empty (truly blank rows)
-    if (cells.length === 0 || cells.every(c => !c || (c.v === null && c.v !== 0 && !c.f))) continue;
+    if (cells.length === 0 || cells.every(c => !c || (c.v === null && c.v !== 0 && !c.f))) return;
 
     const firstTxt   = fmtGvizCell(cells[0]);
     const secondTxt  = fmtGvizCell(cells[1]);
     const firstEmpty = !firstTxt;
 
-    // "Highest" rows: gviz drops the merged "Highest" label entirely.
-    // These rows have col I=null, col J=null, col K=number (the Highest target value).
     const isHighest = firstEmpty && !secondTxt && cells.length > 2 &&
       cells[2] && typeof cells[2].v === 'number';
-
     const isMCL  = !firstEmpty && /^mcl$/i.test(firstTxt.trim());
     const isBold = !firstEmpty && /ibcf|tcf|mcl/i.test(firstTxt);
 
     const tr = document.createElement('tr');
-    if (isHighest)   tr.className = 'gs-highest';
-    else if (isMCL)  tr.className = 'gs-bold gs-mcl';
-    else if (isBold) tr.className = 'gs-bold';
+    if (isHighest)          tr.className = 'gs-highest';
+    else if (isMCL)         tr.className = 'gs-bold gs-mcl';
+    else if (isBold)        tr.className = 'gs-bold';
+    else if (cfLabel[rowIdx]) tr.classList.add('gs-' + cfLabel[rowIdx]);
 
-    // Track CF section for left accent colours on mine rows
-    if (!firstEmpty && /ibcf/i.test(firstTxt))      gsCurrentCF = 'ib';
-    else if (!firstEmpty && /tcf/i.test(firstTxt))  gsCurrentCF = 'tc';
-    else if (!firstEmpty && /mcl/i.test(firstTxt))  gsCurrentCF = null;
-    else if (!firstEmpty && !isBold && gsCurrentCF) tr.classList.add('gs-' + gsCurrentCF);
+    // Last non-Remarks numeric col for MCL qty highlight
+    const lastNumPos = visibleCols.length - 2;
 
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
@@ -3004,12 +3010,11 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       td.textContent = txt;
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
-      // MCL row: colour last numeric col (despatch qty) in green
-      if (isMCL && pos > 0 && pos === visibleCols.length - 2) td.classList.add('gs-mcl-qty');
+      if (isMCL && pos === lastNumPos && txt) td.classList.add('gs-mcl-qty');
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
-  }
+  });
   table.appendChild(tbody);
 }
 
