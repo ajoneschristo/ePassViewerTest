@@ -1412,7 +1412,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 .ss-gsheet-table .gs-highest td {
   background: transparent;
   font-family: var(--mono);
-  font-size: clamp(12px, 1.5vw, 14px);
+  font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 500;
   color: var(--blue);
   border-bottom: 2px solid var(--edge);
@@ -1421,7 +1421,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
 }
 .ss-gsheet-table .gs-highest td:first-child {
   font-family: var(--sans);
-  font-size: clamp(11px, 1.3vw, 12px);
+  font-size: clamp(11px, 1.4vw, 13px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .08em;
@@ -1496,7 +1496,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B33</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B34</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3040,6 +3040,8 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
       const cc = colClass(ci); if (cc) td.classList.add(cc);
+      // Remarks col with actual content: smaller font so it doesn't dominate
+      if (cc === 'gs-col-remarks' && txt) td.style.fontSize = 'clamp(9px, 1.1vw, 11px)';
 
       tr.appendChild(td);
     });
