@@ -1407,7 +1407,6 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
   font-family: var(--sans);
   letter-spacing: .01em;
 }
-.ss-gsheet-table tr.gs-mcl td.gs-mcl-qty { color: var(--green) !important; }
 
 /* ── Highest rows — indented ── */
 .ss-gsheet-table .gs-highest td {
@@ -1454,10 +1453,10 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 /* Highest rows — override col colours to keep blue */
 .ss-gsheet-table .gs-highest td.gs-col-balance,
 .ss-gsheet-table .gs-highest td.gs-col-target { color: var(--blue); }
-.ss-gsheet-table tr.gs-ib td:first-child { border-left: 3px solid var(--amber); }
+.ss-gsheet-table tr.gs-ib td:first-child { border-left: 3px solid #d4721a; }
 
 /* ── Talcher Coalfield mine rows — teal left accent (distinct from blue Highest) ── */
-.ss-gsheet-table tr.gs-tc td:first-child { border-left: 3px solid #2aaa88; }
+.ss-gsheet-table tr.gs-tc td:first-child { border-left: 3px solid #7c5cbf; }
 /* loading spinner */
 .gs-spinner {
   display: inline-block;
@@ -1497,7 +1496,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B32</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B33</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3041,7 +3040,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
       const cc = colClass(ci); if (cc) td.classList.add(cc);
-      if (isMCL && pos === lastNumPos && txt) td.classList.add('gs-mcl-qty');
+
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -3382,8 +3381,8 @@ async function shareReport() {
     tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'13px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px 5px 22px'}));
     tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '10px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; td.style.paddingLeft = '22px'; });
     // CF accent borders
-    tbl.querySelectorAll('tr.gs-ib td:first-child').forEach(td => { td.style.borderLeft = `3px solid ${C.amber}`; });
-    tbl.querySelectorAll('tr.gs-tc td:first-child').forEach(td => { td.style.borderLeft = '3px solid #2aaa88'; });
+    tbl.querySelectorAll('tr.gs-ib td:first-child').forEach(td => { td.style.borderLeft = '3px solid #d4721a'; });
+    tbl.querySelectorAll('tr.gs-tc td:first-child').forEach(td => { td.style.borderLeft = '3px solid #7c5cbf'; });
     // Tabular nums for all data cells
     tbl.querySelectorAll('td').forEach(td => { td.style.fontVariantNumeric = 'tabular-nums'; });
     tbl.querySelectorAll('tr:last-child td').forEach(td => { td.style.borderBottom = 'none'; });
