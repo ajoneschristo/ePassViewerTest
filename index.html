@@ -1369,7 +1369,7 @@ body {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B8</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B9</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2713,19 +2713,25 @@ function renderGSheetTable(dt, table) {
 
   const rows = dt.rows || [];
 
-  // ── Find MINE header row ──
+  // ── Find header row: first row where first cell = "MINE" ──
+  // With range I6:O28, row 0 = col headers (MINE, RDO Balance…)
+  // With range I5:O28, row 0 = "Road Sale Despatch" title, row 1 = col headers
   let headerIdx = -1;
   for (let i = 0; i < Math.min(rows.length, 6); i++) {
     const cells = rows[i].c || [];
     const first = cells[0];
-    const txt = first ? (first.f || first.v) : null;
-    if (txt && /mine/i.test(String(txt))) { headerIdx = i; break; }
+    const txt = first ? String(first.f || first.v || '') : '';
+    if (/mine/i.test(txt)) { headerIdx = i; break; }
   }
 
   const captionRows = headerIdx > 0 ? rows.slice(0, headerIdx) : [];
   const headerCells = headerIdx >= 0 ? (rows[headerIdx].c || []) : [];
   const dataRows    = headerIdx >= 0 ? rows.slice(headerIdx + 1) : rows;
   const numCols     = headerCells.length || (dataRows[0] ? (dataRows[0].c || []).length : 0);
+
+  // Known column headers — used as fallback when sheet cells are merged/null
+  // Order matches sheet columns I→O
+  const KNOWN_HEADERS = ['MINE', 'RDO Balance\n(in Lac)', 'Target', 'till 11.00 AM', 'till 1.30 PM', 'Remarks'];
 
   // ── Determine which columns are "Remarks" (last col) and which are empty ──
   const remarkColIdx = numCols - 1; // last column = Remarks
@@ -2767,15 +2773,15 @@ function renderGSheetTable(dt, table) {
   }
 
   // ── Header ──
-  if (headerCells.length > 0 || (dt.cols && dt.cols.length > 0)) {
+  if (numCols > 0) {
     const thead = document.createElement('thead');
     const htr   = document.createElement('tr');
     visibleCols.forEach(ci => {
       const th   = document.createElement('th');
-      // headerCells may have nulls for merged cells — fall back to col.label then col.id
       const cell = headerCells[ci];
       const col  = (dt.cols || [])[ci] || {};
-      const txt  = fmtGvizCell(cell) || col.label || col.id || '';
+      // Priority: cell formatted value → cell raw value → known header → col id
+      const txt  = fmtGvizCell(cell) || col.label || KNOWN_HEADERS[ci] || col.id || '';
       th.textContent = txt;
       if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
       htr.appendChild(th);
@@ -3599,7 +3605,7 @@ const SETTINGS_GH = {
 let appSettings = {
   sheetUrl:  '',
   sheetName: 'Rake and Road Despatch',
-  sheetRange: 'I5:O28',
+  sheetRange: 'I6:O28',
   scriptUrl: SHEET_WEBAPP_URL,
   // slots: [{label, time, col, autoFrom}]
   // time: "HH:MM" 24h, col: sheet column, autoFrom: "HH:MM" when this slot auto-activates
@@ -4053,7 +4059,7 @@ loadDbFromGitHub();
         </div>
         <div class="stt-section">
           <label class="stt-label">Sheet View Range</label>
-          <input id="cfg_sheetRange" class="stt-input" type="text" placeholder="I5:O28" style="font-family:var(--mono);letter-spacing:.04em;">
+          <input id="cfg_sheetRange" class="stt-input" type="text" placeholder="I6:O28" style="font-family:var(--mono);letter-spacing:.04em;">
           <div class="stt-hint" style="margin-top:4px;">Range shown in Sheet view (e.g. I5:O28). Fetched live from your Google Sheet.</div>
         </div>
         <div class="stt-section">
