@@ -1315,7 +1315,7 @@ body {
 }
 .ss-gsheet-table th {
   font-family: var(--sans);
-  font-size: 10px;
+  font-size: clamp(10px, 1.2vw, 13px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .07em;
@@ -1453,7 +1453,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B27</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B28</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3274,7 +3274,7 @@ async function shareReport() {
     tbl.insertBefore(titleThead, tbl.firstChild);
     tbl.querySelectorAll('th').forEach((th, i) => {
       sc(th, {
-        fontSize:'13px', textTransform:'uppercase', letterSpacing:'.06em',
+        fontSize:'14px', textTransform:'uppercase', letterSpacing:'.06em',
         color:C.mid, fontFamily:'IBM Plex Sans,sans-serif', fontWeight:'700',
         padding:'10px 14px', borderTop:`2px solid ${C.line}`, borderBottom:`2px solid ${C.line}`,
         borderRight:`1px solid ${C.line}`, borderLeft:`1px solid ${C.line}`,
