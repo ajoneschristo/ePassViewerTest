@@ -1447,7 +1447,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B16</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B17</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1507,14 +1507,21 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
   <!-- Sheet view on home screen (shown when Sheet toggle ON, no file needed) -->
   <div id="ssGSheetWrapDrop" style="display:none;width:100%;max-width:900px;margin-top:8px;">
     <div id="ssGSheetStatusDrop" style="padding:18px 14px;text-align:center;font-size:13px;color:var(--dim);display:none;"></div>
-    <!-- Hide Empty toggle for drop screen -->
-    <div id="hideEmptyWrapDrop" style="display:none;padding:4px 10px 6px;display:flex;align-items:center;gap:6px;">
+    <!-- Toolbar for drop screen sheet view -->
+    <div id="hideEmptyWrapDrop" style="display:none;padding:4px 10px 6px;display:flex;align-items:center;gap:8px;">
       <div class="trips-switch-wrap" onclick="toggleHideEmpty()" style="display:flex;">
         <span class="trips-switch-label">Hide Empty</span>
         <div class="switch-track on" id="hideEmptyTrackDrop">
           <div class="switch-thumb"></div>
         </div>
       </div>
+      <button class="share-btn" onclick="shareReport()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+        </svg>
+        Share
+      </button>
     </div>
     <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
       <table class="ss-table ss-gsheet-table" id="ssTableDrop" style="display:none;width:100%;border-collapse:collapse;"></table>
@@ -3221,8 +3228,14 @@ async function shareReport() {
   const displayDate = (ssViewOn && gsSheetDate) ? gsSheetDate : shownDate;
   const snapTitle   = ssViewOn ? 'MCL Road Despatch · Sheet' : 'MCL Road Despatch as of';
 
+  // Dynamic width: 140px for mine col + 110px per numeric col, min 480px
+  const visColCount = gsEmptyColIndices.size > 0 && gsHideEmpty
+    ? (7 - gsEmptyColIndices.size)   // 7 = total cols in range
+    : 7;
+  const snapWidth = ssViewOn ? Math.max(480, 140 + (visColCount - 1) * 115) : 520;
+
   const snap = document.createElement('div');
-  snap.style.cssText = `position:fixed;left:-9999px;top:0;width:520px;background:${C.bg};padding:20px;font-family:IBM Plex Sans,sans-serif;color:${C.text};`;
+  snap.style.cssText = `position:fixed;left:-9999px;top:0;width:${snapWidth}px;background:${C.bg};padding:20px;font-family:IBM Plex Sans,sans-serif;color:${C.text};`;
 
   // Title
   const titleDiv = document.createElement('div');
@@ -3241,17 +3254,35 @@ async function shareReport() {
   if (ssViewOn) {
     // ── GSheet live table ──────────────────────────────
     const tbl = document.getElementById('ssTable').cloneNode(true);
-    tbl.style.cssText = `width:auto;min-width:100%;border-collapse:collapse;font-family:IBM Plex Mono,monospace;font-size:18px;background:${C.surface};border:1px solid ${C.edge};table-layout:auto;`;
-    tbl.querySelectorAll('th').forEach(th => {
-      sc(th, {fontSize:'13px',textTransform:'uppercase',letterSpacing:'.5px',color:C.dim,fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'600',padding:'9px 14px',textAlign:'right',borderBottom:`2px solid ${C.edge}`,background:C.raise,whiteSpace:'nowrap'});
-      if (th === th.parentElement.children[0]) th.style.textAlign = 'left';
+    tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Mono,monospace;font-size:16px;background:${C.surface};border:1px solid ${C.edge};table-layout:auto;`;
+    tbl.querySelectorAll('caption').forEach(cap => sc(cap, {
+      padding:'8px 14px 6px', fontSize:'12px', letterSpacing:'.08em',
+      textTransform:'uppercase', color:C.dim, fontFamily:'IBM Plex Sans,sans-serif',
+      background:C.surface, borderBottom:`1px solid ${C.edge}`,
+    }));
+    tbl.querySelectorAll('th').forEach((th, i) => {
+      sc(th, {
+        fontSize:'11px', textTransform:'uppercase', letterSpacing:'.06em',
+        color:C.mid, fontFamily:'IBM Plex Sans,sans-serif', fontWeight:'700',
+        padding:'10px 14px', borderBottom:`2px solid ${C.line}`,
+        background:C.raise, whiteSpace:'nowrap', textAlign:'right',
+        position:'static',
+      });
+      if (i === 0) th.style.textAlign = 'left';
     });
-    tbl.querySelectorAll('td').forEach((td, i) => {
-      sc(td, {padding:'9px 14px',borderBottom:`1px solid ${C.edge}`,color:C.text,whiteSpace:'nowrap',textAlign:'right'});
-      if (td === td.parentElement.children[0]) { td.style.textAlign='left'; td.style.fontFamily='IBM Plex Sans,sans-serif'; td.style.fontWeight='500'; }
+    tbl.querySelectorAll('td').forEach(td => {
+      sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', fontFamily:'IBM Plex Mono,monospace', fontSize:'15px'});
+      if (td === td.parentElement.children[0]) {
+        td.style.textAlign = 'left';
+        td.style.fontFamily = 'IBM Plex Sans,sans-serif';
+        td.style.fontWeight = '500';
+        td.style.borderRight = `1px solid ${C.edge}`;
+      }
     });
-    tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise,fontWeight:'700',borderTop:`1px solid ${C.edge}`}));
+    tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'16px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}));
     tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.amber; });
+    tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'13px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px'}));
+    tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '10px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; });
     tbl.querySelectorAll('tr:last-child td').forEach(td => { td.style.borderBottom = 'none'; });
     snap.appendChild(tbl);
 
