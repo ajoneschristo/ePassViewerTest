@@ -1290,7 +1290,7 @@ body {
   font-size: 12.5px;
   border-collapse: collapse;
   width: 100%;
-  border: 1px solid color-mix(in srgb, var(--edge) 70%, #3aafa9 30%);
+  border: 1px solid var(--edge);
   border-radius: 8px;
   overflow: hidden;
 }
@@ -1311,7 +1311,7 @@ body {
 
 /* Header row */
 .ss-gsheet-table thead tr {
-  background: color-mix(in srgb, var(--raise) 85%, #3aafa9 15%);
+  background: var(--raise);
 }
 .ss-gsheet-table th {
   font-family: var(--sans);
@@ -1321,8 +1321,8 @@ body {
   letter-spacing: .07em;
   color: var(--mid);
   padding: 9px 12px;
-  border-top: 2px solid color-mix(in srgb, var(--line) 60%, #3aafa9 40%);
-  border-bottom: 2px solid color-mix(in srgb, var(--line) 60%, #3aafa9 40%);
+  border-top: 2px solid var(--line);
+  border-bottom: 2px solid var(--line);
   border-right: 1px solid var(--line);
   white-space: normal;
   word-break: break-word;
@@ -1371,7 +1371,7 @@ body {
 /* ── Remove zebra stripe — use clean row separators instead ── */
 
 /* Hover */
-.ss-gsheet-table tbody tr:hover td { background: var(--raise); transition: background .08s; }
+.ss-gsheet-table tbody tr:hover td { background: var(--raise); transition: background .1s; }
 body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(255,255,255,.04); }
 
 /* Last row no border */
@@ -1381,16 +1381,18 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(255,255,255,.04)
 .ss-gsheet-table .gs-bold td {
   font-weight: 700;
   background: var(--raise);
-  border-top: 2px solid color-mix(in srgb, var(--line) 50%, #3aafa9 50%);
+  border-top: 2px solid var(--line);
   border-bottom: 1px solid var(--line);
   font-size: clamp(12px, 1.6vw, 15px);
   color: var(--text);
 }
 .ss-gsheet-table .gs-bold td:first-child {
-  color: var(--text);
+  color: var(--mid);
   font-family: var(--sans);
   font-size: clamp(12px, 1.6vw, 15px);
-  letter-spacing: .01em;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-transform: uppercase;
 }
 
 /* ── MCL grand total — stronger treatment ── */
@@ -1403,10 +1405,11 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(255,255,255,.04)
   color: var(--text);
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
-  color: var(--text);
+  color: var(--mid);
   font-family: var(--sans);
   font-weight: 800;
-  letter-spacing: .01em;
+  letter-spacing: .02em;
+  text-transform: uppercase;
 }
 
 /* ── Highest rows — indented ── */
@@ -1415,7 +1418,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(255,255,255,.04)
   font-family: var(--mono);
   font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 500;
-  color: #0097a7;
+  color: var(--blue);
   border-bottom: 2px solid var(--edge);
   padding-top: 4px;
   padding-bottom: 6px;
@@ -1430,34 +1433,8 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(255,255,255,.04)
   border-right: 1px solid var(--edge);
   padding-left: 20px;
 }
-body.dark .ss-gsheet-table .gs-highest td { color: #26c6da; }
+body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 
-/* ── Column type colours ── */
-/* RDO Balance — muted blue/teal: it's a context figure, not an action figure */
-.ss-gsheet-table td.gs-col-balance,
-.ss-gsheet-table th.gs-col-balance { color: var(--dim); }
-
-/* Target — amber: it's a goal */
-.ss-gsheet-table td.gs-col-target  { color: #3aafa9; }
-.ss-gsheet-table th.gs-col-target  { color: #3aafa9; opacity: .9; }
-
-/* Despatch — no special colour, inherits default */
-
-/* Remarks */
-.ss-gsheet-table td.gs-col-remarks,
-.ss-gsheet-table th.gs-col-remarks { color: var(--dim); font-size: .9em; }
-
-/* Override: bold/MCL rows keep their own colours for mine name, but keep col tint for numbers */
-.ss-gsheet-table .gs-bold td.gs-col-balance { color: var(--dim); }
-.ss-gsheet-table .gs-bold td.gs-col-target  { color: #3aafa9; }
-
-/* Highest rows — override col colours to keep blue */
-.ss-gsheet-table .gs-highest td.gs-col-balance,
-.ss-gsheet-table .gs-highest td.gs-col-target { color: #0097a7; }
-.ss-gsheet-table tr.gs-ib td:first-child { border-left: 3px solid #2e9e82; }
-
-/* ── Talcher Coalfield mine rows — teal left accent (distinct from blue Highest) ── */
-.ss-gsheet-table tr.gs-tc td:first-child { border-left: 3px solid #c4587a; }
 /* loading spinner */
 .gs-spinner {
   display: inline-block;
@@ -1497,7 +1474,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: #26c6da; }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B36</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B37</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2944,7 +2921,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   // ── Caption (title · date) ──
   if (captionRows.length > 0) {
     const cap = document.createElement('caption');
-    cap.style.cssText = 'caption-side:top;text-align:left;padding:6px 10px 2px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:color-mix(in srgb,var(--surface) 90%,#3aafa9 10%);';
+    cap.style.cssText = 'caption-side:top;text-align:left;padding:6px 10px 2px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:';
     const parts = [];
     for (const row of captionRows) {
       for (const cell of (row.c || [])) {
@@ -2968,14 +2945,6 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   }
 
   // Column type class helper
-  function colClass(ci) {
-    if (ci === 0) return '';
-    if (ci === 1) return 'gs-col-balance';
-    if (ci === 2) return 'gs-col-target';
-    if (ci === remarkColIdx) return 'gs-col-remarks';
-    return 'gs-col-despatch';
-  }
-
   // ── Header ──
   if (numCols > 0) {
     const thead = document.createElement('thead');
@@ -2987,25 +2956,10 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       const txt  = fmtGvizCell(cell) || col.label || KNOWN_HEADERS[ci] || col.id || '';
       th.textContent = txt;
       if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
-      const cc = colClass(ci); if (cc) th.classList.add(cc);
       htr.appendChild(th);
     });
     thead.appendChild(htr);
     table.appendChild(thead);
-  }
-
-  // ── Pre-label CF membership via forward scan ──
-  // Mines appear BEFORE their CF total. Scan forward: every non-bold mine row
-  // gets the label of the NEXT CF total it encounters.
-  const cfLabel = new Array(dataRows.length).fill(null);
-  let nextCF = null;
-  for (let i = dataRows.length - 1; i >= 0; i--) {
-    const c = dataRows[i].c || [];
-    const t = fmtGvizCell(c[0]);
-    if (/ibcf/i.test(t))      nextCF = 'ib';
-    else if (/tcf/i.test(t))  nextCF = 'tc';
-    else if (/mcl/i.test(t))  nextCF = null;
-    else if (t && nextCF)     cfLabel[i] = nextCF;
   }
 
   // ── Body ──
@@ -3027,7 +2981,6 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     if (isHighest)          tr.className = 'gs-highest';
     else if (isMCL)         tr.className = 'gs-bold gs-mcl';
     else if (isBold)        tr.className = 'gs-bold';
-    else if (cfLabel[rowIdx]) tr.classList.add('gs-' + cfLabel[rowIdx]);
 
     // Last non-Remarks numeric col for MCL qty highlight
     const lastNumPos = visibleCols.length - 2;
@@ -3040,9 +2993,6 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       td.textContent = txt;
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
-      const cc = colClass(ci); if (cc) td.classList.add(cc);
-      // Remarks col with actual content: smaller font so it doesn't dominate
-      if (cc === 'gs-col-remarks' && txt) td.style.fontSize = 'clamp(9px, 1.1vw, 11px)';
 
       tr.appendChild(td);
     });
@@ -3356,9 +3306,6 @@ async function shareReport() {
       });
       if (i === 0) { th.style.textAlign = 'left'; th.style.whiteSpace = 'nowrap'; }
       if (i === th.parentElement.children.length - 1) th.style.borderRight = 'none';
-      // Column type colours in snapshot
-      if (i === 1) th.style.color = C.mid;
-      if (i === 2) th.style.color = '#3aafa9';
     });
     tbl.querySelectorAll('td').forEach(td => {
       sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, borderRight:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', verticalAlign:'middle', fontFamily:'IBM Plex Mono,monospace', fontSize:'17px'});
@@ -3371,21 +3318,17 @@ async function shareReport() {
       }
       if (td === td.parentElement.children[td.parentElement.children.length - 1]) td.style.borderRight = 'none';
       // Column type colours
-      if (colIdx === 1) td.style.color = C.mid;
-      if (colIdx === 2) td.style.color = '#3aafa9';
     });
     tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'19px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, fontVariantNumeric:'tabular-nums'}));
-    tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.text; });
+    tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.mid; td.style.textTransform='uppercase'; td.style.letterSpacing='.02em'; });
     // MCL grand total — stronger
     tbl.querySelectorAll('tr.gs-mcl td').forEach(td => sc(td, {background:C.edge, fontWeight:'800', fontSize:'21px', borderTop:`3px solid ${C.line}`}));
-    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => { td.style.color = C.text; td.style.fontWeight = '800'; });
+    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => { td.style.color = C.mid; td.style.fontWeight='800'; td.style.textTransform='uppercase'; td.style.letterSpacing='.02em'; });
     tbl.querySelectorAll('tr.gs-mcl td.gs-mcl-qty').forEach(td => { td.style.color = C.green; });
     // Highest rows — indented
-    tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:'#0097a7', fontSize:'13px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px 5px 22px'}));
+    tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'13px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px 5px 22px'}));
     tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '10px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; td.style.paddingLeft = '22px'; });
     // CF accent borders
-    tbl.querySelectorAll('tr.gs-ib td:first-child').forEach(td => { td.style.borderLeft = '3px solid #2e9e82'; });
-    tbl.querySelectorAll('tr.gs-tc td:first-child').forEach(td => { td.style.borderLeft = '3px solid #c4587a'; });
     // Tabular nums for all data cells
     tbl.querySelectorAll('td').forEach(td => { td.style.fontVariantNumeric = 'tabular-nums'; });
     tbl.querySelectorAll('tr:last-child td').forEach(td => { td.style.borderBottom = 'none'; });
