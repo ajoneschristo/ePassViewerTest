@@ -1369,6 +1369,7 @@ body {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B8</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2669,10 +2670,6 @@ async function fetchAndRenderGSheet() {
       return;
     }
     // Debug: log first 3 rows to console so we can inspect cell structure
-    console.log('[GSheet] cols:', JSON.stringify(dt.cols));
-    console.log('[GSheet] rows[0]:', JSON.stringify(dt.rows[0]));
-    console.log('[GSheet] rows[1]:', JSON.stringify(dt.rows[1]));
-    console.log('[GSheet] rows[2]:', JSON.stringify(dt.rows[2]));
     renderGSheetTable(dt, table);
     renderGSheetTable(dt, tableDrop);
     [statusEl, statusElDrop].forEach(el => el.style.display = 'none');
@@ -2770,14 +2767,16 @@ function renderGSheetTable(dt, table) {
   }
 
   // ── Header ──
-  if (headerCells.length > 0) {
+  if (headerCells.length > 0 || (dt.cols && dt.cols.length > 0)) {
     const thead = document.createElement('thead');
     const htr   = document.createElement('tr');
     visibleCols.forEach(ci => {
-      const th  = document.createElement('th');
-      const txt = fmtGvizCell(headerCells[ci]);
+      const th   = document.createElement('th');
+      // headerCells may have nulls for merged cells — fall back to col.label then col.id
+      const cell = headerCells[ci];
+      const col  = (dt.cols || [])[ci] || {};
+      const txt  = fmtGvizCell(cell) || col.label || col.id || '';
       th.textContent = txt;
-      // Right-align numeric-looking headers (not first col, not Remarks)
       if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
       htr.appendChild(th);
     });
