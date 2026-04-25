@@ -1323,6 +1323,13 @@ body {
   border-top: 1px solid var(--edge);
 }
 .ss-gsheet-table .gs-bold td:first-child { color: var(--amber); }
+.ss-gsheet-table .gs-highest td {
+  font-weight: 600;
+  background: var(--raise);
+  color: var(--blue);
+  font-size: 11px;
+  font-family: var(--mono);
+}
 /* loading spinner */
 .gs-spinner {
   display: inline-block;
@@ -1552,6 +1559,12 @@ body {
         <div class="trips-switch-wrap" onclick="toggleTrips()">
           <span class="trips-switch-label">Trips</span>
           <div class="switch-track" id="tripsSwitchTrack">
+            <div class="switch-thumb"></div>
+          </div>
+        </div>
+        <div class="trips-switch-wrap" id="hideEmptyWrap" onclick="toggleHideEmpty()" style="display:none;">
+          <span class="trips-switch-label">Hide Empty</span>
+          <div class="switch-track on" id="hideEmptyTrack">
             <div class="switch-thumb"></div>
           </div>
         </div>
@@ -2079,6 +2092,7 @@ let currentTabMaxDateStr = '';
 let tripsVisible  = false;
 let areaViewOn    = false;
 let ssViewOn      = true;   // Spreadsheet view ON by default
+let gsHideEmpty   = true;   // Hide empty columns in GSheet view by default
 let lastUnknownDOs = new Set();
 
 // ═══════════════════════════════════════════════════════
@@ -2654,6 +2668,11 @@ async function fetchAndRenderGSheet() {
       showStatus('⚠ No data returned for range ' + sheetRange + '.');
       return;
     }
+    // Debug: log first 3 rows to console so we can inspect cell structure
+    console.log('[GSheet] cols:', JSON.stringify(dt.cols));
+    console.log('[GSheet] rows[0]:', JSON.stringify(dt.rows[0]));
+    console.log('[GSheet] rows[1]:', JSON.stringify(dt.rows[1]));
+    console.log('[GSheet] rows[2]:', JSON.stringify(dt.rows[2]));
     renderGSheetTable(dt, table);
     renderGSheetTable(dt, tableDrop);
     [statusEl, statusElDrop].forEach(el => el.style.display = 'none');
@@ -2668,13 +2687,10 @@ async function fetchAndRenderGSheet() {
 // ── Format a gviz cell for display — prefer the sheet's own formatted string ──
 function fmtGvizCell(cell) {
   if (!cell) return '';
-  // cell.f = the formatted string as shown in Google Sheets (dates, currency, etc.)
-  // cell.v = the raw value
-  if (cell.f !== undefined && cell.f !== null && cell.f !== '') return cell.f;
+  if (cell.f !== undefined && cell.f !== null && cell.f !== '') return String(cell.f);
   const val = cell.v;
   if (val === null || val === undefined || val === '') return '';
   if (typeof val === 'string') {
-    // gviz date string fallback
     const dm = val.match(/^Date\((\d+),(\d+),(\d+)\)$/);
     if (dm) {
       const d = new Date(+dm[1], +dm[2], +dm[3]);
@@ -2690,34 +2706,50 @@ function fmtGvizCell(cell) {
   return String(val);
 }
 
+// Tracks which col indices are empty (populated after each fetch)
+let gsEmptyColIndices = new Set();
+let gsLastDt = null; // cache last fetched DataTable for re-render on toggle
+
 function renderGSheetTable(dt, table) {
   table.innerHTML = '';
+  gsLastDt = dt;
 
-  const cols = dt.cols || [];
   const rows = dt.rows || [];
 
-  // Find the column header row: first row whose first cell text is "MINE" (case-insensitive)
-  // or more generally, the first row where ALL non-empty cells are strings (not numbers)
+  // ── Find MINE header row ──
   let headerIdx = -1;
   for (let i = 0; i < Math.min(rows.length, 6); i++) {
-    const cells   = rows[i].c || [];
-    const first   = cells[0];
-    const firstVal = first ? (first.f || first.v) : null;
-    if (firstVal !== null && typeof firstVal === 'string' && /mine/i.test(String(firstVal))) {
-      headerIdx = i;
-      break;
-    }
+    const cells = rows[i].c || [];
+    const first = cells[0];
+    const txt = first ? (first.f || first.v) : null;
+    if (txt && /mine/i.test(String(txt))) { headerIdx = i; break; }
   }
 
-  // Rows before the header = caption rows (title, date, etc.)
   const captionRows = headerIdx > 0 ? rows.slice(0, headerIdx) : [];
   const headerCells = headerIdx >= 0 ? (rows[headerIdx].c || []) : [];
   const dataRows    = headerIdx >= 0 ? rows.slice(headerIdx + 1) : rows;
+  const numCols     = headerCells.length || (dataRows[0] ? (dataRows[0].c || []).length : 0);
 
-  // Caption
+  // ── Determine which columns are "Remarks" (last col) and which are empty ──
+  const remarkColIdx = numCols - 1; // last column = Remarks
+  gsEmptyColIndices = new Set();
+  for (let ci = 0; ci < numCols; ci++) {
+    if (ci === 0 || ci === remarkColIdx) continue; // never hide MINE or Remarks
+    const hasData = dataRows.some(row => {
+      const cell = (row.c || [])[ci];
+      return cell && (cell.v !== null && cell.v !== undefined && cell.v !== '');
+    });
+    if (!hasData) gsEmptyColIndices.add(ci);
+  }
+
+  // Show/hide the "Hide Empty" switch based on whether any empty cols exist
+  const hideWrap = document.getElementById('hideEmptyWrap');
+  if (hideWrap) hideWrap.style.display = gsEmptyColIndices.size > 0 ? '' : 'none';
+
+  // ── Caption (title · date) ──
   if (captionRows.length > 0) {
     const cap = document.createElement('caption');
-    cap.style.cssText = 'caption-side:top;text-align:left;padding:8px 10px 4px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.03em;';
+    cap.style.cssText = 'caption-side:top;text-align:left;padding:6px 10px 2px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;';
     const parts = [];
     for (const row of captionRows) {
       for (const cell of (row.c || [])) {
@@ -2729,38 +2761,64 @@ function renderGSheetTable(dt, table) {
     table.appendChild(cap);
   }
 
-  // Header row
+  // ── Apply column visibility ──
+  const hideEmpty = gsHideEmpty;
+  const visibleCols = [];
+  for (let ci = 0; ci < numCols; ci++) {
+    if (hideEmpty && gsEmptyColIndices.has(ci)) continue;
+    visibleCols.push(ci);
+  }
+
+  // ── Header ──
   if (headerCells.length > 0) {
     const thead = document.createElement('thead');
     const htr   = document.createElement('tr');
-    headerCells.forEach(cell => {
-      const th = document.createElement('th');
-      th.textContent = fmtGvizCell(cell);
+    visibleCols.forEach(ci => {
+      const th  = document.createElement('th');
+      const txt = fmtGvizCell(headerCells[ci]);
+      th.textContent = txt;
+      // Right-align numeric-looking headers (not first col, not Remarks)
+      if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
       htr.appendChild(th);
     });
     thead.appendChild(htr);
     table.appendChild(thead);
   }
 
-  // Body rows
+  // ── Body ──
   const tbody = document.createElement('tbody');
   for (const row of dataRows) {
     const cells = row.c || [];
-    if (cells.every(c => !c || (c.v === null && !c.f))) continue; // skip empty rows
+    if (cells.every(c => !c || (c.v === null && !c.f))) continue;
 
     const firstTxt = fmtGvizCell(cells[0]);
     const isBold   = /ibcf|tcf|mcl|highest/i.test(firstTxt);
+    const isHighest = /highest/i.test(firstTxt);
 
     const tr = document.createElement('tr');
-    if (isBold) tr.className = 'gs-bold';
-    cells.forEach(cell => {
-      const td = document.createElement('td');
-      td.textContent = fmtGvizCell(cell);
+    if (isBold) tr.className = isHighest ? 'gs-highest' : 'gs-bold';
+
+    visibleCols.forEach((ci, pos) => {
+      const td  = document.createElement('td');
+      const txt = fmtGvizCell(cells[ci]);
+      td.textContent = txt;
+      // First col left-align, rest right-align
+      if (pos > 0) td.style.textAlign = 'right';
+      // Dim empty data cells
+      if (!txt) td.style.color = 'var(--edge)';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
   }
   table.appendChild(tbody);
+}
+
+function applyGSheetToAllTables() {
+  if (!gsLastDt) return;
+  const t1 = document.getElementById('ssTable');
+  const t2 = document.getElementById('ssTableDrop');
+  if (t1) renderGSheetTable(gsLastDt, t1);
+  if (t2) renderGSheetTable(gsLastDt, t2);
 }
 
 function toggleAreaView() {
@@ -2775,6 +2833,12 @@ function toggleTrips() {
   document.getElementById('areaTable').classList.toggle('hide-trips', !tripsVisible);
   document.getElementById('ssTable').classList.toggle('hide-trips', !tripsVisible);
   document.getElementById('tripsSwitchTrack').classList.toggle('on', tripsVisible);
+}
+
+function toggleHideEmpty() {
+  gsHideEmpty = !gsHideEmpty;
+  document.getElementById('hideEmptyTrack').classList.toggle('on', gsHideEmpty);
+  applyGSheetToAllTables();
 }
 
 // ═══════════════════════════════════════════════════════
