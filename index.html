@@ -1452,7 +1452,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B20</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B21</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3247,24 +3247,7 @@ async function shareReport() {
   const snapWidth = ssViewOn ? Math.max(480, 140 + (visColCount - 1) * 115) : 520;
 
   const snap = document.createElement('div');
-  snap.style.cssText = `position:fixed;left:-9999px;top:0;width:${snapWidth}px;background:${C.bg};padding:20px;font-family:IBM Plex Sans,sans-serif;color:${C.text};`;
-
-  // Title
-  const titleDiv = document.createElement('div');
-  titleDiv.style.cssText = `margin-bottom:18px;padding-bottom:16px;border-bottom:2px solid ${C.edge};`;
-
-  if (ssViewOn) {
-    titleDiv.innerHTML =
-      `<div style="font-family:IBM Plex Mono,monospace;font-size:22px;font-weight:600;color:${C.dim};letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;">Road Despatch dated</div>` +
-      `<div style="font-family:IBM Plex Mono,monospace;font-size:36px;font-weight:700;color:${C.amber};letter-spacing:1px;line-height:1.05;">${displayDate}</div>`;
-  } else {
-    titleDiv.innerHTML =
-      (dateLabel ? `<div style="font-family:IBM Plex Mono,monospace;font-size:14px;color:${C.dim};letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">${dateLabel}</div>` : '') +
-      `<div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:600;color:${C.dim};letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">MCL Road Despatch as of</div>` +
-      `<div style="font-family:IBM Plex Mono,monospace;font-size:34px;font-weight:700;color:${C.amber};letter-spacing:1px;line-height:1.05;margin-bottom:4px;">${shownTime}</div>` +
-      `<div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:400;color:${C.mid};letter-spacing:.5px;">${displayDate}</div>`;
-  }
-  snap.appendChild(titleDiv);
+  snap.style.cssText = `position:fixed;left:-9999px;top:0;width:${snapWidth}px;background:${C.bg};padding:16px;font-family:IBM Plex Sans,sans-serif;color:${C.text};`;
 
   const sc = (el, extra) => Object.assign(el.style, extra);
 
@@ -3273,7 +3256,15 @@ async function shareReport() {
     // ── GSheet live table ──────────────────────────────
     const tbl = document.getElementById('ssTable').cloneNode(true);
     tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Mono,monospace;font-size:16px;background:${C.surface};border:1px solid ${C.edge};table-layout:auto;`;
-    tbl.querySelectorAll('caption').forEach(cap => cap.remove()); // title already shows date
+    // Replace gviz caption with a compact styled title caption
+    tbl.querySelectorAll('caption').forEach(cap => cap.remove());
+    const cap = document.createElement('caption');
+    cap.style.cssText = `caption-side:top;padding:10px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:left;`;
+    cap.innerHTML =
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:${C.dim};">Road Despatch dated&nbsp;&nbsp;</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:15px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${displayDate}</span>` +
+      (shownTime && !ssViewOn ? `<span style="font-family:IBM Plex Mono,monospace;font-size:13px;color:${C.mid};margin-left:10px;">as of ${shownTime}</span>` : '');
+    tbl.insertBefore(cap, tbl.firstChild);
     tbl.querySelectorAll('th').forEach((th, i) => {
       sc(th, {
         fontSize:'11px', textTransform:'uppercase', letterSpacing:'.06em',
@@ -3309,6 +3300,15 @@ async function shareReport() {
     const tbl = document.getElementById('areaTable').cloneNode(true);
     if (!tripsVisible) tbl.classList.add('hide-trips');
     else tbl.classList.remove('hide-trips');
+
+    // Compact title caption
+    const areaCap = document.createElement('caption');
+    areaCap.style.cssText = `caption-side:top;padding:10px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:left;`;
+    areaCap.innerHTML =
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.1em;color:${C.dim};">MCL Road Despatch&nbsp;&nbsp;</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:15px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${shownTime}</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:13px;color:${C.mid};margin-left:10px;">${displayDate}</span>`;
+    tbl.insertBefore(areaCap, tbl.firstChild);
 
     const bodyFs   = tripsVisible ? '16px' : '20px';
     const totalFs  = tripsVisible ? '16px' : '20px';
