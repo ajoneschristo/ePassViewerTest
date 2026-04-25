@@ -1417,6 +1417,14 @@ body {
     </div>
   </div>
   <p class="privacy-note"></p>
+
+  <!-- Sheet view on home screen (shown when Sheet toggle ON, no file needed) -->
+  <div id="ssGSheetWrapDrop" style="display:none;width:100%;max-width:900px;margin-top:8px;">
+    <div id="ssGSheetStatusDrop" style="padding:18px 14px;text-align:center;font-size:13px;color:var(--dim);display:none;"></div>
+    <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
+      <table class="ss-table ss-gsheet-table" id="ssTableDrop" style="display:none;width:100%;border-collapse:collapse;"></table>
+    </div>
+  </div>
 </div>
 
 <!-- ══ DASHBOARD ══════════════════════════════════════ -->
@@ -2576,10 +2584,12 @@ function renderSpreadsheet(colAcc) {
 //  VIEW TOGGLES
 // ═══════════════════════════════════════════════════════
 function applyTableVisibility() {
-  const ssWrap    = document.getElementById('ssGSheetWrap');
-  const areaTable = document.getElementById('areaTable');
-  ssWrap.style.display    = ssViewOn ? '' : 'none';
-  areaTable.style.display = ssViewOn ? 'none' : '';
+  const ssWrap     = document.getElementById('ssGSheetWrap');
+  const ssWrapDrop = document.getElementById('ssGSheetWrapDrop');
+  const areaTable  = document.getElementById('areaTable');
+  ssWrap.style.display     = ssViewOn ? '' : 'none';
+  ssWrapDrop.style.display = ssViewOn ? '' : 'none';
+  areaTable.style.display  = ssViewOn ? 'none' : '';
 }
 
 function toggleSpreadsheet() {
@@ -2600,34 +2610,35 @@ function parseSheetUrl(url) {
   };
 }
 
-// ── Fetch live data from Google Sheet and render into #ssTable ──
+// ── Fetch live data from Google Sheet and render into both #ssTable and #ssTableDrop ──
 async function fetchAndRenderGSheet() {
-  const statusEl = document.getElementById('ssGSheetStatus');
-  const table    = document.getElementById('ssTable');
+  const statusEl     = document.getElementById('ssGSheetStatus');
+  const statusElDrop = document.getElementById('ssGSheetStatusDrop');
+  const table        = document.getElementById('ssTable');
+  const tableDrop    = document.getElementById('ssTableDrop');
 
   const sheetUrl   = appSettings.sheetUrl   || '';
   const sheetName  = appSettings.sheetName  || 'Rake and Road Despatch';
   const sheetRange = appSettings.sheetRange || 'I5:O28';
 
+  const showStatus = (html) => {
+    [statusEl, statusElDrop].forEach(el => { el.style.display = ''; el.innerHTML = html; });
+    [table, tableDrop].forEach(t => t.style.display = 'none');
+  };
+
   if (!sheetUrl) {
-    statusEl.style.display = '';
-    statusEl.innerHTML = '⚠ Google Sheet URL not configured. Open ⚙ Settings to add it.';
-    table.style.display = 'none';
+    showStatus('⚠ Google Sheet URL not configured. Open ⚙ Settings to add it.');
     return;
   }
 
   const { id } = parseSheetUrl(sheetUrl);
   if (!id) {
-    statusEl.style.display = '';
-    statusEl.innerHTML = '⚠ Could not parse Sheet ID from URL. Check Settings.';
-    table.style.display = 'none';
+    showStatus('⚠ Could not parse Sheet ID from URL. Check Settings.');
     return;
   }
 
   // Show spinner
-  statusEl.style.display = '';
-  statusEl.innerHTML = '<span class="gs-spinner"></span>Fetching from Google Sheet…';
-  table.style.display = 'none';
+  showStatus('<span class="gs-spinner"></span>Fetching from Google Sheet…');
 
   const encodedSheet = encodeURIComponent(sheetName);
   const encodedRange = encodeURIComponent(sheetRange);
@@ -2637,19 +2648,20 @@ async function fetchAndRenderGSheet() {
     const res  = await fetch(url);
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const text = await res.text();
-    // gviz wraps JSON in:  google.visualization.Query.setResponse({…});
     const json = JSON.parse(text.replace(/^[^(]+\(/, '').replace(/\);?\s*$/, ''));
     const dt   = json.table;
     if (!dt || !dt.rows || !dt.rows.length) {
-      statusEl.innerHTML = '⚠ No data returned for range ' + sheetRange + '.';
+      showStatus('⚠ No data returned for range ' + sheetRange + '.');
       return;
     }
     renderGSheetTable(dt, table);
-    statusEl.style.display = 'none';
-    table.style.display = '';
+    renderGSheetTable(dt, tableDrop);
+    [statusEl, statusElDrop].forEach(el => el.style.display = 'none');
+    [table, tableDrop].forEach(t => t.style.display = '');
   } catch(e) {
-    statusEl.innerHTML = '⚠ Could not fetch sheet: ' + e.message +
+    const msg = '⚠ Could not fetch sheet: ' + e.message +
       '. Make sure the sheet is set to <strong>Anyone with the link can view</strong>.';
+    [statusEl, statusElDrop].forEach(el => { el.style.display = ''; el.innerHTML = msg; });
   }
 }
 
@@ -2663,9 +2675,9 @@ function excelSerialToDate(serial) {
   return d.toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'2-digit', timeZone:'UTC' });
 }
 
-// ── Is a number likely an Excel date serial? (between 1900-01-01 and 2100-01-01) ──
+// ── Is a number likely an Excel date serial? ──
 function isExcelDateSerial(val, colType) {
-  return colType === 'date' || (typeof val === 'number' && val > 30000 && val < 80000);
+  return colType === 'date'; // only trust explicit gviz date type, never guess from value
 }
 
 function fmtGvizVal(val, colType) {
@@ -3544,7 +3556,7 @@ const SETTINGS_GH = {
 let appSettings = {
   sheetUrl:  '',
   sheetName: 'Rake and Road Despatch',
-  sheetRange: 'I3:O28',
+  sheetRange: 'I5:O28',
   scriptUrl: SHEET_WEBAPP_URL,
   // slots: [{label, time, col, autoFrom}]
   // time: "HH:MM" 24h, col: sheet column, autoFrom: "HH:MM" when this slot auto-activates
@@ -3966,7 +3978,9 @@ async function saveSettings() {
   }
 }
 
-loadSettingsFromGitHub();
+loadSettingsFromGitHub().then(() => {
+  if (ssViewOn) { applyTableVisibility(); fetchAndRenderGSheet(); }
+});
 loadDbFromGitHub();
 </script>
 
@@ -3996,7 +4010,7 @@ loadDbFromGitHub();
         </div>
         <div class="stt-section">
           <label class="stt-label">Sheet View Range</label>
-          <input id="cfg_sheetRange" class="stt-input" type="text" placeholder="I3:O28" style="font-family:var(--mono);letter-spacing:.04em;">
+          <input id="cfg_sheetRange" class="stt-input" type="text" placeholder="I5:O28" style="font-family:var(--mono);letter-spacing:.04em;">
           <div class="stt-hint" style="margin-top:4px;">Range shown in Sheet view (e.g. I5:O28). Fetched live from your Google Sheet.</div>
         </div>
         <div class="stt-section">
