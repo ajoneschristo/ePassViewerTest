@@ -1369,7 +1369,7 @@ body {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B11</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B12</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2667,9 +2667,9 @@ async function fetchAndRenderGSheet() {
     return;
   }
 
-  // Auto-expand the fetch range 3 rows above the user's range to capture date/title rows.
+  // Auto-expand the fetch range 1 row above the user's range to capture the date row.
   // The renderer uses the original start row to separate caption rows from data.
-  const fetchRange   = expandRangeUp(sheetRange, 3);
+  const fetchRange   = expandRangeUp(sheetRange, 1);
   const parsedRange  = parseRange(sheetRange);
   const dataStartRow = parsedRange ? parsedRange.startRow : null;
 
@@ -2764,11 +2764,15 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
   const headerCells = headerIdx >= 0 ? (userRows[headerIdx].c || []) : [];
   const dataRows    = headerIdx >= 0 ? userRows.slice(headerIdx + 1) : userRows;
-  const numCols     = headerCells.length || (dataRows[0] ? (dataRows[0].c || []).length : 0);
+  // Compute numCols from the maximum cell count across data rows (merged header cells can be shorter)
+  const numCols     = Math.max(
+    headerCells.length,
+    ...dataRows.map(r => (r.c || []).length)
+  );
 
-  // Known column headers — used as fallback when sheet cells are merged/null
-  // Order matches sheet columns I→O
-  const KNOWN_HEADERS = ['MINE', 'RDO Balance\n(in Lac)', 'Target', 'till 11.00 AM', 'till 1.30 PM', 'Remarks'];
+  // Known column headers — fallback when sheet cells are merged/null
+  // Maps to columns I, J, K, L, M, N, O (7 columns)
+  const KNOWN_HEADERS = ['MINE', 'RDO Balance (in Lac)', 'Target', 'till 11.00 AM', 'till 1.30 PM', 'till 5.30 PM', 'Remarks'];
 
   // ── Determine which columns are empty (ignoring Highest rows) ──
   const remarkColIdx = numCols - 1;
@@ -2836,7 +2840,8 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   const tbody = document.createElement('tbody');
   for (const row of dataRows) {
     const cells = row.c || [];
-    if (cells.every(c => !c || (c.v === null && !c.f))) continue;
+    // Skip rows where ALL cells are empty (truly blank rows)
+    if (cells.length === 0 || cells.every(c => !c || (c.v === null && c.v !== 0 && !c.f))) continue;
 
     const firstTxt  = fmtGvizCell(cells[0]);
     const firstEmpty = !firstTxt; // no mine name in col I
