@@ -1452,7 +1452,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B23</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B24</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3264,16 +3264,16 @@ async function shareReport() {
     const titleTr    = document.createElement('tr');
     const titleTd    = document.createElement('td');
     titleTd.setAttribute('colspan', colCount);
-    titleTd.style.cssText = `padding:11px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:center;`;
+    titleTd.style.cssText = `padding:14px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:center;`;
     titleTd.innerHTML =
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.dim};">Road Despatch dated&nbsp;&nbsp;</span>` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:15px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${displayDate}</span>`;
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.dim};">Road Despatch dated&nbsp;&nbsp;</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:20px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${displayDate}</span>`;
     titleTr.appendChild(titleTd);
     titleThead.appendChild(titleTr);
     tbl.insertBefore(titleThead, tbl.firstChild);
     tbl.querySelectorAll('th').forEach((th, i) => {
       sc(th, {
-        fontSize:'11px', textTransform:'uppercase', letterSpacing:'.06em',
+        fontSize:'13px', textTransform:'uppercase', letterSpacing:'.06em',
         color:C.mid, fontFamily:'IBM Plex Sans,sans-serif', fontWeight:'700',
         padding:'10px 14px', borderBottom:`2px solid ${C.line}`,
         borderRight:`1px solid ${C.line}`,
@@ -3285,7 +3285,7 @@ async function shareReport() {
       if (i === th.parentElement.children.length - 1) th.style.borderRight = 'none';
     });
     tbl.querySelectorAll('td').forEach(td => {
-      sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, borderRight:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', verticalAlign:'middle', fontFamily:'IBM Plex Mono,monospace', fontSize:'15px'});
+      sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, borderRight:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', verticalAlign:'middle', fontFamily:'IBM Plex Mono,monospace', fontSize:'17px'});
       if (td === td.parentElement.children[0]) {
         td.style.textAlign = 'left';
         td.style.fontFamily = 'IBM Plex Sans,sans-serif';
@@ -3294,7 +3294,7 @@ async function shareReport() {
       }
       if (td === td.parentElement.children[td.parentElement.children.length - 1]) td.style.borderRight = 'none';
     });
-    tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'16px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}));
+    tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'19px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`}));
     tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.amber; });
     tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'13px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px'}));
     tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '10px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; });
@@ -3313,11 +3313,11 @@ async function shareReport() {
     const areaTitleTr    = document.createElement('tr');
     const areaTitleTd    = document.createElement('td');
     areaTitleTd.setAttribute('colspan', areaColCount);
-    areaTitleTd.style.cssText = `padding:11px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:center;`;
+    areaTitleTd.style.cssText = `padding:14px 14px;background:${C.raise};border-bottom:2px solid ${C.line};text-align:center;`;
     areaTitleTd.innerHTML =
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.dim};">MCL Road Despatch&nbsp;&nbsp;</span>` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:15px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${shownTime}</span>` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:13px;font-weight:400;color:${C.mid};margin-left:10px;">${displayDate}</span>`;
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.dim};">MCL Road Despatch&nbsp;&nbsp;</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:20px;font-weight:700;color:${C.amber};letter-spacing:.5px;">${shownTime}</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:16px;font-weight:400;color:${C.mid};margin-left:12px;">${displayDate}</span>`;
     areaTitleTr.appendChild(areaTitleTd);
     areaTitleThead.appendChild(areaTitleTr);
     tbl.insertBefore(areaTitleThead, tbl.firstChild);
