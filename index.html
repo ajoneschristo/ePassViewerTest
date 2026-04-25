@@ -1322,14 +1322,23 @@ body {
   color: var(--mid);
   padding: 9px 12px;
   border-bottom: 2px solid var(--line);
-  white-space: nowrap;
+  white-space: normal;       /* allow wrapping */
+  word-break: break-word;
   text-align: right;
+  vertical-align: bottom;    /* pin to bottom when wrapped */
+  max-width: 80px;           /* keep numeric cols narrow */
+  line-height: 1.3;
   position: sticky;
   top: 0;
   background: var(--raise);
   z-index: 1;
 }
-.ss-gsheet-table th:first-child { text-align: left; min-width: 110px; }
+.ss-gsheet-table th:first-child {
+  text-align: left;
+  min-width: 90px;
+  max-width: 120px;
+  white-space: nowrap;       /* mine name col doesn't need to wrap */
+}
 
 /* Data cells */
 .ss-gsheet-table td {
@@ -1438,7 +1447,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B15</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B16</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2800,6 +2809,7 @@ let gsEmptyColIndices  = new Set();
 let gsLastDt           = null;
 let gsLastDataStartRow = null;
 let gsLastFetchRange   = null;
+let gsSheetDate        = null; // date string extracted from sheet caption
 
 function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   table.innerHTML = '';
@@ -2885,6 +2895,9 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     }
     cap.textContent = parts.join('  ·  ');
     table.appendChild(cap);
+    // Extract the date part from caption (looks like "25-Apr-26")
+    const datePart = parts.find(p => /\d{1,2}-[A-Za-z]+-\d{2,4}/.test(p));
+    if (datePart) gsSheetDate = datePart;
   }
 
   // ── Apply column visibility ──
@@ -3204,6 +3217,10 @@ async function shareReport() {
   const reportDate = document.getElementById('metaPeriod').textContent.trim();
   const dateLabel  = (!isMultiDay && reportDate !== shownDate) ? reportDate : '';
 
+  // When Sheet view ON, use the sheet's own date (not the XLS file date)
+  const displayDate = (ssViewOn && gsSheetDate) ? gsSheetDate : shownDate;
+  const snapTitle   = ssViewOn ? 'MCL Road Despatch · Sheet' : 'MCL Road Despatch as of';
+
   const snap = document.createElement('div');
   snap.style.cssText = `position:fixed;left:-9999px;top:0;width:520px;background:${C.bg};padding:20px;font-family:IBM Plex Sans,sans-serif;color:${C.text};`;
 
@@ -3212,9 +3229,9 @@ async function shareReport() {
   titleDiv.style.cssText = `margin-bottom:18px;padding-bottom:16px;border-bottom:2px solid ${C.edge};`;
   titleDiv.innerHTML = `
     ${dateLabel ? `<div style="font-family:IBM Plex Mono,monospace;font-size:14px;color:${C.dim};letter-spacing:.8px;text-transform:uppercase;margin-bottom:8px;">${dateLabel}</div>` : ''}
-    <div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:600;color:${C.dim};letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">MCL Road Despatch as of</div>
-    <div style="font-family:IBM Plex Mono,monospace;font-size:34px;font-weight:700;color:${C.amber};letter-spacing:1px;line-height:1.05;margin-bottom:4px;">${shownTime}</div>
-    <div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:400;color:${C.mid};letter-spacing:.5px;">${shownDate}</div>
+    <div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:600;color:${C.dim};letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">${snapTitle}</div>
+    <div style="font-family:IBM Plex Mono,monospace;font-size:34px;font-weight:700;color:${C.amber};letter-spacing:1px;line-height:1.05;margin-bottom:4px;">${ssViewOn ? displayDate : shownTime}</div>
+    ${ssViewOn ? '' : `<div style="font-family:IBM Plex Mono,monospace;font-size:24px;font-weight:400;color:${C.mid};letter-spacing:.5px;">${displayDate}</div>`}
   `;
   snap.appendChild(titleDiv);
 
