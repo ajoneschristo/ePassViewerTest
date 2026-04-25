@@ -1369,7 +1369,7 @@ body {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B12</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B13</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2780,12 +2780,13 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   for (let ci = 0; ci < numCols; ci++) {
     if (ci === 0 || ci === remarkColIdx) continue;
     const hasData = dataRows.some(row => {
-      const cells    = row.c || [];
-      const firstVal = fmtGvizCell(cells[0]);
+      const rowCells  = row.c || [];
+      const firstVal  = fmtGvizCell(rowCells[0]);
+      const secondVal = fmtGvizCell(rowCells[1]);
       // Skip Highest rows — they fill future-time columns that are otherwise empty
-      const isHighestRow = !firstVal && cells.slice(1).some(c => c && c.v !== null && typeof c.v === 'number');
+      const isHighestRow = !firstVal && /highest/i.test(secondVal);
       if (isHighestRow) return false;
-      const cell = cells[ci];
+      const cell = rowCells[ci];
       return cell && cell.v !== null && cell.v !== undefined && cell.v !== '';
     });
     if (!hasData) gsEmptyColIndices.add(ci);
@@ -2843,13 +2844,17 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     // Skip rows where ALL cells are empty (truly blank rows)
     if (cells.length === 0 || cells.every(c => !c || (c.v === null && c.v !== 0 && !c.f))) continue;
 
-    const firstTxt  = fmtGvizCell(cells[0]);
-    const firstEmpty = !firstTxt; // no mine name in col I
+    const firstTxt   = fmtGvizCell(cells[0]);
+    const secondTxt  = fmtGvizCell(cells[1]);
+    const firstEmpty = !firstTxt;
 
-    // "Highest" rows: first cell is empty, but numeric data exists in later cols
-    const isHighest = firstEmpty && cells.slice(1).some(c => c && c.v !== null && typeof c.v === 'number');
+    // Debug: log rows with empty first cell so we can trace Highest rows
+    if (firstEmpty && cells.length > 1) console.log('[GSheet] empty-first row:', JSON.stringify(cells.slice(0,3)));
 
-    // Bold total rows: IBCF / TCF / MCL detected by name
+    // "Highest" rows: col I is empty (merged above), col J contains "Highest"
+    const isHighest = firstEmpty && /highest/i.test(secondTxt);
+
+    // Bold total rows: IBCF / TCF / MCL in col I
     const isBold = !firstEmpty && /ibcf|tcf|mcl/i.test(firstTxt);
 
     const tr = document.createElement('tr');
@@ -2858,7 +2863,10 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
-      const txt = fmtGvizCell(cells[ci]);
+      let txt   = fmtGvizCell(cells[ci]);
+      // For Highest rows, show "Highest" label in first visible column (merging cols I+J visually)
+      if (isHighest && pos === 0) txt = secondTxt; // col J has "Highest"
+      if (isHighest && pos === 1) txt = '';         // suppress col J value (already shown in pos 0)
       td.textContent = txt;
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
@@ -3860,7 +3868,7 @@ async function loadSettingsFromGitHub() {
 function openSettings() {
   document.getElementById('cfg_sheetUrl').value   = appSettings.sheetUrl   || '';
   document.getElementById('cfg_sheetName').value  = appSettings.sheetName  || 'Rake and Road Despatch';
-  document.getElementById('cfg_sheetRange').value = appSettings.sheetRange || 'I5:O28';
+  document.getElementById('cfg_sheetRange').value = appSettings.sheetRange || 'I6:O28';
   document.getElementById('cfg_scriptUrl').value  = appSettings.scriptUrl  || SHEET_WEBAPP_URL;
   renderSlotsTable();
   renderMinesTable();
@@ -4016,7 +4024,7 @@ function collectSettingsFromDOM() {
   return {
     sheetUrl:   document.getElementById('cfg_sheetUrl').value.trim(),
     sheetName:  document.getElementById('cfg_sheetName').value.trim() || 'Rake and Road Despatch',
-    sheetRange: document.getElementById('cfg_sheetRange').value.trim() || 'I5:O28',
+    sheetRange: document.getElementById('cfg_sheetRange').value.trim() || 'I6:O28',
     scriptUrl:  document.getElementById('cfg_scriptUrl').value.trim(),
     slots,
     mines,
