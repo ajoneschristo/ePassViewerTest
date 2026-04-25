@@ -1371,8 +1371,8 @@ body {
 /* ── Remove zebra stripe — use clean row separators instead ── */
 
 /* Hover */
-.ss-gsheet-table tbody tr:hover td { background: var(--amber-lo); transition: background .08s; }
-body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); }
+.ss-gsheet-table tbody tr:hover td { background: var(--raise); transition: background .08s; }
+body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(255,255,255,.04); }
 
 /* Last row no border */
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
@@ -1387,7 +1387,7 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
   color: var(--text);
 }
 .ss-gsheet-table .gs-bold td:first-child {
-  color: var(--amber);
+  color: var(--text);
   font-family: var(--sans);
   font-size: clamp(12px, 1.6vw, 15px);
   letter-spacing: .01em;
@@ -1403,8 +1403,9 @@ body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(240,165,0,.07); 
   color: var(--text);
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
-  color: var(--amber);
+  color: var(--text);
   font-family: var(--sans);
+  font-weight: 800;
   letter-spacing: .01em;
 }
 
@@ -1437,8 +1438,8 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 .ss-gsheet-table th.gs-col-balance { color: var(--mid); }
 
 /* Target — amber: it's a goal */
-.ss-gsheet-table td.gs-col-target  { color: var(--amber); }
-.ss-gsheet-table th.gs-col-target  { color: var(--amber); opacity: .8; }
+.ss-gsheet-table td.gs-col-target  { color: #5a8fd4; }
+.ss-gsheet-table th.gs-col-target  { color: #5a8fd4; opacity: .9; }
 
 /* Despatch — no special colour, inherits default */
 
@@ -1448,7 +1449,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 
 /* Override: bold/MCL rows keep their own colours for mine name, but keep col tint for numbers */
 .ss-gsheet-table .gs-bold td.gs-col-balance { color: var(--mid); }
-.ss-gsheet-table .gs-bold td.gs-col-target  { color: var(--amber); }
+.ss-gsheet-table .gs-bold td.gs-col-target  { color: #5a8fd4; }
 
 /* Highest rows — override col colours to keep blue */
 .ss-gsheet-table .gs-highest td.gs-col-balance,
@@ -1496,7 +1497,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B34</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B35</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3357,7 +3358,7 @@ async function shareReport() {
       if (i === th.parentElement.children.length - 1) th.style.borderRight = 'none';
       // Column type colours in snapshot
       if (i === 1) th.style.color = C.mid;
-      if (i === 2) th.style.color = C.amber;
+      if (i === 2) th.style.color = '#5a8fd4';
     });
     tbl.querySelectorAll('td').forEach(td => {
       sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, borderRight:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', verticalAlign:'middle', fontFamily:'IBM Plex Mono,monospace', fontSize:'17px'});
@@ -3371,13 +3372,13 @@ async function shareReport() {
       if (td === td.parentElement.children[td.parentElement.children.length - 1]) td.style.borderRight = 'none';
       // Column type colours
       if (colIdx === 1) td.style.color = C.mid;
-      if (colIdx === 2) td.style.color = C.amber;
+      if (colIdx === 2) td.style.color = '#5a8fd4';
     });
     tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'19px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, fontVariantNumeric:'tabular-nums'}));
-    tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.amber; });
+    tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.text; });
     // MCL grand total — stronger
     tbl.querySelectorAll('tr.gs-mcl td').forEach(td => sc(td, {background:C.edge, fontWeight:'800', fontSize:'21px', borderTop:`3px solid ${C.line}`}));
-    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => { td.style.color = C.amber; });
+    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => { td.style.color = C.text; td.style.fontWeight = '800'; });
     tbl.querySelectorAll('tr.gs-mcl td.gs-mcl-qty').forEach(td => { td.style.color = C.green; });
     // Highest rows — indented
     tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'13px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px 5px 22px'}));
