@@ -1,0 +1,35 @@
+{
+  "name": "ePass Viewer",
+  "short_name": "ePass",
+  "description": "MCL Coalnet Road Despatch Viewer",
+  "start_url": "/ePassViewer/",
+  "scope": "/ePassViewer/",
+  "display": "standalone",
+  "background_color": "#0e1117",
+  "theme_color": "#0e1117",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%23161b24'/%3E%3Cpolygon points='96,20 172,62 172,130 96,172 20,130 20,62' fill='%23f0a500'/%3E%3Ctext x='96' y='112' font-family='monospace' font-weight='bold' font-size='52' text-anchor='middle' fill='%23000'%3EMCL%3C/text%3E%3C/svg%3E",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "share_target": {
+    "action": "/ePassViewer/",
+    "method": "POST",
+    "enctype": "multipart/form-data",
+    "params": {
+      "files": [
+        {
+          "name": "file",
+          "accept": [
+            "application/vnd.ms-excel",
+            "application/octet-stream",
+            ".xls"
+          ]
+        }
+      ]
+    }
+  }
+}
