@@ -1362,17 +1362,15 @@ body.dark .ss-gsheet-table td { color: #dde6f4; border-color: #444; }
   font-size: clamp(11px, 1.5vw, 13px);
 }
 
-/* ── IB CF mine rows — alternating pink/lavender ── */
-.ss-gsheet-table tr.gs-ib-odd  td { background: #ffe6f0; }
-.ss-gsheet-table tr.gs-ib-even td { background: #edd9f7; }
-body.dark .ss-gsheet-table tr.gs-ib-odd  td { background: #3a1a28; }
-body.dark .ss-gsheet-table tr.gs-ib-even td { background: #2e1a3a; }
-
-/* ── TC CF mine rows — alternating peach/cream ── */
-.ss-gsheet-table tr.gs-tc-odd  td { background: #fff0e0; }
-.ss-gsheet-table tr.gs-tc-even td { background: #fde8d0; }
-body.dark .ss-gsheet-table tr.gs-tc-odd  td { background: #3a2510; }
-body.dark .ss-gsheet-table tr.gs-tc-even td { background: #2e1e0e; }
+/* ── IB/TC mine rows — color only injected inline per-cell ── */
+.ss-gsheet-table tr.gs-ib-odd td,
+.ss-gsheet-table tr.gs-ib-even td,
+.ss-gsheet-table tr.gs-tc-odd td,
+.ss-gsheet-table tr.gs-tc-even td { background: #ffffff; }
+body.dark .ss-gsheet-table tr.gs-ib-odd td,
+body.dark .ss-gsheet-table tr.gs-ib-even td,
+body.dark .ss-gsheet-table tr.gs-tc-odd td,
+body.dark .ss-gsheet-table tr.gs-tc-even td { background: #161b24; }
 
 /* ── CF/MCL total rows — light green ── */
 .ss-gsheet-table tr.gs-bold td {
@@ -3002,6 +3000,23 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       if (isHighest && pos === 1) txt = '';
       td.textContent = txt;
       if (!txt && !isHighest) td.style.color = '#bbb';
+
+      // Per-cell color logic for mine rows (color only col 0 and last col)
+      const isLastCol = pos === visibleCols.length - 1;
+      if (tr.className === 'gs-ib-odd') {
+        if (pos === 0 || isLastCol) td.style.background = '#ffccdd';
+        else td.style.background = '#ffffff';
+      } else if (tr.className === 'gs-ib-even') {
+        if (pos === 0 || isLastCol) td.style.background = '#e8ccf0';
+        else td.style.background = '#ffffff';
+      } else if (tr.className === 'gs-tc-odd') {
+        if (pos === 0 || isLastCol) td.style.background = '#ffe0b3';
+        else td.style.background = '#ffffff';
+      } else if (tr.className === 'gs-tc-even') {
+        if (pos === 0 || isLastCol) td.style.background = '#fff3e0';
+        else td.style.background = '#ffffff';
+      }
+
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -3299,12 +3314,14 @@ async function shareReport() {
       Object.assign(td.style, {padding:'6px 10px',border:'1px solid #aaa',textAlign:'center',verticalAlign:'middle',fontFamily:'IBM Plex Sans,sans-serif',fontSize:'14px',color:'#111'});
       if (td.parentElement && td.parentElement.classList.contains('gs-title-row')) return; // skip title
     });
-    // IB mine rows
-    tbl.querySelectorAll('tr.gs-ib-odd td').forEach(td => { td.style.background = '#ffe6f0'; });
-    tbl.querySelectorAll('tr.gs-ib-even td').forEach(td => { td.style.background = '#edd9f7'; });
-    // TC mine rows
-    tbl.querySelectorAll('tr.gs-tc-odd td').forEach(td => { td.style.background = '#fff0e0'; });
-    tbl.querySelectorAll('tr.gs-tc-even td').forEach(td => { td.style.background = '#fde8d0'; });
+    // IB/TC mine rows — color only first and last cell
+    ['gs-ib-odd','gs-ib-even','gs-tc-odd','gs-tc-even'].forEach(cls => {
+      tbl.querySelectorAll(`tr.${cls} td`).forEach((td, pos, arr) => {
+        const isFirst = pos === 0, isLast = pos === arr.length - 1;
+        const color = cls === 'gs-ib-odd' ? '#ffccdd' : cls === 'gs-ib-even' ? '#e8ccf0' : cls === 'gs-tc-odd' ? '#ffe0b3' : '#fff3e0';
+        td.style.background = (isFirst || isLast) ? color : '#ffffff';
+      });
+    });
     // CF/MCL bold total rows (green)
     tbl.querySelectorAll('tr.gs-bold td').forEach(td => Object.assign(td.style, {background:'#d6eecc',fontWeight:'700',fontSize:'15px',border:'1.5px solid #888',color:'#000'}));
     tbl.querySelectorAll('tr.gs-mcl td').forEach(td => { td.style.borderTop = '2px solid #666'; });
