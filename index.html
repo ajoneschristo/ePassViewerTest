@@ -1473,7 +1473,7 @@ body.dark .ss-gsheet-table tr.gs-highest td  { background: #CCE5FF !important; }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v5-B1</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v5-B2</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2960,13 +2960,6 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       const txt  = fmtGvizCell(cell) || col.label || KNOWN_HEADERS[ci] || col.id || '';
       th.textContent = txt;
       if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
-      // Insert % header just before Remarks
-      if (ci === remarkColIdx) {
-        const thPct = document.createElement('th');
-        thPct.textContent = 'Achievement';
-        thPct.style.cssText = 'text-align:center;min-width:80px;';
-        htr.appendChild(thPct);
-      }
       htr.appendChild(th);
     });
     thead.appendChild(htr);
@@ -3006,15 +2999,8 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     else if (isBold) tr.className = ('gs-bold gs-cf-total ' + secCls).trim();
     else             tr.className = secCls;
 
-    // Last non-Remarks numeric col for MCL qty highlight
+    // Last non-Remarks numeric col (kept for future use)
     const lastNumPos = visibleCols.length - 2;
-
-    // Pre-calc achievement for this row
-    const targetVal  = cells[2] ? (parseFloat(String(cells[2].v)) || 0) : 0;
-    const lastDispCI = visibleCols.slice().reverse().find(ci => ci !== remarkColIdx && ci > 2);
-    const despVal    = (lastDispCI != null && cells[lastDispCI]) ? (parseFloat(String(cells[lastDispCI].v)) || 0) : 0;
-    const pct        = targetVal > 0 ? Math.min(despVal / targetVal, 1) : 0;
-    const pctDisplay = (!isHighest && targetVal > 0) ? Math.round(pct * 100) : null;
 
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
@@ -3024,24 +3010,6 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       td.textContent = txt;
       if (pos > 0) td.style.textAlign = 'right';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
-
-      // Insert achievement bar just before Remarks
-      if (ci === remarkColIdx) {
-        const tdBar = document.createElement('td');
-        tdBar.style.cssText = 'padding:5px 10px;vertical-align:middle;min-width:80px;border-right:1px solid var(--edge);';
-        if (pctDisplay !== null) {
-          const hue = Math.round(pct * 120); // 0=red, 60=yellow, 120=green
-          const barColor = `hsl(${hue},70%,40%)`;
-          const gradStart = `hsl(0,75%,42%)`;
-          tdBar.innerHTML =
-            `<div style="height:7px;border-radius:4px;background:var(--edge);overflow:hidden;">` +
-              `<div style="height:100%;width:${Math.round(pct*100)}%;background:linear-gradient(to right,${gradStart},${barColor});border-radius:4px;"></div>` +
-            `</div>` +
-            `<div style="text-align:center;font-size:9px;color:var(--dim);margin-top:2px;font-family:var(--mono);letter-spacing:.02em;">${pctDisplay}%</div>`;
-        }
-        tr.appendChild(tdBar);
-      }
-
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
