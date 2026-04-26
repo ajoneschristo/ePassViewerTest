@@ -1287,53 +1287,66 @@ body {
 
 /* ════════════════════════════════════════════════════════
    GSheet — Road Despatch table
-   Design intent:
-     · Two coalfields get distinct warm/cool identities
-     · Mine name cell carries the field accent; data cells stay clean
-     · Field totals (IBCF/TCF) are prominent section closers
-     · MCL total is the dominant headline row
-     · Highest row is a quiet reference, not competing colour
+   Material Design 3 · Pastel palette
+   ─────────────────────────────────────────────────────
+   MD3 tones used (all light, accessible):
+     IB CF    → Blue 50 / Blue 100 / Blue 200  (#E3F2FD / #BBDEFB / #90CAF9)
+     TC CF    → Amber 50 / Amber 100           (#FFF8E1 / #FFECB3)
+     IBCF tot → Blue 200 surface, Blue 800 text
+     TCF tot  → Amber 200 surface, Amber 900 text
+     MCL tot  → Deep Purple 50, Deep Purple 800 text
+     Highest  → Purple 50, italic dim
    ════════════════════════════════════════════════════════ */
+
+/* MD3 elevation tokens for table */
 .ss-gsheet-table {
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   width: 100%;
-  border: 1px solid var(--line);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #CAC4D0;   /* MD3 Outline */
+  box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.06);
   font-family: var(--sans);
   font-size: clamp(11px, 1.4vw, 13px);
+}
+body.dark .ss-gsheet-table {
+  border-color: #49454F;
+  box-shadow: 0 1px 3px rgba(0,0,0,.3);
 }
 
 .ss-gsheet-table caption { display: none; }
 
-/* ── Title row ── */
+/* ── Title row  ·  MD3 Surface Variant ── */
 .ss-gsheet-table thead tr.gs-title-row td {
-  background: #1e2d40;
-  color: #f0f6ff;
+  background: #E7E0EC;          /* MD3 Surface Variant */
+  color: #1C1B1F;               /* MD3 On Surface */
   font-family: var(--sans);
   font-size: clamp(12px, 1.6vw, 14px);
-  font-weight: 700;
-  letter-spacing: .04em;
+  font-weight: 600;
+  letter-spacing: .03em;
   text-align: center;
-  padding: 9px 14px;
-  border: 1px solid #0e1a28;
+  padding: 10px 16px;
+  border-bottom: 1px solid #CAC4D0;
 }
 body.dark .ss-gsheet-table thead tr.gs-title-row td {
-  background: #0e1a28;
-  color: #c8daf0;
-  border-color: #050d18;
+  background: #36343B;          /* MD3 Surface Variant dark */
+  color: #E6E1E5;
+  border-color: #49454F;
 }
 
-/* ── Column header row ── */
+/* ── Column header row  ·  MD3 Secondary Container ── */
 .ss-gsheet-table thead tr.gs-header-row th {
-  background: var(--raise);
-  color: var(--mid);
+  background: #E8DEF8;          /* MD3 Secondary Container */
+  color: #21005E;               /* MD3 On Secondary Container */
   font-family: var(--sans);
   font-size: clamp(9px, 1.1vw, 11px);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: .06em;
-  padding: 8px 10px;
-  border: 1px solid var(--line);
-  border-bottom: 2px solid var(--amber);
+  letter-spacing: .07em;
+  padding: 9px 10px;
+  border-bottom: 2px solid #B0A7C0;
+  border-right: 1px solid #CAC4D0;
   white-space: normal;
   word-break: break-word;
   text-align: center;
@@ -1343,152 +1356,143 @@ body.dark .ss-gsheet-table thead tr.gs-title-row td {
   top: 0;
   z-index: 1;
 }
+.ss-gsheet-table thead tr.gs-header-row th:last-child { border-right: none; }
+body.dark .ss-gsheet-table thead tr.gs-header-row th {
+  background: #4A4458;
+  color: #CCC2DC;
+  border-color: #49454F;
+}
 
 /* ── Default data cell ── */
 .ss-gsheet-table td {
-  padding: 6px 10px;
-  border: 1px solid var(--edge);
+  padding: 7px 12px;
+  border-bottom: 1px solid #E7E0EC;
+  border-right: 1px solid #E7E0EC;
   white-space: nowrap;
   text-align: right;
   vertical-align: middle;
   font-family: var(--mono);
   font-size: clamp(11px, 1.4vw, 13px);
   font-variant-numeric: tabular-nums;
-  color: var(--text);
-  background: var(--surface);
+  color: #1C1B1F;
+  background: #FFFBFE;          /* MD3 Surface */
 }
-/* Mine name col: left-aligned, sans, bold */
+.ss-gsheet-table td:last-child { border-right: none; }
+body.dark .ss-gsheet-table td {
+  color: #E6E1E5;
+  background: #1C1B1F;
+  border-color: #49454F;
+}
+
+/* Mine name col */
 .ss-gsheet-table tbody td:first-child {
   font-family: var(--sans);
   font-weight: 600;
-  font-size: clamp(11px, 1.4vw, 13px);
   text-align: left;
-  color: var(--text);
-  background: var(--surface);
-  border-right: 1px solid var(--line);
-  padding-left: 12px;
+  padding-left: 14px;
+  border-right: 1px solid #CAC4D0;
 }
 
-/* ── IB Coalfield mine rows
-       Mine name cell: cool blue-slate tint with left accent bar
-       Data cells: clean surface ── */
-.ss-gsheet-table tr.gs-ib-odd  td:first-child,
-.ss-gsheet-table tr.gs-ib-even td:first-child {
-  background: #e8f0fa;
-  box-shadow: inset 3px 0 0 #4a7cc7;
-  color: #1a3260;
-  padding-left: 10px;
-}
-body.dark .ss-gsheet-table tr.gs-ib-odd  td:first-child,
-body.dark .ss-gsheet-table tr.gs-ib-even td:first-child {
-  background: #1a2a3e;
-  box-shadow: inset 3px 0 0 #4a7cc7;
-  color: #9bbde8;
-}
-/* Subtle alternating tint on data cells */
-.ss-gsheet-table tr.gs-ib-even td { background: #f5f8fd; }
-body.dark .ss-gsheet-table tr.gs-ib-even td { background: #161e2c; }
+/* ── IB Coalfield  ·  MD3 Blue tone ──────────────────
+   Odd rows: Blue 50 mine cell · white data
+   Even rows: Blue 50 mine cell · Blue 50 data (hairline tint) ── */
+.ss-gsheet-table tr.gs-ib-odd td,
+.ss-gsheet-table tr.gs-ib-even td { background: #FFFBFE; }
 
-/* ── Talcher Coalfield mine rows
-       Mine name cell: warm amber tint with left accent bar ── */
-.ss-gsheet-table tr.gs-tc-odd  td:first-child,
-.ss-gsheet-table tr.gs-tc-even td:first-child {
-  background: #fef5e4;
-  box-shadow: inset 3px 0 0 #c47e14;
-  color: #5c3800;
-  padding-left: 10px;
-}
-body.dark .ss-gsheet-table tr.gs-tc-odd  td:first-child,
-body.dark .ss-gsheet-table tr.gs-tc-even td:first-child {
-  background: #2a1e08;
-  box-shadow: inset 3px 0 0 #c47e14;
-  color: #e0b86a;
-}
-/* Subtle alternating tint on data cells */
-.ss-gsheet-table tr.gs-tc-even td { background: #fffcf5; }
-body.dark .ss-gsheet-table tr.gs-tc-even td { background: #1c1708; }
+.ss-gsheet-table tr.gs-ib-odd  td:first-child { background: #E3F2FD; color: #0D47A1; }
+.ss-gsheet-table tr.gs-ib-even td:first-child { background: #BBDEFB; color: #0D47A1; }
+body.dark .ss-gsheet-table tr.gs-ib-odd  td:first-child { background: #1A2E50; color: #90CAF9; }
+body.dark .ss-gsheet-table tr.gs-ib-even td:first-child { background: #0D2040; color: #90CAF9; }
+body.dark .ss-gsheet-table tr.gs-ib-odd  td,
+body.dark .ss-gsheet-table tr.gs-ib-even td { background: #1C1B1F; }
 
-/* ── IBCF / TCF field total rows — solid field-colour header ── */
-.ss-gsheet-table tr.gs-bold td {
+/* ── Talcher Coalfield  ·  MD3 Amber tone ────────────
+   Odd rows: Amber 50 mine cell · white data
+   Even rows: Amber 100 mine cell · white data ── */
+.ss-gsheet-table tr.gs-tc-odd td,
+.ss-gsheet-table tr.gs-tc-even td { background: #FFFBFE; }
+
+.ss-gsheet-table tr.gs-tc-odd  td:first-child { background: #FFF8E1; color: #E65100; }
+.ss-gsheet-table tr.gs-tc-even td:first-child { background: #FFECB3; color: #E65100; }
+body.dark .ss-gsheet-table tr.gs-tc-odd  td:first-child { background: #2C1B00; color: #FFD54F; }
+body.dark .ss-gsheet-table tr.gs-tc-even td:first-child { background: #1E1200; color: #FFD54F; }
+body.dark .ss-gsheet-table tr.gs-tc-odd  td,
+body.dark .ss-gsheet-table tr.gs-tc-even td { background: #1C1B1F; }
+
+/* ── IBCF field total  ·  Blue 200 surface, MD3 elevation ── */
+.ss-gsheet-table tr.gs-ibcf-total td {
+  background: #90CAF9;          /* Blue 200 */
+  color: #0D47A1;               /* Blue 900 */
   font-weight: 700;
   font-size: clamp(11px, 1.4vw, 13px);
-  border-top: 2px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  color: var(--text);
-  background: var(--raise);
-}
-/* IBCF — steel blue accent */
-.ss-gsheet-table tr.gs-ibcf-total td {
-  background: #2a4a7a;
-  color: #e8f0ff;
-  border-color: #1a3060;
+  border-top: 2px solid #64B5F6;
+  border-bottom: 2px solid #64B5F6;
+  border-right: 1px solid #90CAF9;
 }
 .ss-gsheet-table tr.gs-ibcf-total td:first-child {
-  background: #1e3860;
-  box-shadow: none;
-  color: #c8daf8;
-  text-transform: uppercase;
-  letter-spacing: .05em;
+  background: #BBDEFB;          /* Blue 100 — slightly lighter for name cell */
+  letter-spacing: .04em;
+  border-right: 1px solid #64B5F6;
 }
-body.dark .ss-gsheet-table tr.gs-ibcf-total td { background: #1a2e50; color: #c0d4f4; border-color: #0e1e38; }
-body.dark .ss-gsheet-table tr.gs-ibcf-total td:first-child { background: #112040; }
+body.dark .ss-gsheet-table tr.gs-ibcf-total td { background: #1A3A6A; color: #90CAF9; border-color: #1E4080; }
+body.dark .ss-gsheet-table tr.gs-ibcf-total td:first-child { background: #122850; }
 
-/* TCF — warm amber accent */
+/* ── TCF field total  ·  Amber 200 surface ── */
 .ss-gsheet-table tr.gs-tcf-total td {
-  background: #7a4a10;
-  color: #fff4e0;
-  border-color: #5a3408;
+  background: #FFD54F;          /* Amber 300 */
+  color: #E65100;               /* Deep Orange 900 */
+  font-weight: 700;
+  font-size: clamp(11px, 1.4vw, 13px);
+  border-top: 2px solid #FFCA28;
+  border-bottom: 2px solid #FFCA28;
+  border-right: 1px solid #FFD54F;
 }
 .ss-gsheet-table tr.gs-tcf-total td:first-child {
-  background: #5a3408;
-  box-shadow: none;
-  color: #f5d8a0;
-  text-transform: uppercase;
-  letter-spacing: .05em;
+  background: #FFECB3;          /* Amber 100 */
+  letter-spacing: .04em;
+  border-right: 1px solid #FFCA28;
 }
-body.dark .ss-gsheet-table tr.gs-tcf-total td { background: #4a2e08; color: #f0d090; border-color: #3a2004; }
-body.dark .ss-gsheet-table tr.gs-tcf-total td:first-child { background: #3a2004; }
+body.dark .ss-gsheet-table tr.gs-tcf-total td { background: #4A3000; color: #FFD54F; border-color: #5A3A00; }
+body.dark .ss-gsheet-table tr.gs-tcf-total td:first-child { background: #3A2000; }
 
-/* ── MCL grand total — dominant charcoal ── */
+/* ── MCL grand total  ·  MD3 Primary Container (deep purple pastel) ── */
 .ss-gsheet-table tr.gs-mcl td {
-  background: #1e2d40;
-  color: #f0f8ff;
-  font-weight: 800;
+  background: #D0BCFF;          /* MD3 Primary Container */
+  color: #21005E;               /* MD3 On Primary Container */
+  font-weight: 700;
   font-size: clamp(12px, 1.5vw, 14px);
-  border-top: 2px solid #0e1a28;
-  border-color: #0e1a28;
+  border-top: 2px solid #B39DDB;
+  border-bottom: none;
   letter-spacing: .01em;
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
-  background: #0e1a28;
-  color: #c8daf0;
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  box-shadow: none;
+  background: #B39DDB;          /* slightly deeper — name anchor */
+  letter-spacing: .05em;
+  border-right: 1px solid #9C7CC0;
 }
-body.dark .ss-gsheet-table tr.gs-mcl td { background: #0a1420; color: #c0d8f4; border-color: #050d18; }
-body.dark .ss-gsheet-table tr.gs-mcl td:first-child { background: #050d18; }
+.ss-gsheet-table tr.gs-mcl td:last-child { border-right: none; }
+body.dark .ss-gsheet-table tr.gs-mcl td { background: #4A3880; color: #E9DDFF; border-color: #381E72; }
+body.dark .ss-gsheet-table tr.gs-mcl td:first-child { background: #381E72; }
 
-/* ── Highest rows — dim reference, italic ── */
+/* ── Highest rows  ·  Purple 50, italic, quiet ── */
 .ss-gsheet-table tr.gs-highest td {
-  background: var(--raise);
-  color: var(--dim);
+  background: #F3E5F5;          /* Purple 50 */
+  color: #6A1B9A;               /* Purple 800 */
   font-style: italic;
   font-size: clamp(10px, 1.3vw, 12px);
   border-top: none;
-  border-bottom: 2px solid var(--edge);
+  border-bottom: 2px solid #CE93D8;
 }
 .ss-gsheet-table tr.gs-highest td:first-child {
-  background: var(--raise);
-  color: var(--dim);
-  font-style: italic;
+  background: #F3E5F5;
   font-weight: 500;
-  box-shadow: none;
   padding-left: 22px;
   font-size: clamp(10px, 1.2vw, 11px);
   letter-spacing: .04em;
   text-transform: uppercase;
 }
+body.dark .ss-gsheet-table tr.gs-highest td { background: #2A1040; color: #CE93D8; border-color: #4A2070; }
+body.dark .ss-gsheet-table tr.gs-highest td:first-child { background: #2A1040; }
 
 /* loading spinner */
 .gs-spinner {
@@ -3370,46 +3374,32 @@ async function shareReport() {
   if (ssViewOn) {
     // ── GSheet live table — purposeful field-identity design ──
     const tbl = document.getElementById('ssTable').cloneNode(true);
-    tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Sans,sans-serif;font-size:13px;border:1px solid #2e3d56;table-layout:auto;`;
-    // Title row
-    tbl.querySelectorAll('tr.gs-title-row td').forEach(td => {
-      Object.assign(td.style, {background:'#1e2d40',color:'#f0f6ff',fontWeight:'700',fontSize:'15px',padding:'9px 14px',border:'1px solid #0e1a28',textAlign:'center',letterSpacing:'.04em',fontFamily:'IBM Plex Sans,sans-serif'});
-    });
-    // Header row
-    tbl.querySelectorAll('tr.gs-header-row th').forEach(th => {
-      Object.assign(th.style, {background:'#f7f8fa',color:'#4a6080',fontWeight:'700',fontSize:'11px',textTransform:'uppercase',letterSpacing:'.06em',padding:'8px 10px',border:'1px solid #c8d2e0',borderBottom:'2px solid #d4860a',textAlign:'center',verticalAlign:'middle',position:'static',fontFamily:'IBM Plex Sans,sans-serif'});
-    });
-    // All td defaults
+    tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Sans,sans-serif;font-size:13px;border:1px solid #CAC4D0;border-radius:12px;overflow:hidden;table-layout:auto;`;
+    tbl.querySelectorAll('tr.gs-title-row td').forEach(td => Object.assign(td.style, {background:'#E7E0EC',color:'#1C1B1F',fontWeight:'600',fontSize:'14px',padding:'10px 16px',borderBottom:'1px solid #CAC4D0',textAlign:'center',letterSpacing:'.03em',fontFamily:'IBM Plex Sans,sans-serif'}));
+    tbl.querySelectorAll('tr.gs-header-row th').forEach(th => Object.assign(th.style, {background:'#E8DEF8',color:'#21005E',fontWeight:'700',fontSize:'11px',textTransform:'uppercase',letterSpacing:'.07em',padding:'9px 10px',borderBottom:'2px solid #B0A7C0',borderRight:'1px solid #CAC4D0',textAlign:'center',verticalAlign:'middle',position:'static',fontFamily:'IBM Plex Sans,sans-serif'}));
     tbl.querySelectorAll('td').forEach(td => {
       if (td.parentElement && td.parentElement.classList.contains('gs-title-row')) return;
-      Object.assign(td.style, {padding:'6px 10px',border:'1px solid #dde3ec',textAlign:'right',verticalAlign:'middle',fontFamily:'IBM Plex Mono,monospace',fontSize:'13px',color:'#1a2436',background:'#ffffff',fontVariantNumeric:'tabular-nums'});
+      Object.assign(td.style, {padding:'7px 12px',borderBottom:'1px solid #E7E0EC',borderRight:'1px solid #E7E0EC',textAlign:'right',verticalAlign:'middle',fontFamily:'IBM Plex Mono,monospace',fontSize:'13px',color:'#1C1B1F',background:'#FFFBFE',fontVariantNumeric:'tabular-nums'});
     });
-    // Mine name cells
-    tbl.querySelectorAll('tbody td:first-child').forEach(td => {
-      Object.assign(td.style, {fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'600',textAlign:'left',paddingLeft:'12px',borderRight:'1px solid #c8d2e0',background:'#ffffff',color:'#1a2436'});
-    });
-    // IB mine rows — cool blue accent on mine cell
-    tbl.querySelectorAll('tr.gs-ib-odd td:first-child, tr.gs-ib-even td:first-child').forEach(td => {
-      Object.assign(td.style, {background:'#e8f0fa',color:'#1a3260',boxShadow:'inset 3px 0 0 #4a7cc7',paddingLeft:'10px'});
-    });
-    tbl.querySelectorAll('tr.gs-ib-even td').forEach(td => { if (!td.matches(':first-child')) td.style.background = '#f5f8fd'; });
-    // TC mine rows — amber accent on mine cell
-    tbl.querySelectorAll('tr.gs-tc-odd td:first-child, tr.gs-tc-even td:first-child').forEach(td => {
-      Object.assign(td.style, {background:'#fef5e4',color:'#5c3800',boxShadow:'inset 3px 0 0 #c47e14',paddingLeft:'10px'});
-    });
-    tbl.querySelectorAll('tr.gs-tc-even td').forEach(td => { if (!td.matches(':first-child')) td.style.background = '#fffcf5'; });
-    // IBCF total — steel blue
-    tbl.querySelectorAll('tr.gs-ibcf-total td').forEach(td => Object.assign(td.style, {background:'#2a4a7a',color:'#e8f0ff',fontWeight:'700',border:'1px solid #1a3060',fontSize:'14px',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('tr.gs-ibcf-total td:first-child').forEach(td => Object.assign(td.style, {background:'#1e3860',color:'#c8daf8',textTransform:'uppercase',letterSpacing:'.05em',boxShadow:'none'}));
-    // TCF total — amber-brown
-    tbl.querySelectorAll('tr.gs-tcf-total td').forEach(td => Object.assign(td.style, {background:'#7a4a10',color:'#fff4e0',fontWeight:'700',border:'1px solid #5a3408',fontSize:'14px',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('tr.gs-tcf-total td:first-child').forEach(td => Object.assign(td.style, {background:'#5a3408',color:'#f5d8a0',textTransform:'uppercase',letterSpacing:'.05em',boxShadow:'none'}));
-    // MCL total — charcoal
-    tbl.querySelectorAll('tr.gs-mcl td').forEach(td => Object.assign(td.style, {background:'#1e2d40',color:'#f0f8ff',fontWeight:'800',border:'1px solid #0e1a28',fontSize:'15px',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => Object.assign(td.style, {background:'#0e1a28',color:'#c8daf0',textTransform:'uppercase',letterSpacing:'.06em',boxShadow:'none'}));
-    // Highest rows — dim italic reference
-    tbl.querySelectorAll('tr.gs-highest td').forEach(td => Object.assign(td.style, {background:'#f7f8fa',color:'#7a8fa8',fontStyle:'italic',fontSize:'12px',borderTop:'none',fontFamily:'IBM Plex Mono,monospace'}));
-    tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => Object.assign(td.style, {paddingLeft:'22px',fontWeight:'500',textTransform:'uppercase',fontSize:'11px',letterSpacing:'.04em',boxShadow:'none',fontFamily:'IBM Plex Sans,sans-serif',fontStyle:'italic'}));
+    tbl.querySelectorAll('tbody td:first-child').forEach(td => Object.assign(td.style, {fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'600',textAlign:'left',paddingLeft:'14px',borderRight:'1px solid #CAC4D0'}));
+    // IB mines
+    tbl.querySelectorAll('tr.gs-ib-odd  td:first-child').forEach(td => Object.assign(td.style, {background:'#E3F2FD',color:'#0D47A1'}));
+    tbl.querySelectorAll('tr.gs-ib-even td:first-child').forEach(td => Object.assign(td.style, {background:'#BBDEFB',color:'#0D47A1'}));
+    // TC mines
+    tbl.querySelectorAll('tr.gs-tc-odd  td:first-child').forEach(td => Object.assign(td.style, {background:'#FFF8E1',color:'#E65100'}));
+    tbl.querySelectorAll('tr.gs-tc-even td:first-child').forEach(td => Object.assign(td.style, {background:'#FFECB3',color:'#E65100'}));
+    // IBCF total
+    tbl.querySelectorAll('tr.gs-ibcf-total td').forEach(td => Object.assign(td.style, {background:'#90CAF9',color:'#0D47A1',fontWeight:'700',fontSize:'14px',borderTop:'2px solid #64B5F6',borderBottom:'2px solid #64B5F6',fontFamily:'IBM Plex Sans,sans-serif'}));
+    tbl.querySelectorAll('tr.gs-ibcf-total td:first-child').forEach(td => Object.assign(td.style, {background:'#BBDEFB',letterSpacing:'.04em'}));
+    // TCF total
+    tbl.querySelectorAll('tr.gs-tcf-total td').forEach(td => Object.assign(td.style, {background:'#FFD54F',color:'#E65100',fontWeight:'700',fontSize:'14px',borderTop:'2px solid #FFCA28',borderBottom:'2px solid #FFCA28',fontFamily:'IBM Plex Sans,sans-serif'}));
+    tbl.querySelectorAll('tr.gs-tcf-total td:first-child').forEach(td => Object.assign(td.style, {background:'#FFECB3',letterSpacing:'.04em'}));
+    // MCL total
+    tbl.querySelectorAll('tr.gs-mcl td').forEach(td => Object.assign(td.style, {background:'#D0BCFF',color:'#21005E',fontWeight:'700',fontSize:'15px',borderTop:'2px solid #B39DDB',fontFamily:'IBM Plex Sans,sans-serif'}));
+    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => Object.assign(td.style, {background:'#B39DDB',letterSpacing:'.05em',borderRight:'1px solid #9C7CC0'}));
+    // Highest rows
+    tbl.querySelectorAll('tr.gs-highest td').forEach(td => Object.assign(td.style, {background:'#F3E5F5',color:'#6A1B9A',fontStyle:'italic',fontSize:'12px',borderTop:'none',borderBottom:'2px solid #CE93D8',fontFamily:'IBM Plex Mono,monospace'}));
+    tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => Object.assign(td.style, {paddingLeft:'22px',fontWeight:'500',textTransform:'uppercase',fontSize:'11px',letterSpacing:'.04em',fontFamily:'IBM Plex Sans,sans-serif'}));
     snap.appendChild(tbl);
 
   } else {
