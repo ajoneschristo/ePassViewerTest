@@ -1285,155 +1285,127 @@ body {
 .ss-table tr:last-child td { border-bottom: none; }
 .ss-table.hide-trips .ss-col-trips { display: none; }
 
-/* ── GSheet live-fetch table ────────────────────────── */
+/* ── GSheet live-fetch table — Excel screenshot style ── */
 .ss-gsheet-table {
-  font-size: 12.5px;
+  font-size: 13px;
   border-collapse: collapse;
   width: 100%;
-  border: 1px solid var(--edge);
-  border-radius: 8px;
+  border: 3px solid #00e5e5;
   overflow: hidden;
 }
+body.dark .ss-gsheet-table { border-color: #00b8b8; }
 
-/* Caption — title · date */
-.ss-gsheet-table caption {
-  caption-side: top;
-  text-align: left;
-  padding: 8px 12px 5px;
-  font-size: 10.5px;
-  font-family: var(--mono);
-  letter-spacing: .06em;
-  color: var(--dim);
-  text-transform: uppercase;
-  background: var(--surface);
-  border-bottom: 1px solid var(--edge);
-}
+/* Caption — hidden; date shown in title row instead */
+.ss-gsheet-table caption { display: none; }
 
-/* Header row */
-.ss-gsheet-table thead tr {
-  background: var(--raise);
-}
-.ss-gsheet-table th {
+/* ── Title row (injected as first <thead> row) ── */
+.ss-gsheet-table thead tr.gs-title-row td {
+  background: #00e5e5;
+  color: #000;
   font-family: var(--sans);
-  font-size: clamp(10px, 1.2vw, 13px);
+  font-size: clamp(13px, 1.8vw, 15px);
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .07em;
-  color: var(--mid);
-  padding: 9px 12px;
-  border-top: 2px solid var(--line);
-  border-bottom: 2px solid var(--line);
-  border-right: 1px solid var(--line);
+  text-align: center;
+  padding: 8px 12px;
+  border: 1px solid #009999;
+  letter-spacing: .02em;
+}
+body.dark .ss-gsheet-table thead tr.gs-title-row td {
+  background: #00b8b8;
+  border-color: #007a7a;
+}
+
+/* ── Column header row ── */
+.ss-gsheet-table thead tr.gs-header-row th {
+  font-family: var(--sans);
+  font-size: clamp(10px, 1.3vw, 13px);
+  font-weight: 700;
+  color: #000;
+  background: #ffff99;
+  padding: 8px 10px;
+  border: 1.5px solid #888;
   white-space: normal;
   word-break: break-word;
-  text-align: center;                   /* centre all headings */
+  text-align: center;
   vertical-align: middle;
-  max-width: 80px;
   line-height: 1.3;
   position: sticky;
   top: 0;
-  background: var(--raise);
   z-index: 1;
 }
-.ss-gsheet-table th:last-child { border-right: none; }
-.ss-gsheet-table th:first-child {
-  text-align: left;
+body.dark .ss-gsheet-table thead tr.gs-header-row th {
+  background: #a8a800;
+  color: #fff;
+  border-color: #555;
+}
+.ss-gsheet-table thead tr.gs-header-row th:first-child {
+  text-align: center;
   min-width: 90px;
-  max-width: 120px;
-  white-space: nowrap;
-  border-right: 1px solid var(--line);
 }
 
-/* Data cells */
+/* ── Data cells (default) ── */
 .ss-gsheet-table td {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--edge);
-  border-right: 1px solid var(--edge);
+  padding: 6px 10px;
+  border: 1px solid #aaa;
   white-space: nowrap;
-  text-align: right;
+  text-align: center;
   vertical-align: middle;
-  font-family: var(--mono);
-  font-size: clamp(11px, 1.5vw, 14px);
+  font-family: var(--sans);
+  font-size: clamp(11px, 1.5vw, 13px);
   font-variant-numeric: tabular-nums;
-  color: var(--text);
-  transition: background .1s;
+  color: #111;
 }
-.ss-gsheet-table td:last-child { border-right: none; }
+body.dark .ss-gsheet-table td { color: #dde6f4; border-color: #444; }
 .ss-gsheet-table td:first-child {
-  text-align: left;
-  font-family: var(--sans);
-  font-size: clamp(11px, 1.5vw, 14px);
-  font-weight: 500;
-  color: var(--text);
-  border-right: 1px solid var(--line);
-}
-
-/* ── Remove zebra stripe — use clean row separators instead ── */
-
-/* Hover */
-.ss-gsheet-table tbody tr:hover td { background: var(--raise); transition: background .1s; }
-body.dark .ss-gsheet-table tbody tr:hover td { background: rgba(255,255,255,.04); }
-
-/* Last row no border */
-.ss-gsheet-table tr:last-child td { border-bottom: none; }
-
-/* ── CF/MCL total rows ── */
-.ss-gsheet-table .gs-bold td {
+  text-align: center;
   font-weight: 700;
-  background: var(--raise);
-  border-top: 2px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  font-size: clamp(12px, 1.6vw, 15px);
-  color: var(--text);
-}
-.ss-gsheet-table .gs-bold td:first-child {
-  color: var(--mid);
-  font-family: var(--sans);
-  font-size: clamp(12px, 1.6vw, 15px);
-  font-weight: 700;
-  letter-spacing: .02em;
-  text-transform: uppercase;
+  font-size: clamp(11px, 1.5vw, 13px);
 }
 
-/* ── MCL grand total — stronger treatment ── */
+/* ── IB CF mine rows — alternating pink/lavender ── */
+.ss-gsheet-table tr.gs-ib-odd  td { background: #ffe6f0; }
+.ss-gsheet-table tr.gs-ib-even td { background: #edd9f7; }
+body.dark .ss-gsheet-table tr.gs-ib-odd  td { background: #3a1a28; }
+body.dark .ss-gsheet-table tr.gs-ib-even td { background: #2e1a3a; }
+
+/* ── TC CF mine rows — alternating peach/cream ── */
+.ss-gsheet-table tr.gs-tc-odd  td { background: #fff0e0; }
+.ss-gsheet-table tr.gs-tc-even td { background: #fde8d0; }
+body.dark .ss-gsheet-table tr.gs-tc-odd  td { background: #3a2510; }
+body.dark .ss-gsheet-table tr.gs-tc-even td { background: #2e1e0e; }
+
+/* ── CF/MCL total rows — light green ── */
+.ss-gsheet-table tr.gs-bold td {
+  font-weight: 700;
+  background: #d6eecc;
+  border: 1.5px solid #888;
+  font-size: clamp(12px, 1.6vw, 14px);
+  color: #000;
+}
+body.dark .ss-gsheet-table tr.gs-bold td {
+  background: #1e3a14;
+  color: #dde6f4;
+  border-color: #555;
+}
 .ss-gsheet-table tr.gs-mcl td {
-  font-weight: 700;
-  background: var(--edge) !important;
-  border-top: 3px solid var(--line) !important;
-  border-bottom: 1px solid var(--line);
-  font-size: clamp(13px, 1.8vw, 16px);
-  color: var(--text);
+  background: #d6eecc;
+  border-top: 2px solid #666;
 }
-.ss-gsheet-table tr.gs-mcl td:first-child {
-  color: var(--mid);
-  font-family: var(--sans);
-  font-weight: 800;
-  letter-spacing: .02em;
-  text-transform: uppercase;
-}
+body.dark .ss-gsheet-table tr.gs-mcl td { background: #1e3a14; }
 
-/* ── Highest rows — indented ── */
-.ss-gsheet-table .gs-highest td {
-  background: transparent;
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.6vw, 15px);
-  font-weight: 500;
-  color: var(--blue);
-  border-bottom: 2px solid var(--edge);
-  padding-top: 4px;
-  padding-bottom: 6px;
+/* ── Highest rows — light blue ── */
+.ss-gsheet-table tr.gs-highest td {
+  background: #cce0ff;
+  font-weight: 700;
+  font-size: clamp(12px, 1.6vw, 14px);
+  color: #000;
+  border: 1.5px solid #888;
 }
-.ss-gsheet-table .gs-highest td:first-child {
-  font-family: var(--sans);
-  font-size: clamp(11px, 1.4vw, 13px);
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .08em;
-  color: var(--dim);
-  border-right: 1px solid var(--edge);
-  padding-left: 20px;
+body.dark .ss-gsheet-table tr.gs-highest td {
+  background: #0e2040;
+  color: #dde6f4;
+  border-color: #555;
 }
-body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 
 /* loading spinner */
 .gs-spinner {
@@ -1474,7 +1446,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B40r</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B40r-fork</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2919,9 +2891,10 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   });
 
   // ── Caption (title · date) ──
+  // Build a spanning title row inside <thead> instead of a <caption>
+  let captionText = '';
+  let captionDate = '';
   if (captionRows.length > 0) {
-    const cap = document.createElement('caption');
-    cap.style.cssText = 'caption-side:top;text-align:left;padding:6px 10px 2px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:';
     const parts = [];
     for (const row of captionRows) {
       for (const cell of (row.c || [])) {
@@ -2929,11 +2902,10 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
         if (txt) parts.push(txt);
       }
     }
-    cap.textContent = parts.join('  ·  ');
-    table.appendChild(cap);
+    captionText = parts.filter(p => !/road sale despatch/i.test(p)).join('  ·  ');
     // Extract the date part from caption (looks like "25-Apr-26")
     const datePart = parts.find(p => /\d{1,2}-[A-Za-z]+-\d{2,4}/.test(p));
-    if (datePart) gsSheetDate = datePart;
+    if (datePart) { gsSheetDate = datePart; captionDate = datePart; }
   }
 
   // ── Apply column visibility ──
@@ -2948,14 +2920,28 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   // ── Header ──
   if (numCols > 0) {
     const thead = document.createElement('thead');
-    const htr   = document.createElement('tr');
+
+    // Title row (cyan banner)
+    const titleTr = document.createElement('tr');
+    titleTr.className = 'gs-title-row';
+    const titleTd = document.createElement('td');
+    titleTd.setAttribute('colspan', visibleCols.length);
+    // Left part: "Road Sale Despatch", right part: date
+    titleTd.innerHTML =
+      '<span style="font-weight:700;font-size:clamp(13px,1.8vw,15px);">Road Sale Despatch</span>' +
+      (captionDate ? `<span style="float:right;font-size:clamp(11px,1.5vw,13px);font-weight:700;">${captionDate}</span>` : '');
+    titleTr.appendChild(titleTd);
+    thead.appendChild(titleTr);
+
+    // Column header row (yellow)
+    const htr = document.createElement('tr');
+    htr.className = 'gs-header-row';
     visibleCols.forEach(ci => {
       const th   = document.createElement('th');
       const cell = headerCells[ci];
       const col  = (dt.cols || [])[ci] || {};
       const txt  = fmtGvizCell(cell) || col.label || KNOWN_HEADERS[ci] || col.id || '';
       th.textContent = txt;
-      if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
       htr.appendChild(th);
     });
     thead.appendChild(htr);
@@ -2964,6 +2950,8 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
   // ── Body ──
   const tbody = document.createElement('tbody');
+  let ibRowCount = 0, tcRowCount = 0;
+  let currentSection = null; // 'IB' | 'TC' | null
   dataRows.forEach((row, rowIdx) => {
     const cells = row.c || [];
     if (cells.length === 0 || cells.every(c => !c || (c.v === null && c.v !== 0 && !c.f))) return;
@@ -2976,14 +2964,36 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       cells[2] && typeof cells[2].v === 'number';
     const isMCL  = !firstEmpty && /^mcl$/i.test(firstTxt.trim());
     const isBold = !firstEmpty && /ibcf|tcf|mcl/i.test(firstTxt);
+    const isIBCF = !firstEmpty && /ibcf/i.test(firstTxt);
+    const isTCF  = !firstEmpty && /tcf/i.test(firstTxt);
+
+    // Track section transitions
+    if (isIBCF) currentSection = null; // after IBCF total, pause until TCF mine rows
+    else if (isTCF || isMCL) currentSection = null;
+    else if (!isBold && !isHighest) {
+      // Mine data row — determine section from position
+      // Section is IB until we hit IBCF, then TC until TCF
+      if (currentSection === null) {
+        // Check if we've passed the IBCF row
+        const pastIBCF = dataRows.slice(0, rowIdx).some(r => {
+          const f = fmtGvizCell((r.c || [])[0]);
+          return f && /ibcf/i.test(f);
+        });
+        currentSection = pastIBCF ? 'TC' : 'IB';
+      }
+    }
 
     const tr = document.createElement('tr');
-    if (isHighest)          tr.className = 'gs-highest';
-    else if (isMCL)         tr.className = 'gs-bold gs-mcl';
-    else if (isBold)        tr.className = 'gs-bold';
-
-    // Last non-Remarks numeric col for MCL qty highlight
-    const lastNumPos = visibleCols.length - 2;
+    if (isHighest)       tr.className = 'gs-highest';
+    else if (isMCL)      tr.className = 'gs-bold gs-mcl';
+    else if (isBold)     tr.className = 'gs-bold';
+    else if (currentSection === 'IB') {
+      ibRowCount++;
+      tr.className = ibRowCount % 2 === 1 ? 'gs-ib-odd' : 'gs-ib-even';
+    } else if (currentSection === 'TC') {
+      tcRowCount++;
+      tr.className = tcRowCount % 2 === 1 ? 'gs-tc-odd' : 'gs-tc-even';
+    }
 
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
@@ -2991,8 +3001,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       if (isHighest && pos === 0) txt = 'Highest';
       if (isHighest && pos === 1) txt = '';
       td.textContent = txt;
-      if (pos > 0) td.style.textAlign = 'right';
-      if (!txt && !isHighest) td.style.color = 'var(--edge)';
+      if (!txt && !isHighest) td.style.color = '#bbb';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -3274,63 +3283,35 @@ async function shareReport() {
 
   // Clone whichever table is currently active
   if (ssViewOn) {
-    // ── GSheet live table ──────────────────────────────
+    // ── GSheet live table — Excel-style colors ──────────
     const tbl = document.getElementById('ssTable').cloneNode(true);
-    tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Mono,monospace;font-size:16px;background:${C.surface};border:1px solid ${C.edge};table-layout:auto;`;
-    // Remove gviz caption; inject title as a spanning header row instead
-    // (html2canvas doesn't reliably render <caption> elements)
-    tbl.querySelectorAll('caption').forEach(cap => cap.remove());
-    const colCount = tbl.querySelector('tr') ? tbl.querySelector('tr').children.length : 7;
-    const titleThead = document.createElement('thead');
-    const titleTr    = document.createElement('tr');
-    const titleTd    = document.createElement('td');
-    titleTd.setAttribute('colspan', colCount);
-    titleTd.style.cssText = `padding:14px 14px;background:${C.raise};border-bottom:2px solid ${C.line};border-top:1px solid ${C.edge};border-left:1px solid ${C.edge};border-right:1px solid ${C.edge};text-align:center;`;
-    titleTd.innerHTML =
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.dim};">Road Despatch dated&nbsp;&nbsp;</span>` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:20px;font-weight:700;color:${C.text};letter-spacing:.5px;">${displayDate}</span>` +
-      `<span style="float:right;font-family:IBM Plex Sans,sans-serif;font-size:12px;font-weight:700;color:${C.mid};letter-spacing:.1em;text-transform:uppercase;opacity:.7;line-height:2;">Mahanadi Coalfields</span>`;
-    titleTr.appendChild(titleTd);
-    titleThead.appendChild(titleTr);
-    tbl.insertBefore(titleThead, tbl.firstChild);
-    tbl.querySelectorAll('th').forEach((th, i) => {
-      sc(th, {
-        fontSize:'14px', textTransform:'uppercase', letterSpacing:'.06em',
-        color:C.mid, fontFamily:'IBM Plex Sans,sans-serif', fontWeight:'700',
-        padding:'10px 14px', borderTop:`2px solid ${C.line}`, borderBottom:`2px solid ${C.line}`,
-        borderRight:`1px solid ${C.line}`, borderLeft:`1px solid ${C.line}`,
-        background:C.raise, whiteSpace:'normal', wordBreak:'break-word',
-        textAlign:'center', verticalAlign:'middle', position:'static',
-        maxWidth:'100px', lineHeight:'1.3',
-      });
-      if (i === 0) { th.style.textAlign = 'left'; th.style.whiteSpace = 'nowrap'; }
-      if (i === th.parentElement.children.length - 1) th.style.borderRight = 'none';
+    tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Sans,sans-serif;font-size:14px;border:3px solid #00e5e5;table-layout:auto;`;
+    // Style the cyan title row
+    tbl.querySelectorAll('tr.gs-title-row td').forEach(td => {
+      Object.assign(td.style, {background:'#00e5e5',color:'#000',fontWeight:'700',fontSize:'16px',padding:'8px 12px',border:'1px solid #009999',textAlign:'center'});
     });
+    // Style yellow header row
+    tbl.querySelectorAll('tr.gs-header-row th').forEach(th => {
+      Object.assign(th.style, {background:'#ffff99',color:'#000',fontWeight:'700',fontSize:'13px',padding:'8px 10px',border:'1.5px solid #888',textAlign:'center',verticalAlign:'middle',position:'static'});
+    });
+    // All td defaults
     tbl.querySelectorAll('td').forEach(td => {
-      sc(td, {padding:'9px 14px', borderBottom:`1px solid ${C.edge}`, borderRight:`1px solid ${C.edge}`, color:C.text, whiteSpace:'nowrap', textAlign:'right', verticalAlign:'middle', fontFamily:'IBM Plex Mono,monospace', fontSize:'17px'});
-      const colIdx = Array.from(td.parentElement.children).indexOf(td);
-      if (colIdx === 0) {
-        td.style.textAlign = 'left';
-        td.style.fontFamily = 'IBM Plex Sans,sans-serif';
-        td.style.fontWeight = '500';
-        td.style.borderRight = `1px solid ${C.line}`;
-      }
-      if (td === td.parentElement.children[td.parentElement.children.length - 1]) td.style.borderRight = 'none';
-      // Column type colours
+      Object.assign(td.style, {padding:'6px 10px',border:'1px solid #aaa',textAlign:'center',verticalAlign:'middle',fontFamily:'IBM Plex Sans,sans-serif',fontSize:'14px',color:'#111'});
+      if (td.parentElement && td.parentElement.classList.contains('gs-title-row')) return; // skip title
     });
-    tbl.querySelectorAll('tr.gs-bold td').forEach(td => sc(td, {background:C.raise, fontWeight:'700', fontSize:'19px', borderTop:`2px solid ${C.line}`, borderBottom:`1px solid ${C.line}`, fontVariantNumeric:'tabular-nums'}));
-    tbl.querySelectorAll('tr.gs-bold td:first-child').forEach(td => { td.style.color = C.mid; td.style.textTransform='uppercase'; td.style.letterSpacing='.02em'; });
-    // MCL grand total — stronger
-    tbl.querySelectorAll('tr.gs-mcl td').forEach(td => sc(td, {background:C.edge, fontWeight:'800', fontSize:'21px', borderTop:`3px solid ${C.line}`}));
-    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => { td.style.color = C.mid; td.style.fontWeight='800'; td.style.textTransform='uppercase'; td.style.letterSpacing='.02em'; });
-    tbl.querySelectorAll('tr.gs-mcl td.gs-mcl-qty').forEach(td => { td.style.color = C.green; });
-    // Highest rows — indented
-    tbl.querySelectorAll('tr.gs-highest td').forEach(td => sc(td, {color:C.blue, fontSize:'15px', fontWeight:'500', borderBottom:`2px solid ${C.edge}`, padding:'5px 14px 5px 22px'}));
-    tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => { td.style.color = C.dim; td.style.fontSize = '12px'; td.style.textTransform = 'uppercase'; td.style.letterSpacing = '.08em'; td.style.fontFamily = 'IBM Plex Sans,sans-serif'; td.style.paddingLeft = '22px'; });
-    // CF accent borders
-    // Tabular nums for all data cells
-    tbl.querySelectorAll('td').forEach(td => { td.style.fontVariantNumeric = 'tabular-nums'; });
-    tbl.querySelectorAll('tr:last-child td').forEach(td => { td.style.borderBottom = 'none'; });
+    // IB mine rows
+    tbl.querySelectorAll('tr.gs-ib-odd td').forEach(td => { td.style.background = '#ffe6f0'; });
+    tbl.querySelectorAll('tr.gs-ib-even td').forEach(td => { td.style.background = '#edd9f7'; });
+    // TC mine rows
+    tbl.querySelectorAll('tr.gs-tc-odd td').forEach(td => { td.style.background = '#fff0e0'; });
+    tbl.querySelectorAll('tr.gs-tc-even td').forEach(td => { td.style.background = '#fde8d0'; });
+    // CF/MCL bold total rows (green)
+    tbl.querySelectorAll('tr.gs-bold td').forEach(td => Object.assign(td.style, {background:'#d6eecc',fontWeight:'700',fontSize:'15px',border:'1.5px solid #888',color:'#000'}));
+    tbl.querySelectorAll('tr.gs-mcl td').forEach(td => { td.style.borderTop = '2px solid #666'; });
+    // Highest rows (blue)
+    tbl.querySelectorAll('tr.gs-highest td').forEach(td => Object.assign(td.style, {background:'#cce0ff',fontWeight:'700',fontSize:'15px',border:'1.5px solid #888',color:'#000'}));
+    // First col bold
+    tbl.querySelectorAll('tbody td:first-child').forEach(td => { td.style.fontWeight = '700'; });
     snap.appendChild(tbl);
 
   } else {
