@@ -1474,7 +1474,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B42</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B43</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2997,7 +2997,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     const lastDispCI = visibleCols.slice().reverse().find(ci => ci !== remarkColIdx && ci > 2);
     const despVal    = (lastDispCI != null && cells[lastDispCI]) ? (parseFloat(String(cells[lastDispCI].v)) || 0) : 0;
     const pct        = targetVal > 0 ? Math.min(despVal / targetVal, 1) : 0;
-    const pctDisplay = (!isBold && !isHighest && targetVal > 0) ? Math.round(pct * 100) : null;
+    const pctDisplay = (!isHighest && targetVal > 0) ? Math.round(pct * 100) : null;
 
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
