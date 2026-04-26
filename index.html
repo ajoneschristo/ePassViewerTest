@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ePass MCL Coalnet Viewer</title>
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ePass">
+<meta name="theme-color" content="#0e1117">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -1471,13 +1476,8 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
   justify-content: center;
 }
 .i3ms-backdrop.open { display: flex; }
-.i3ms-backdrop.fullscreen {
-  background: var(--bg);
-  align-items: stretch;
-  justify-content: stretch;
-}
 @media (min-width: 480px) {
-  .i3ms-backdrop:not(.fullscreen) { align-items: center; }
+  .i3ms-backdrop { align-items: center; }
 }
 .i3ms-sheet {
   background: var(--surface);
@@ -1487,18 +1487,9 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
   max-width: 440px;
   padding-bottom: env(safe-area-inset-bottom, 0px);
   animation: slideUp .22s ease;
-  display: flex;
-  flex-direction: column;
-}
-.i3ms-backdrop.fullscreen .i3ms-sheet {
-  max-width: 100%;
-  height: 100%;
-  border: none;
-  border-radius: 0;
-  animation: none;
 }
 @media (min-width: 480px) {
-  .i3ms-backdrop:not(.fullscreen) .i3ms-sheet {
+  .i3ms-sheet {
     border-bottom: 1px solid var(--edge);
     border-radius: 2px;
     animation: fadeIn .18s ease;
@@ -1508,12 +1499,11 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 14px 11px;
+  padding: 16px 18px 14px;
   border-bottom: 1px solid var(--edge);
-  flex-shrink: 0;
 }
 .i3ms-title {
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--mid);
   text-transform: uppercase;
@@ -1527,57 +1517,73 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
   -webkit-tap-highlight-color: transparent;
 }
 .i3ms-close:hover { color: var(--text); }
-
-/* Credential hint bar (compact, shown when frame is active) */
-.i3ms-cred-bar {
-  background: var(--amber-lo);
-  border-bottom: 1px solid var(--amber);
-  padding: 7px 14px;
-  flex-shrink: 0;
-}
-.i3ms-cred-bar-inner {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-}
-.i3ms-cred-bar-text {
-  font-size: 12px;
-  color: var(--amber);
-  flex: 1;
-}
-
-/* iframe wrapper */
-.i3ms-frame-wrap {
-  flex: 1;
-  position: relative;
-  min-height: 0;
-}
-.i3ms-frame {
-  width: 100%;
-  height: 100%;
-  border: none;
-  display: block;
-  background: #fff;
-}
-/* Blocked overlay */
-.i3ms-blocked {
-  position: absolute;
-  inset: 0;
-  background: var(--surface);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-}
-.i3ms-blocked-inner {
-  text-align: center;
-  max-width: 320px;
-}
 .i3ms-body {
   padding: 18px 18px 4px;
+}
+/* Step indicators */
+.i3ms-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 20px;
+}
+.i3ms-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  position: relative;
+}
+.i3ms-step::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+.i3ms-step:last-child::after { display: none; }
+.i3ms-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--dim);
+  z-index: 1;
+  position: relative;
+  transition: all .2s;
   flex-shrink: 0;
 }
+.i3ms-step.active .i3ms-step-num {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: var(--amber-lo);
+}
+.i3ms-step.done .i3ms-step-num {
+  border-color: var(--green);
+  background: var(--green-lo);
+  color: var(--green);
+}
+.i3ms-step-label {
+  font-size: 9px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  text-align: center;
+  line-height: 1.3;
+}
+.i3ms-step.active .i3ms-step-label { color: var(--amber); }
+.i3ms-step.done .i3ms-step-label { color: var(--green); }
 
+/* Credential hint card */
+.i3ms-cred-card {
   background: var(--raise);
   border: 1px solid var(--edge);
   border-left: 3px solid var(--amber);
@@ -1737,6 +1743,68 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 }
 .i3ms-btn-green:active { opacity: .85; }
 .i3ms-btn-green svg { width: 16px; height: 16px; flex-shrink: 0; }
+/* ── PWA INSTALL BANNER ─────────────────────────────── */
+.pwa-banner {
+  display: none;
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 0px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border-top: 2px solid var(--amber);
+  padding: 12px 16px;
+  z-index: 5000;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+}
+.pwa-banner.show { display: flex; }
+.pwa-banner-icon {
+  width: 36px; height: 36px;
+  background: var(--amber);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-weight: 700; font-size: 9px;
+  color: #000; flex-shrink: 0; letter-spacing: .3px;
+}
+.pwa-banner-text { flex: 1; min-width: 0; }
+.pwa-banner-title {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  margin-bottom: 1px;
+}
+.pwa-banner-sub {
+  font-size: 11px; color: var(--dim); line-height: 1.4;
+}
+.pwa-banner-btn {
+  background: var(--amber); color: #000;
+  border: none; font-family: var(--sans);
+  font-size: 13px; font-weight: 700;
+  padding: 9px 16px; cursor: pointer;
+  flex-shrink: 0; letter-spacing: .2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.pwa-banner-dismiss {
+  background: none; border: none;
+  color: var(--dim); font-size: 18px;
+  cursor: pointer; padding: 4px;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+/* Shared file toast */
+.share-toast {
+  display: none;
+  position: fixed;
+  top: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--green);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 600;
+  padding: 10px 18px;
+  z-index: 6000;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  animation: fadeIn .2s ease;
+}
+.share-toast.show { display: block; }
 </style>
 </head>
 <body>
@@ -2052,91 +2120,88 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
       <button class="i3ms-close" onclick="closeI3ms()">✕</button>
     </div>
 
-    <!-- Credential hint bar — always visible at top when frame shown -->
-    <div class="i3ms-cred-bar" id="i3msCredBar" style="display:none;">
-      <div class="i3ms-cred-bar-inner">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:13px;height:13px;color:var(--amber);flex-shrink:0;">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
-        </svg>
-        <span class="i3ms-cred-bar-text">Login as <strong>mclsysho</strong> · not mclho</span>
-        <button class="i3ms-copy-btn" onclick="i3msCopy('mclsysho', this)" style="margin-left:4px;">Copy ID</button>
-      </div>
-    </div>
+    <div class="i3ms-body">
 
-    <!-- iframe container -->
-    <div class="i3ms-frame-wrap" id="i3msFrameWrap" style="display:none;">
-      <iframe id="i3msFrame" class="i3ms-frame"
-        src="about:blank"
-        sandbox="allow-forms allow-scripts allow-same-origin allow-popups allow-downloads"
-        allow="downloads">
-      </iframe>
-      <!-- Blocked overlay — shown if iframe fails to load -->
-      <div class="i3ms-blocked" id="i3msBlocked" style="display:none;">
-        <div class="i3ms-blocked-inner">
-          <div style="font-size:32px;margin-bottom:12px;">🚫</div>
-          <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:6px;">i3MS blocked the frame</div>
-          <div style="font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:16px;">The portal uses <code>X-Frame-Options</code> to prevent embedding. This is common on government sites.</div>
-          <button class="i3ms-btn-primary" style="max-width:260px;" onclick="i3msFallbackNewTab()">
-            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-            </svg>
-            Open in New Tab instead
-          </button>
+      <!-- Step indicators -->
+      <div class="i3ms-steps">
+        <div class="i3ms-step active" id="i3msStep1">
+          <div class="i3ms-step-num">1</div>
+          <div class="i3ms-step-label">Login &amp;<br>Download</div>
+        </div>
+        <div class="i3ms-step" id="i3msStep2">
+          <div class="i3ms-step-num">2</div>
+          <div class="i3ms-step-label">Return<br>Here</div>
+        </div>
+        <div class="i3ms-step" id="i3msStep3">
+          <div class="i3ms-step-num">3</div>
+          <div class="i3ms-step-label">Pick<br>File</div>
         </div>
       </div>
-    </div>
 
-    <!-- Initial state: before frame loaded -->
-    <div class="i3ms-body" id="i3msBody">
-      <div class="i3ms-cred-card">
+      <!-- Credential hint -->
+      <div class="i3ms-cred-card" id="i3msCredCard">
         <div class="i3ms-cred-label">Use these credentials on i3MS</div>
         <div class="i3ms-cred-row">
           <span class="i3ms-cred-key">User ID</span>
-          <span class="i3ms-cred-val">mclsysho</span>
+          <span class="i3ms-cred-val" id="i3msCredUser">mclsysho</span>
           <button class="i3ms-copy-btn" onclick="i3msCopy('mclsysho', this)">Copy</button>
         </div>
         <div class="i3ms-cred-row">
-          <span class="i3ms-cred-key">Navigate to</span>
-          <span class="i3ms-cred-val" style="font-size:11px;color:var(--dim);">MCL Reports → Coal Net Report → Export XLS</span>
+          <span class="i3ms-cred-key">Portal</span>
+          <span class="i3ms-cred-val" style="font-size:11px;color:var(--dim);">MCL Coal Net Report → Export XLS</span>
           <span></span>
         </div>
       </div>
-      <div class="i3ms-warn">
+
+      <!-- Warning -->
+      <div class="i3ms-warn" id="i3msWarn">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
         </svg>
-        <span>Use <strong>mclsysho</strong> here — not mclho. The mclho ID is only for the DO Database.</span>
+        <span>Do <strong>not</strong> use the <strong>mclho</strong> ID here — that is only for the DO Database. Use <strong>mclsysho</strong> to download the Coalnet XLS report.</span>
       </div>
-    </div>
+
+      <!-- Waiting state (shown after portal opens) -->
+      <div class="i3ms-waiting" id="i3msWaiting">
+        <div class="i3ms-waiting-pulse"></div>
+        <div class="i3ms-waiting-text">Waiting for your download…</div>
+        <div class="i3ms-waiting-sub">Log in on i3MS, navigate to<br><strong>MCL Reports → Coal Net Report</strong>,<br>set your date range and export the XLS.<br>Then come back here.</div>
+      </div>
+
+    </div><!-- /i3ms-body -->
 
     <div class="i3ms-actions" id="i3msActions">
-      <button class="i3ms-btn-primary" id="i3msBtnOpen" onclick="i3msLoadFrame()">
+      <!-- Step 1: Open portal -->
+      <button class="i3ms-btn-primary" id="i3msBtnOpen" onclick="i3msOpenPortal()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M5 3l14 9-14 9V3z"/>
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
         </svg>
-        Open i3MS here
+        Open i3MS Portal
       </button>
-      <button class="i3ms-btn-secondary" onclick="closeI3ms()">Cancel</button>
-    </div>
+      <button class="i3ms-btn-secondary" onclick="closeI3ms()">
+        Cancel
+      </button>
 
-    <!-- Waiting state actions — shown after XLS download triggered inside frame -->
-    <div class="i3ms-actions" id="i3msActionsWait" style="display:none;">
-      <div class="i3ms-waiting show" style="padding:0 0 12px;">
-        <div class="i3ms-waiting-pulse"></div>
-        <div class="i3ms-waiting-text">File downloading…</div>
-        <div class="i3ms-waiting-sub">If the file downloaded to your device,<br>tap below to load it.</div>
-      </div>
-      <button class="i3ms-btn-green" onclick="i3msPickFile()">
+      <!-- Step 2+: Pick file (hidden until portal opened) -->
+      <button class="i3ms-btn-green" id="i3msBtnPick" style="display:none" onclick="i3msPickFile()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
         </svg>
         Pick Downloaded File
       </button>
-      <button class="i3ms-btn-secondary" onclick="closeI3ms()">Cancel</button>
+      <button class="i3ms-btn-secondary" id="i3msBtnReopenPortal" style="display:none" onclick="i3msOpenPortal()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        Reopen i3MS
+      </button>
+      <button class="i3ms-btn-secondary" id="i3msBtnCancelWait" style="display:none" onclick="closeI3ms()">
+        Cancel
+      </button>
     </div>
 
   </div>
@@ -4381,113 +4446,71 @@ function downloadBlob(blob) {
 
 // ── Load DB from GitHub on startup ──────────────────────
 // ═══════════════════════════════════════════════════════
-//  i3MS FETCH MODAL — iframe embed with blocked fallback
+//  i3MS FETCH MODAL
 // ═══════════════════════════════════════════════════════
-const I3MS_URL = 'https://i3ms.odishaminerals.gov.in/';
-let _i3msFrameLoaded = false;
-let _i3msBlockedTimer = null;
+let _i3msState = 'idle'; // 'idle' | 'waiting'
 
 function openI3msModal() {
-  _i3msFrameLoaded = false;
-  // Reset to initial (pre-frame) state
-  const backdrop = document.getElementById('i3msBackdrop');
-  backdrop.classList.remove('fullscreen');
-  backdrop.classList.add('open');
-
-  document.getElementById('i3msBody').style.display = '';
-  document.getElementById('i3msCredBar').style.display = 'none';
-  document.getElementById('i3msFrameWrap').style.display = 'none';
-  document.getElementById('i3msBlocked').style.display = 'none';
-  document.getElementById('i3msActions').style.display = '';
-  document.getElementById('i3msActionsWait').style.display = 'none';
-
-  // Reset iframe to blank so previous session doesn't linger
-  const frame = document.getElementById('i3msFrame');
-  frame.src = 'about:blank';
+  _i3msState = 'idle';
+  _i3msSetStep(1);
+  // Reset to initial state
+  document.getElementById('i3msCredCard').style.display = '';
+  document.getElementById('i3msWarn').style.display = '';
+  document.getElementById('i3msWaiting').classList.remove('show');
+  document.getElementById('i3msBtnOpen').style.display = '';
+  document.getElementById('i3msBtnPick').style.display = 'none';
+  document.getElementById('i3msBtnReopenPortal').style.display = 'none';
+  document.getElementById('i3msBtnCancelWait').style.display = 'none';
+  document.querySelector('#i3msActions .i3ms-btn-secondary').style.display = ''; // Cancel
+  document.getElementById('i3msBackdrop').classList.add('open');
 }
 
 function closeI3ms() {
-  const backdrop = document.getElementById('i3msBackdrop');
-  backdrop.classList.remove('open', 'fullscreen');
-  // Stop iframe to free resources
-  const frame = document.getElementById('i3msFrame');
-  frame.src = 'about:blank';
-  if (_i3msBlockedTimer) { clearTimeout(_i3msBlockedTimer); _i3msBlockedTimer = null; }
+  document.getElementById('i3msBackdrop').classList.remove('open');
 }
 
-function i3msLoadFrame() {
-  // Go fullscreen
-  const backdrop = document.getElementById('i3msBackdrop');
-  backdrop.classList.add('fullscreen');
-
-  // Hide intro, show cred bar + frame
-  document.getElementById('i3msBody').style.display = 'none';
-  document.getElementById('i3msActions').style.display = 'none';
-  document.getElementById('i3msCredBar').style.display = '';
-  document.getElementById('i3msFrameWrap').style.display = '';
-  document.getElementById('i3msBlocked').style.display = 'none';
-
-  // Load the iframe
-  const frame = document.getElementById('i3msFrame');
-
-  // Set a timer — if the frame doesn't fire onload within 8s, assume blocked
-  // (blocked frames often fire onload immediately with an empty document,
-  //  or never fire at all — we detect both)
-  _i3msBlockedTimer = setTimeout(() => _i3msCheckBlocked(), 8000);
-
-  frame.onload = () => {
-    if (_i3msBlockedTimer) { clearTimeout(_i3msBlockedTimer); _i3msBlockedTimer = null; }
-    _i3msCheckBlocked();
-  };
-
-  frame.src = I3MS_URL;
+function _i3msSetStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('i3msStep' + i);
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  });
 }
 
-function _i3msCheckBlocked() {
-  const frame = document.getElementById('i3msFrame');
-  let isBlocked = false;
+function i3msOpenPortal() {
+  // Open i3MS in a new tab
+  window.open('https://i3ms.odishaminerals.gov.in/', '_blank', 'noopener');
 
-  try {
-    // If we can read contentDocument it loaded same-origin (unlikely) or is blank
-    const doc = frame.contentDocument || frame.contentWindow.document;
-    // If title is empty and body is empty → blocked/refused
-    const title = doc.title || '';
-    const bodyText = (doc.body && doc.body.innerText) ? doc.body.innerText.trim() : '';
-    if (!title && !bodyText) isBlocked = true;
-  } catch(e) {
-    // Cross-origin access denied = the page DID load (good!) — not blocked
-    // This is the success case for a cross-origin site
-    isBlocked = false;
-  }
+  // Transition to waiting state
+  _i3msState = 'waiting';
+  _i3msSetStep(2);
 
-  if (isBlocked) {
-    document.getElementById('i3msBlocked').style.display = 'flex';
-  }
-  // If not blocked, frame is showing — user can interact normally
-  // We show the "Pick Downloaded File" action bar after a short delay
-  // so users know what to do after they export
-  if (!isBlocked) {
-    setTimeout(() => {
-      document.getElementById('i3msActionsWait').style.display = '';
-    }, 3000);
-  }
-}
+  document.getElementById('i3msCredCard').style.display = 'none';
+  document.getElementById('i3msWarn').style.display = 'none';
+  document.getElementById('i3msWaiting').classList.add('show');
 
-function i3msFallbackNewTab() {
-  window.open(I3MS_URL, '_blank', 'noopener');
-  // Collapse back to small modal in waiting state
-  document.getElementById('i3msBackdrop').classList.remove('fullscreen');
-  document.getElementById('i3msBlocked').style.display = 'none';
-  document.getElementById('i3msFrameWrap').style.display = 'none';
-  document.getElementById('i3msCredBar').style.display = 'none';
-  document.getElementById('i3msBody').style.display = '';
-  document.getElementById('i3msActions').style.display = 'none';
-  document.getElementById('i3msActionsWait').style.display = '';
+  // Swap buttons
+  document.getElementById('i3msBtnOpen').style.display = 'none';
+  document.querySelector('#i3msActions .i3ms-btn-secondary').style.display = 'none'; // original Cancel
+  document.getElementById('i3msBtnPick').style.display = '';
+  document.getElementById('i3msBtnReopenPortal').style.display = '';
+  document.getElementById('i3msBtnCancelWait').style.display = '';
+
+  // After a short delay, advance step indicator to show "return here" done
+  setTimeout(() => { if (_i3msState === 'waiting') _i3msSetStep(2); }, 800);
 }
 
 function i3msPickFile() {
+  _i3msSetStep(3);
+  // Trigger the existing file input — reuse all existing parse logic
   document.getElementById('fileInput').click();
-  document.getElementById('fileInput').addEventListener('change', () => closeI3ms(), { once: true });
+  // Listen for file selection once, then close modal
+  const handler = () => {
+    closeI3ms();
+    document.getElementById('fileInput').removeEventListener('change', handler);
+  };
+  document.getElementById('fileInput').addEventListener('change', handler, { once: true });
 }
 
 function i3msCopy(text, btn) {
@@ -4495,7 +4518,7 @@ function i3msCopy(text, btn) {
     navigator.clipboard.writeText(text).then(() => {
       btn.textContent = 'Copied!';
       btn.classList.add('copied');
-      setTimeout(() => { btn.textContent = btn.dataset.label || 'Copy'; btn.classList.remove('copied'); }, 1800);
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
     }).catch(() => _i3msFallbackCopy(text, btn));
   } else {
     _i3msFallbackCopy(text, btn);
@@ -4512,7 +4535,7 @@ function _i3msFallbackCopy(text, btn) {
     document.execCommand('copy');
     btn.textContent = 'Copied!';
     btn.classList.add('copied');
-    setTimeout(() => { btn.textContent = btn.dataset.label || 'Copy'; btn.classList.remove('copied'); }, 1800);
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
   } catch(e) { /* silent */ }
   document.body.removeChild(ta);
 }
@@ -4990,7 +5013,103 @@ async function saveSettings() {
   }
 }
 
-loadSettingsFromGitHub().then(() => {
+// ═══════════════════════════════════════════════════════
+//  PWA — SERVICE WORKER + INSTALL BANNER + SHARE TARGET
+// ═══════════════════════════════════════════════════════
+
+// ── IDB: read shared file stored by service worker ────
+function openShareDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('epass-share', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('files');
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function consumeSharedFile() {
+  try {
+    const db = await openShareDB();
+    const record = await new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readwrite');
+      const store = tx.objectStore('files');
+      const getReq = store.get('pending');
+      getReq.onsuccess = e => {
+        // Delete it immediately so it isn't re-consumed on next load
+        if (e.target.result) store.delete('pending');
+        resolve(e.target.result);
+      };
+      getReq.onerror = e => reject(e.target.error);
+    });
+
+    if (!record || !record.buffer) return;
+
+    // Convert ArrayBuffer back to a File-like Blob and load it
+    const blob = new Blob([record.buffer], { type: record.type || 'application/octet-stream' });
+    const file = new File([blob], record.name || 'coalnet.xls', { type: blob.type });
+
+    // Show toast
+    const toast = document.getElementById('shareToast');
+    toast.textContent = `✓ ${record.name || 'ePass file'} received`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+
+    // Load the file using existing parser
+    loadFile(file);
+  } catch(e) {
+    console.warn('Could not read shared file:', e);
+  }
+}
+
+// ── Check for ?shared=1 on page load ─────────────────
+if (new URLSearchParams(location.search).get('shared') === '1') {
+  // Remove the query param from URL without reload
+  history.replaceState(null, '', location.pathname);
+  // Wait for DOM + settings to be ready, then consume
+  window.addEventListener('load', () => setTimeout(consumeSharedFile, 300));
+}
+
+// ── Service Worker registration ───────────────────────
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
+
+// ── PWA Install banner ────────────────────────────────
+let _pwaDeferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _pwaDeferredPrompt = e;
+  // Only show if not already installed / not dismissed recently
+  const dismissed = sessionStorage.getItem('pwa-dismissed');
+  if (!dismissed) {
+    document.getElementById('pwaBanner').classList.add('show');
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwaBanner').classList.remove('show');
+  _pwaDeferredPrompt = null;
+});
+
+document.getElementById('pwaBannerInstall').addEventListener('click', async () => {
+  if (!_pwaDeferredPrompt) return;
+  _pwaDeferredPrompt.prompt();
+  const { outcome } = await _pwaDeferredPrompt.userChoice;
+  _pwaDeferredPrompt = null;
+  document.getElementById('pwaBanner').classList.remove('show');
+});
+
+function pwaDismiss() {
+  document.getElementById('pwaBanner').classList.remove('show');
+  sessionStorage.setItem('pwa-dismissed', '1');
+}
+
+
   if (ssViewOn) { applyTableVisibility(); fetchAndRenderGSheet(); }
 });
 loadDbFromGitHub();
@@ -5084,5 +5203,20 @@ loadDbFromGitHub();
 
   </div>
 </div>
+
+<!-- ══ PWA INSTALL BANNER ════════════════════════════ -->
+<div class="pwa-banner" id="pwaBanner">
+  <div class="pwa-banner-icon">MCL</div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Install ePass Viewer</div>
+    <div class="pwa-banner-sub">Install once → share XLS directly from downloads. No file picking.</div>
+  </div>
+  <button class="pwa-banner-btn" id="pwaBannerInstall">Install</button>
+  <button class="pwa-banner-dismiss" onclick="pwaDismiss()" title="Dismiss">✕</button>
+</div>
+
+<!-- ══ SHARED FILE TOAST ═════════════════════════════ -->
+<div class="share-toast" id="shareToast">✓ ePass file received</div>
+
 </body>
 </html>
