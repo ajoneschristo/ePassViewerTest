@@ -4,6 +4,11 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ePass MCL Coalnet Viewer</title>
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ePass">
+<meta name="theme-color" content="#0e1117">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
@@ -1460,6 +1465,442 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
   }
   @keyframes fadeIn { from { opacity:0; transform: scale(.97); } to { opacity:1; transform: scale(1); } }
 }
+
+/* ── i3MS FETCH MODAL ───────────────────────────────── */
+.i3ms-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 4000;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.i3ms-backdrop.open { display: flex; }
+@media (min-width: 480px) {
+  .i3ms-backdrop { align-items: center; }
+}
+.i3ms-sheet {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-bottom: none;
+  width: 100%;
+  max-width: 440px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  animation: slideUp .22s ease;
+}
+@media (min-width: 480px) {
+  .i3ms-sheet {
+    border-bottom: 1px solid var(--edge);
+    border-radius: 2px;
+    animation: fadeIn .18s ease;
+  }
+}
+.i3ms-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--edge);
+}
+.i3ms-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mid);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+}
+.i3ms-close {
+  background: none; border: none;
+  color: var(--dim); font-size: 20px;
+  cursor: pointer; line-height: 1;
+  padding: 0 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-close:hover { color: var(--text); }
+.i3ms-body {
+  padding: 18px 18px 4px;
+}
+/* Step indicators */
+.i3ms-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 20px;
+}
+.i3ms-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  position: relative;
+}
+.i3ms-step::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+.i3ms-step:last-child::after { display: none; }
+.i3ms-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--dim);
+  z-index: 1;
+  position: relative;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.i3ms-step.active .i3ms-step-num {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: var(--amber-lo);
+}
+.i3ms-step.done .i3ms-step-num {
+  border-color: var(--green);
+  background: var(--green-lo);
+  color: var(--green);
+}
+.i3ms-step-label {
+  font-size: 9px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  text-align: center;
+  line-height: 1.3;
+}
+.i3ms-step.active .i3ms-step-label { color: var(--amber); }
+.i3ms-step.done .i3ms-step-label { color: var(--green); }
+
+/* Credential hint card */
+.i3ms-cred-card {
+  background: var(--raise);
+  border: 1px solid var(--edge);
+  border-left: 3px solid var(--amber);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.i3ms-cred-label {
+  font-size: 10px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  margin-bottom: 8px;
+}
+.i3ms-cred-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+.i3ms-cred-row:last-child { margin-bottom: 0; }
+.i3ms-cred-key {
+  font-size: 11px;
+  color: var(--dim);
+  min-width: 50px;
+}
+.i3ms-cred-val {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .5px;
+  flex: 1;
+}
+.i3ms-copy-btn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--dim);
+  font-size: 10px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-family: var(--mono);
+  letter-spacing: .3px;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.i3ms-copy-btn:active { background: var(--amber-lo); border-color: var(--amber); color: var(--amber); }
+.i3ms-copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+/* Warning note */
+.i3ms-warn {
+  background: var(--amber-lo);
+  border: 1px solid var(--amber);
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--amber);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+.i3ms-warn svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; }
+
+/* Waiting state */
+.i3ms-waiting {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 16px;
+  gap: 10px;
+  text-align: center;
+}
+.i3ms-waiting.show { display: flex; }
+.i3ms-waiting-pulse {
+  width: 48px; height: 48px;
+  border: 3px solid var(--edge);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+}
+.i3ms-waiting-text {
+  font-size: 13px;
+  color: var(--mid);
+  letter-spacing: .2px;
+}
+.i3ms-waiting-sub {
+  font-size: 11px;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* Action buttons */
+.i3ms-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 18px 18px;
+}
+.i3ms-btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--amber);
+  color: #000;
+  border: none;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-btn-primary:active { opacity: .85; }
+.i3ms-btn-primary svg { width: 16px; height: 16px; flex-shrink: 0; }
+.i3ms-btn-secondary {
+  width: 100%;
+  padding: 13px;
+  background: none;
+  color: var(--mid);
+  border: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: border-color .15s, color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-btn-secondary:hover { border-color: var(--mid); color: var(--text); }
+.i3ms-btn-secondary svg { width: 14px; height: 14px; flex-shrink: 0; }
+.i3ms-btn-green {
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-btn-green:active { opacity: .85; }
+.i3ms-btn-green svg { width: 16px; height: 16px; flex-shrink: 0; }
+/* ── FILE SYSTEM ACCESS ─────────────────────────────── */
+.fsa-card {
+  width: 100%;
+  max-width: 400px;
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fsa-card-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.fsa-icon {
+  width: 36px; height: 36px;
+  background: var(--green-lo);
+  border: 1px solid var(--green);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.fsa-icon svg { width: 18px; height: 18px; color: var(--green); }
+.fsa-info { flex: 1; min-width: 0; }
+.fsa-info-title {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  margin-bottom: 2px;
+}
+.fsa-info-sub {
+  font-size: 11px; color: var(--dim); line-height: 1.4;
+}
+.fsa-btn-grant {
+  width: 100%;
+  padding: 13px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 700;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 7px;
+  letter-spacing: .2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+}
+.fsa-btn-grant:active { opacity: .85; }
+.fsa-btn-grant svg { width: 15px; height: 15px; flex-shrink: 0; }
+
+/* New-file notification bar */
+.fsa-new-bar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  background: var(--green);
+  color: #fff;
+  padding: 12px 16px;
+  z-index: 5500;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  animation: slideDown .25s ease;
+}
+.fsa-new-bar.show { display: flex; }
+@keyframes slideDown { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+.fsa-new-bar svg { width: 16px; height: 16px; flex-shrink: 0; }
+.fsa-new-bar-text { flex: 1; }
+.fsa-new-bar-dismiss {
+  background: none; border: none; color: #fff;
+  font-size: 18px; cursor: pointer; padding: 0 2px; line-height: 1;
+}
+
+/* "Load Latest" quick button — shown on drop screen once folder granted */
+.fsa-load-btn {
+  width: 100%;
+  max-width: 400px;
+  padding: 16px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  font-family: var(--sans);
+  font-size: 15px; font-weight: 700;
+  cursor: pointer;
+  display: none;
+  align-items: center; justify-content: center; gap: 9px;
+  letter-spacing: .2px;
+  -webkit-tap-highlight-color: transparent;
+  transition: opacity .15s;
+}
+.fsa-load-btn.ready { display: flex; }
+.fsa-load-btn:active { opacity: .85; }
+.fsa-load-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+</style>
+.pwa-banner {
+  display: none;
+  position: fixed;
+  bottom: env(safe-area-inset-bottom, 0px);
+  left: 0; right: 0;
+  background: var(--surface);
+  border-top: 2px solid var(--amber);
+  padding: 12px 16px;
+  z-index: 5000;
+  align-items: center;
+  gap: 12px;
+  box-shadow: 0 -4px 20px rgba(0,0,0,.2);
+}
+.pwa-banner.show { display: flex; }
+.pwa-banner-icon {
+  width: 36px; height: 36px;
+  background: var(--amber);
+  clip-path: polygon(50% 0%,100% 25%,100% 75%,50% 100%,0% 75%,0% 25%);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono); font-weight: 700; font-size: 9px;
+  color: #000; flex-shrink: 0; letter-spacing: .3px;
+}
+.pwa-banner-text { flex: 1; min-width: 0; }
+.pwa-banner-title {
+  font-size: 13px; font-weight: 600; color: var(--text);
+  margin-bottom: 1px;
+}
+.pwa-banner-sub {
+  font-size: 11px; color: var(--dim); line-height: 1.4;
+}
+.pwa-banner-btn {
+  background: var(--amber); color: #000;
+  border: none; font-family: var(--sans);
+  font-size: 13px; font-weight: 700;
+  padding: 9px 16px; cursor: pointer;
+  flex-shrink: 0; letter-spacing: .2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.pwa-banner-dismiss {
+  background: none; border: none;
+  color: var(--dim); font-size: 18px;
+  cursor: pointer; padding: 4px;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+/* Shared file toast */
+.share-toast {
+  display: none;
+  position: fixed;
+  top: 16px; left: 50%; transform: translateX(-50%);
+  background: var(--green);
+  color: #fff;
+  font-family: var(--sans);
+  font-size: 13px; font-weight: 600;
+  padding: 10px 18px;
+  z-index: 6000;
+  white-space: nowrap;
+  box-shadow: 0 4px 16px rgba(0,0,0,.25);
+  animation: fadeIn .2s ease;
+}
+.share-toast.show { display: block; }
 </style>
 </head>
 <body>
@@ -1474,7 +1915,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B43</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v5-B02</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1499,14 +1940,46 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 
 <!-- ══ DROP SCREEN ════════════════════════════════════ -->
 <div id="drop-screen">
-  <div class="drop-box" id="dropBox" onclick="document.getElementById('fileInput').click()">
+  <div class="drop-box" id="dropBox" onclick="openI3msModal()">
     <span class="drop-icon" style="font-size:64px">🚛</span>
-    <h2>Open ePass MCL Coalnet Report downloaded from i3MS</h2>
-    <p>Tap to browse or drop your file here</p>
+    <h2>Get ePass Coalnet Report from i3MS</h2>
+    <p>Tap to open i3MS portal, download the file, and load it here</p>
     <div class="drop-tags">
-      <span class="tag">.XLS</span>
+      <span class="tag">.XLS from i3MS</span>
     </div>
   </div>
+  <!-- FSA: Load Latest button — shown once Downloads folder granted -->
+  <button class="fsa-load-btn" id="fsaLoadBtn" onclick="fsaLoadLatest()">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+    </svg>
+    Load Latest ePass File
+  </button>
+
+  <!-- FSA: Grant folder access card — shown when FSA supported but not yet granted -->
+  <div class="fsa-card" id="fsaGrantCard" style="display:none;">
+    <div class="fsa-card-row">
+      <div class="fsa-icon">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
+        </svg>
+      </div>
+      <div class="fsa-info">
+        <div class="fsa-info-title">One-time setup</div>
+        <div class="fsa-info-sub">Grant access to your Downloads folder — then tap "Load Latest" after every i3MS export. No file picking ever again.</div>
+      </div>
+    </div>
+    <button class="fsa-btn-grant" onclick="fsaGrantAccess()">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z"/>
+      </svg>
+      Grant Downloads Folder Access
+    </button>
+  </div>
+
   <!-- DO Database card on drop screen -->
   <div class="db-card" style="width:100%;max-width:400px;">
     <div class="db-info">
@@ -1520,12 +1993,12 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
         </svg>
         Paste
       </button>
-      <button class="db-upload-btn" onclick="document.getElementById('mclhoInput').click()">
+      <button class="db-upload-btn" onclick="openI3msModal()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
         </svg>
-        Upload
+        i3MS
       </button>
     </div>
   </div>
@@ -1588,10 +2061,10 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
     </button>
-    <button class="open-new-btn" onclick="document.getElementById('fileInput').click()">
+    <button class="open-new-btn" onclick="openI3msModal()">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
       </svg>
       New File
     </button>
@@ -1763,6 +2236,102 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
       <button class="sheet-btn cancel" onclick="closeClock()">Cancel</button>
       <button class="sheet-btn ok"     onclick="applyTime()">OK</button>
     </div>
+  </div>
+</div>
+
+<!-- ══ i3MS FETCH MODAL ═══════════════════════════════ -->
+<div class="i3ms-backdrop" id="i3msBackdrop" onclick="if(event.target===this)closeI3ms()">
+  <div class="i3ms-sheet" id="i3msSheet">
+
+    <div class="i3ms-header">
+      <span class="i3ms-title">Get ePass File from i3MS</span>
+      <button class="i3ms-close" onclick="closeI3ms()">✕</button>
+    </div>
+
+    <div class="i3ms-body">
+
+      <!-- Step indicators -->
+      <div class="i3ms-steps">
+        <div class="i3ms-step active" id="i3msStep1">
+          <div class="i3ms-step-num">1</div>
+          <div class="i3ms-step-label">Login &amp;<br>Download</div>
+        </div>
+        <div class="i3ms-step" id="i3msStep2">
+          <div class="i3ms-step-num">2</div>
+          <div class="i3ms-step-label">Return<br>Here</div>
+        </div>
+        <div class="i3ms-step" id="i3msStep3">
+          <div class="i3ms-step-num">3</div>
+          <div class="i3ms-step-label">Pick<br>File</div>
+        </div>
+      </div>
+
+      <!-- Credential hint -->
+      <div class="i3ms-cred-card" id="i3msCredCard">
+        <div class="i3ms-cred-label">Use these credentials on i3MS</div>
+        <div class="i3ms-cred-row">
+          <span class="i3ms-cred-key">User ID</span>
+          <span class="i3ms-cred-val" id="i3msCredUser">mclsysho</span>
+          <button class="i3ms-copy-btn" onclick="i3msCopy('mclsysho', this)">Copy</button>
+        </div>
+        <div class="i3ms-cred-row">
+          <span class="i3ms-cred-key">Portal</span>
+          <span class="i3ms-cred-val" style="font-size:11px;color:var(--dim);">MCL Coal Net Report → Export XLS</span>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="i3ms-warn" id="i3msWarn">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+        <span>Do <strong>not</strong> use the <strong>mclho</strong> ID here — that is only for the DO Database. Use <strong>mclsysho</strong> to download the Coalnet XLS report.</span>
+      </div>
+
+      <!-- Waiting state (shown after portal opens) -->
+      <div class="i3ms-waiting" id="i3msWaiting">
+        <div class="i3ms-waiting-pulse"></div>
+        <div class="i3ms-waiting-text">Waiting for your download…</div>
+        <div class="i3ms-waiting-sub">Log in on i3MS, navigate to<br><strong>MCL Reports → Coal Net Report</strong>,<br>set your date range and export the XLS.<br>Then come back here.</div>
+      </div>
+
+    </div><!-- /i3ms-body -->
+
+    <div class="i3ms-actions" id="i3msActions">
+      <!-- Step 1: Open portal -->
+      <button class="i3ms-btn-primary" id="i3msBtnOpen" onclick="i3msOpenPortal()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        Open i3MS Portal
+      </button>
+      <button class="i3ms-btn-secondary" onclick="closeI3ms()">
+        Cancel
+      </button>
+
+      <!-- Step 2+: Pick file (hidden until portal opened) -->
+      <button class="i3ms-btn-green" id="i3msBtnPick" style="display:none" onclick="i3msPickFile()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Pick Downloaded File
+      </button>
+      <button class="i3ms-btn-secondary" id="i3msBtnReopenPortal" style="display:none" onclick="i3msOpenPortal()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        Reopen i3MS
+      </button>
+      <button class="i3ms-btn-secondary" id="i3msBtnCancelWait" style="display:none" onclick="closeI3ms()">
+        Cancel
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -4005,7 +4574,100 @@ function downloadBlob(blob) {
 
 // ── Load DB from GitHub on startup ──────────────────────
 // ═══════════════════════════════════════════════════════
-//  SETTINGS — GitHub-backed config
+//  i3MS FETCH MODAL
+// ═══════════════════════════════════════════════════════
+let _i3msState = 'idle'; // 'idle' | 'waiting'
+
+function openI3msModal() {
+  _i3msState = 'idle';
+  _i3msSetStep(1);
+  // Reset to initial state
+  document.getElementById('i3msCredCard').style.display = '';
+  document.getElementById('i3msWarn').style.display = '';
+  document.getElementById('i3msWaiting').classList.remove('show');
+  document.getElementById('i3msBtnOpen').style.display = '';
+  document.getElementById('i3msBtnPick').style.display = 'none';
+  document.getElementById('i3msBtnReopenPortal').style.display = 'none';
+  document.getElementById('i3msBtnCancelWait').style.display = 'none';
+  document.querySelector('#i3msActions .i3ms-btn-secondary').style.display = ''; // Cancel
+  document.getElementById('i3msBackdrop').classList.add('open');
+}
+
+function closeI3ms() {
+  document.getElementById('i3msBackdrop').classList.remove('open');
+}
+
+function _i3msSetStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('i3msStep' + i);
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  });
+}
+
+function i3msOpenPortal() {
+  // Open i3MS in a new tab
+  window.open('https://i3ms.odishaminerals.gov.in/', '_blank', 'noopener');
+
+  // Transition to waiting state
+  _i3msState = 'waiting';
+  _i3msSetStep(2);
+
+  document.getElementById('i3msCredCard').style.display = 'none';
+  document.getElementById('i3msWarn').style.display = 'none';
+  document.getElementById('i3msWaiting').classList.add('show');
+
+  // Swap buttons
+  document.getElementById('i3msBtnOpen').style.display = 'none';
+  document.querySelector('#i3msActions .i3ms-btn-secondary').style.display = 'none'; // original Cancel
+  document.getElementById('i3msBtnPick').style.display = '';
+  document.getElementById('i3msBtnReopenPortal').style.display = '';
+  document.getElementById('i3msBtnCancelWait').style.display = '';
+
+  // After a short delay, advance step indicator to show "return here" done
+  setTimeout(() => { if (_i3msState === 'waiting') _i3msSetStep(2); }, 800);
+}
+
+function i3msPickFile() {
+  _i3msSetStep(3);
+  // Trigger the existing file input — reuse all existing parse logic
+  document.getElementById('fileInput').click();
+  // Listen for file selection once, then close modal
+  const handler = () => {
+    closeI3ms();
+    document.getElementById('fileInput').removeEventListener('change', handler);
+  };
+  document.getElementById('fileInput').addEventListener('change', handler, { once: true });
+}
+
+function i3msCopy(text, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+    }).catch(() => _i3msFallbackCopy(text, btn));
+  } else {
+    _i3msFallbackCopy(text, btn);
+  }
+}
+
+function _i3msFallbackCopy(text, btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+  } catch(e) { /* silent */ }
+  document.body.removeChild(ta);
+}
+
 // ═══════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════
 //  CUSTOM TIME PICKER
@@ -4479,6 +5141,306 @@ async function saveSettings() {
   }
 }
 
+// ═══════════════════════════════════════════════════════
+//  FILE SYSTEM ACCESS API — auto-load latest XLS from
+//  Downloads folder, no file picker after first setup
+// ═══════════════════════════════════════════════════════
+
+const FSA_SUPPORTED = ('showDirectoryPicker' in window);
+let _fsaDirHandle   = null;   // persisted FileSystemDirectoryHandle
+let _fsaLastFile    = null;   // name of last loaded file (avoid re-loading same)
+let _fsaLatestName  = null;   // newest XLS name detected by watcher
+let _fsaPollTimer   = null;
+
+// ── IDB helpers for persisting the directory handle ───
+function _fsaOpenDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('epass-fsa', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('handles');
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function _fsaSaveHandle(handle) {
+  const db = await _fsaOpenDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('handles', 'readwrite');
+    tx.objectStore('handles').put(handle, 'downloads');
+    tx.oncomplete = resolve;
+    tx.onerror    = e => reject(e.target.error);
+  });
+}
+
+async function _fsaLoadHandle() {
+  try {
+    const db = await _fsaOpenDB();
+    return new Promise((resolve, reject) => {
+      const tx  = db.transaction('handles', 'readonly');
+      const req = tx.objectStore('handles').get('downloads');
+      req.onsuccess = e => resolve(e.target.result || null);
+      req.onerror   = e => reject(e.target.error);
+    });
+  } catch(e) { return null; }
+}
+
+// ── Get the newest .xls file in the directory ─────────
+async function _fsaGetLatestXls(dirHandle) {
+  let newest = null, newestTime = 0;
+  try {
+    for await (const [name, handle] of dirHandle.entries()) {
+      if (handle.kind !== 'file') continue;
+      if (!name.toLowerCase().endsWith('.xls') &&
+          !name.toLowerCase().endsWith('.xlsx')) continue;
+      const file = await handle.getFile();
+      if (file.lastModified > newestTime) {
+        newestTime = file.lastModified;
+        newest = { name, handle, file };
+      }
+    }
+  } catch(e) {
+    console.warn('FSA read error:', e);
+    return null;
+  }
+  return newest;
+}
+
+// ── Grant access — called on button tap ───────────────
+async function fsaGrantAccess() {
+  if (!FSA_SUPPORTED) return;
+  try {
+    const dirHandle = await window.showDirectoryPicker({
+      id: 'downloads',
+      mode: 'read',
+      startIn: 'downloads',
+    });
+    _fsaDirHandle = dirHandle;
+    await _fsaSaveHandle(dirHandle);
+    _fsaUpdateUI(true);
+    _fsaStartWatcher();
+    // Immediately try to load the latest file
+    await fsaLoadLatest();
+  } catch(e) {
+    if (e.name !== 'AbortError') alert('Could not access folder: ' + e.message);
+  }
+}
+
+// ── Load latest XLS from the saved folder ─────────────
+async function fsaLoadLatest() {
+  if (!_fsaDirHandle) return;
+
+  // Re-verify permission (Android may have revoked it)
+  const perm = await _fsaDirHandle.queryPermission({ mode: 'read' });
+  if (perm !== 'granted') {
+    const req = await _fsaDirHandle.requestPermission({ mode: 'read' });
+    if (req !== 'granted') {
+      alert('Downloads folder permission was revoked.\nPlease grant access again.');
+      _fsaDirHandle = null;
+      _fsaUpdateUI(false);
+      return;
+    }
+  }
+
+  const latest = await _fsaGetLatestXls(_fsaDirHandle);
+  if (!latest) {
+    alert('No .xls files found in your Downloads folder.\nDownload the Coalnet report from i3MS first.');
+    return;
+  }
+
+  // Hide the new-file bar
+  fsaDismissBar();
+
+  _fsaLastFile   = latest.name;
+  _fsaLatestName = null;
+  loadFile(latest.file);
+}
+
+// ── Background watcher — polls every 8s for new files ─
+function _fsaStartWatcher() {
+  if (_fsaPollTimer) clearInterval(_fsaPollTimer);
+  _fsaPollTimer = setInterval(_fsaPoll, 8000);
+}
+
+async function _fsaPoll() {
+  if (!_fsaDirHandle) return;
+  try {
+    const perm = await _fsaDirHandle.queryPermission({ mode: 'read' });
+    if (perm !== 'granted') return;
+
+    const latest = await _fsaGetLatestXls(_fsaDirHandle);
+    if (!latest) return;
+
+    // If it's a different file than what we last loaded, notify
+    if (latest.name !== _fsaLastFile && latest.name !== _fsaLatestName) {
+      _fsaLatestName = latest.name;
+      _fsaShowNewBar(latest.name);
+    }
+  } catch(e) { /* silently ignore poll errors */ }
+}
+
+function _fsaShowNewBar(filename) {
+  const bar = document.getElementById('fsaNewBar');
+  bar.querySelector('.fsa-new-bar-text').textContent =
+    `New file: ${filename} — tap to load`;
+  bar.classList.add('show');
+}
+
+function fsaDismissBar() {
+  document.getElementById('fsaNewBar').classList.remove('show');
+}
+
+// ── Update UI based on grant state ────────────────────
+function _fsaUpdateUI(granted) {
+  const loadBtn   = document.getElementById('fsaLoadBtn');
+  const grantCard = document.getElementById('fsaGrantCard');
+
+  if (!FSA_SUPPORTED) {
+    // Browser doesn't support FSA — hide both, fall back to existing flow
+    loadBtn.classList.remove('ready');
+    grantCard.style.display = 'none';
+    return;
+  }
+
+  if (granted) {
+    loadBtn.classList.add('ready');
+    grantCard.style.display = 'none';
+  } else {
+    loadBtn.classList.remove('ready');
+    grantCard.style.display = '';
+  }
+}
+
+// ── Init: restore saved handle on page load ───────────
+async function fsaInit() {
+  if (!FSA_SUPPORTED) {
+    _fsaUpdateUI(false);
+    return;
+  }
+  const handle = await _fsaLoadHandle();
+  if (!handle) {
+    _fsaUpdateUI(false);
+    return;
+  }
+  // Check permission without prompting
+  const perm = await handle.queryPermission({ mode: 'read' });
+  if (perm === 'granted') {
+    _fsaDirHandle = handle;
+    _fsaUpdateUI(true);
+    _fsaStartWatcher();
+  } else {
+    // Permission needs re-asking — show grant card but keep handle
+    // so requestPermission() can be called on next user gesture
+    _fsaDirHandle = handle;
+    _fsaUpdateUI(false);
+    // Override grant button to re-request rather than re-pick
+    document.getElementById('fsaGrantCard').querySelector('.fsa-btn-grant')
+      .textContent = 'Restore Downloads Folder Access';
+  }
+}
+
+// Run init after page load
+window.addEventListener('load', fsaInit);
+
+
+
+// ── IDB: read shared file stored by service worker ────
+function openShareDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('epass-share', 1);
+    req.onupgradeneeded = e => e.target.result.createObjectStore('files');
+    req.onsuccess = e => resolve(e.target.result);
+    req.onerror   = e => reject(e.target.error);
+  });
+}
+
+async function consumeSharedFile() {
+  try {
+    const db = await openShareDB();
+    const record = await new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readwrite');
+      const store = tx.objectStore('files');
+      const getReq = store.get('pending');
+      getReq.onsuccess = e => {
+        // Delete it immediately so it isn't re-consumed on next load
+        if (e.target.result) store.delete('pending');
+        resolve(e.target.result);
+      };
+      getReq.onerror = e => reject(e.target.error);
+    });
+
+    if (!record || !record.buffer) return;
+
+    // Convert ArrayBuffer back to a File-like Blob and load it
+    const blob = new Blob([record.buffer], { type: record.type || 'application/octet-stream' });
+    const file = new File([blob], record.name || 'coalnet.xls', { type: blob.type });
+
+    // Show toast
+    const toast = document.getElementById('shareToast');
+    toast.textContent = `✓ ${record.name || 'ePass file'} received`;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+
+    // Load the file using existing parser
+    loadFile(file);
+  } catch(e) {
+    console.warn('Could not read shared file:', e);
+  }
+}
+
+// ── Check for ?shared=1 on page load ─────────────────
+if (new URLSearchParams(location.search).get('shared') === '1') {
+  // Remove the query param from URL without reload
+  history.replaceState(null, '', location.pathname);
+  // Wait for DOM + settings to be ready, then consume
+  window.addEventListener('load', () => setTimeout(consumeSharedFile, 300));
+}
+
+// ── Service Worker registration ───────────────────────
+// Only register on GitHub Pages — not on claude.ai preview or localhost
+if ('serviceWorker' in navigator && location.hostname.includes('github.io')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js', { scope: './' })
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.warn('SW registration failed:', err));
+  });
+}
+
+// ── PWA Install banner ────────────────────────────────
+let _pwaDeferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  _pwaDeferredPrompt = e;
+  const dismissed = sessionStorage.getItem('pwa-dismissed');
+  if (!dismissed) {
+    document.getElementById('pwaBanner').classList.add('show');
+  }
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwaBanner').classList.remove('show');
+  _pwaDeferredPrompt = null;
+});
+
+// Attach install button handler after DOM is ready
+window.addEventListener('DOMContentLoaded', () => {
+  const installBtn = document.getElementById('pwaBannerInstall');
+  if (installBtn) {
+    installBtn.addEventListener('click', async () => {
+      if (!_pwaDeferredPrompt) return;
+      _pwaDeferredPrompt.prompt();
+      const { outcome } = await _pwaDeferredPrompt.userChoice;
+      _pwaDeferredPrompt = null;
+      document.getElementById('pwaBanner').classList.remove('show');
+    });
+  }
+});
+
+function pwaDismiss() {
+  document.getElementById('pwaBanner').classList.remove('show');
+  sessionStorage.setItem('pwa-dismissed', '1');
+}
+
 loadSettingsFromGitHub().then(() => {
   if (ssViewOn) { applyTableVisibility(); fetchAndRenderGSheet(); }
 });
@@ -4573,5 +5535,30 @@ loadDbFromGitHub();
 
   </div>
 </div>
+
+<!-- ══ FSA NEW FILE BAR ══════════════════════════════ -->
+<div class="fsa-new-bar" id="fsaNewBar" onclick="fsaLoadLatest()">
+  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+      d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"/>
+  </svg>
+  <span class="fsa-new-bar-text">New ePass file detected — tap to load</span>
+  <button class="fsa-new-bar-dismiss" onclick="event.stopPropagation();fsaDismissBar()" title="Dismiss">✕</button>
+</div>
+
+<!-- ══ PWA INSTALL BANNER ════════════════════════════ -->
+<div class="pwa-banner" id="pwaBanner">
+  <div class="pwa-banner-icon">MCL</div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Install ePass Viewer</div>
+    <div class="pwa-banner-sub">Install once → share XLS directly from downloads. No file picking.</div>
+  </div>
+  <button class="pwa-banner-btn" id="pwaBannerInstall">Install</button>
+  <button class="pwa-banner-dismiss" onclick="pwaDismiss()" title="Dismiss">✕</button>
+</div>
+
+<!-- ══ SHARED FILE TOAST ═════════════════════════════ -->
+<div class="share-toast" id="shareToast">✓ ePass file received</div>
+
 </body>
 </html>
