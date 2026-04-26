@@ -1460,6 +1460,284 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
   }
   @keyframes fadeIn { from { opacity:0; transform: scale(.97); } to { opacity:1; transform: scale(1); } }
 }
+
+/* ── i3MS FETCH MODAL ───────────────────────────────── */
+.i3ms-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.75);
+  z-index: 4000;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+}
+.i3ms-backdrop.open { display: flex; }
+@media (min-width: 480px) {
+  .i3ms-backdrop { align-items: center; }
+}
+.i3ms-sheet {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-bottom: none;
+  width: 100%;
+  max-width: 440px;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  animation: slideUp .22s ease;
+}
+@media (min-width: 480px) {
+  .i3ms-sheet {
+    border-bottom: 1px solid var(--edge);
+    border-radius: 2px;
+    animation: fadeIn .18s ease;
+  }
+}
+.i3ms-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 14px;
+  border-bottom: 1px solid var(--edge);
+}
+.i3ms-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mid);
+  text-transform: uppercase;
+  letter-spacing: .8px;
+}
+.i3ms-close {
+  background: none; border: none;
+  color: var(--dim); font-size: 20px;
+  cursor: pointer; line-height: 1;
+  padding: 0 2px;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-close:hover { color: var(--text); }
+.i3ms-body {
+  padding: 18px 18px 4px;
+}
+/* Step indicators */
+.i3ms-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin-bottom: 20px;
+}
+.i3ms-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  flex: 1;
+  position: relative;
+}
+.i3ms-step::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: var(--line);
+  z-index: 0;
+}
+.i3ms-step:last-child::after { display: none; }
+.i3ms-step-num {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 700;
+  border: 2px solid var(--line);
+  background: var(--surface);
+  color: var(--dim);
+  z-index: 1;
+  position: relative;
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.i3ms-step.active .i3ms-step-num {
+  border-color: var(--amber);
+  color: var(--amber);
+  background: var(--amber-lo);
+}
+.i3ms-step.done .i3ms-step-num {
+  border-color: var(--green);
+  background: var(--green-lo);
+  color: var(--green);
+}
+.i3ms-step-label {
+  font-size: 9px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: .5px;
+  text-align: center;
+  line-height: 1.3;
+}
+.i3ms-step.active .i3ms-step-label { color: var(--amber); }
+.i3ms-step.done .i3ms-step-label { color: var(--green); }
+
+/* Credential hint card */
+.i3ms-cred-card {
+  background: var(--raise);
+  border: 1px solid var(--edge);
+  border-left: 3px solid var(--amber);
+  padding: 12px 14px;
+  margin-bottom: 16px;
+}
+.i3ms-cred-label {
+  font-size: 10px;
+  color: var(--dim);
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  margin-bottom: 8px;
+}
+.i3ms-cred-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  gap: 8px;
+}
+.i3ms-cred-row:last-child { margin-bottom: 0; }
+.i3ms-cred-key {
+  font-size: 11px;
+  color: var(--dim);
+  min-width: 50px;
+}
+.i3ms-cred-val {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: .5px;
+  flex: 1;
+}
+.i3ms-copy-btn {
+  background: none;
+  border: 1px solid var(--line);
+  color: var(--dim);
+  font-size: 10px;
+  padding: 3px 8px;
+  cursor: pointer;
+  font-family: var(--mono);
+  letter-spacing: .3px;
+  transition: all .15s;
+  -webkit-tap-highlight-color: transparent;
+  flex-shrink: 0;
+}
+.i3ms-copy-btn:active { background: var(--amber-lo); border-color: var(--amber); color: var(--amber); }
+.i3ms-copy-btn.copied { border-color: var(--green); color: var(--green); }
+
+/* Warning note */
+.i3ms-warn {
+  background: var(--amber-lo);
+  border: 1px solid var(--amber);
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--amber);
+  line-height: 1.5;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+}
+.i3ms-warn svg { width: 13px; height: 13px; flex-shrink: 0; margin-top: 1px; }
+
+/* Waiting state */
+.i3ms-waiting {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 0 16px;
+  gap: 10px;
+  text-align: center;
+}
+.i3ms-waiting.show { display: flex; }
+.i3ms-waiting-pulse {
+  width: 48px; height: 48px;
+  border: 3px solid var(--edge);
+  border-top-color: var(--amber);
+  border-radius: 50%;
+  animation: spin .9s linear infinite;
+}
+.i3ms-waiting-text {
+  font-size: 13px;
+  color: var(--mid);
+  letter-spacing: .2px;
+}
+.i3ms-waiting-sub {
+  font-size: 11px;
+  color: var(--dim);
+  line-height: 1.5;
+}
+
+/* Action buttons */
+.i3ms-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 18px 18px;
+}
+.i3ms-btn-primary {
+  width: 100%;
+  padding: 14px;
+  background: var(--amber);
+  color: #000;
+  border: none;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-btn-primary:active { opacity: .85; }
+.i3ms-btn-primary svg { width: 16px; height: 16px; flex-shrink: 0; }
+.i3ms-btn-secondary {
+  width: 100%;
+  padding: 13px;
+  background: none;
+  color: var(--mid);
+  border: 1px solid var(--line);
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  transition: border-color .15s, color .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-btn-secondary:hover { border-color: var(--mid); color: var(--text); }
+.i3ms-btn-secondary svg { width: 14px; height: 14px; flex-shrink: 0; }
+.i3ms-btn-green {
+  width: 100%;
+  padding: 14px;
+  background: var(--green);
+  color: #fff;
+  border: none;
+  font-family: var(--sans);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: .3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: opacity .15s;
+  -webkit-tap-highlight-color: transparent;
+}
+.i3ms-btn-green:active { opacity: .85; }
+.i3ms-btn-green svg { width: 16px; height: 16px; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -1474,7 +1752,7 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B43</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v5-B01</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1499,12 +1777,12 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
 
 <!-- ══ DROP SCREEN ════════════════════════════════════ -->
 <div id="drop-screen">
-  <div class="drop-box" id="dropBox" onclick="document.getElementById('fileInput').click()">
+  <div class="drop-box" id="dropBox" onclick="openI3msModal()">
     <span class="drop-icon" style="font-size:64px">🚛</span>
-    <h2>Open ePass MCL Coalnet Report downloaded from i3MS</h2>
-    <p>Tap to browse or drop your file here</p>
+    <h2>Get ePass Coalnet Report from i3MS</h2>
+    <p>Tap to open i3MS portal, download the file, and load it here</p>
     <div class="drop-tags">
-      <span class="tag">.XLS</span>
+      <span class="tag">.XLS from i3MS</span>
     </div>
   </div>
   <!-- DO Database card on drop screen -->
@@ -1520,12 +1798,12 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
         </svg>
         Paste
       </button>
-      <button class="db-upload-btn" onclick="document.getElementById('mclhoInput').click()">
+      <button class="db-upload-btn" onclick="openI3msModal()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
         </svg>
-        Upload
+        i3MS
       </button>
     </div>
   </div>
@@ -1588,10 +1866,10 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
       </svg>
     </button>
-    <button class="open-new-btn" onclick="document.getElementById('fileInput').click()">
+    <button class="open-new-btn" onclick="openI3msModal()">
       <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
       </svg>
       New File
     </button>
@@ -1763,6 +2041,102 @@ body.dark .ss-gsheet-table .gs-highest td { color: var(--blue); }
       <button class="sheet-btn cancel" onclick="closeClock()">Cancel</button>
       <button class="sheet-btn ok"     onclick="applyTime()">OK</button>
     </div>
+  </div>
+</div>
+
+<!-- ══ i3MS FETCH MODAL ═══════════════════════════════ -->
+<div class="i3ms-backdrop" id="i3msBackdrop" onclick="if(event.target===this)closeI3ms()">
+  <div class="i3ms-sheet" id="i3msSheet">
+
+    <div class="i3ms-header">
+      <span class="i3ms-title">Get ePass File from i3MS</span>
+      <button class="i3ms-close" onclick="closeI3ms()">✕</button>
+    </div>
+
+    <div class="i3ms-body">
+
+      <!-- Step indicators -->
+      <div class="i3ms-steps">
+        <div class="i3ms-step active" id="i3msStep1">
+          <div class="i3ms-step-num">1</div>
+          <div class="i3ms-step-label">Login &amp;<br>Download</div>
+        </div>
+        <div class="i3ms-step" id="i3msStep2">
+          <div class="i3ms-step-num">2</div>
+          <div class="i3ms-step-label">Return<br>Here</div>
+        </div>
+        <div class="i3ms-step" id="i3msStep3">
+          <div class="i3ms-step-num">3</div>
+          <div class="i3ms-step-label">Pick<br>File</div>
+        </div>
+      </div>
+
+      <!-- Credential hint -->
+      <div class="i3ms-cred-card" id="i3msCredCard">
+        <div class="i3ms-cred-label">Use these credentials on i3MS</div>
+        <div class="i3ms-cred-row">
+          <span class="i3ms-cred-key">User ID</span>
+          <span class="i3ms-cred-val" id="i3msCredUser">mclsysho</span>
+          <button class="i3ms-copy-btn" onclick="i3msCopy('mclsysho', this)">Copy</button>
+        </div>
+        <div class="i3ms-cred-row">
+          <span class="i3ms-cred-key">Portal</span>
+          <span class="i3ms-cred-val" style="font-size:11px;color:var(--dim);">MCL Coal Net Report → Export XLS</span>
+          <span></span>
+        </div>
+      </div>
+
+      <!-- Warning -->
+      <div class="i3ms-warn" id="i3msWarn">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+        <span>Do <strong>not</strong> use the <strong>mclho</strong> ID here — that is only for the DO Database. Use <strong>mclsysho</strong> to download the Coalnet XLS report.</span>
+      </div>
+
+      <!-- Waiting state (shown after portal opens) -->
+      <div class="i3ms-waiting" id="i3msWaiting">
+        <div class="i3ms-waiting-pulse"></div>
+        <div class="i3ms-waiting-text">Waiting for your download…</div>
+        <div class="i3ms-waiting-sub">Log in on i3MS, navigate to<br><strong>MCL Reports → Coal Net Report</strong>,<br>set your date range and export the XLS.<br>Then come back here.</div>
+      </div>
+
+    </div><!-- /i3ms-body -->
+
+    <div class="i3ms-actions" id="i3msActions">
+      <!-- Step 1: Open portal -->
+      <button class="i3ms-btn-primary" id="i3msBtnOpen" onclick="i3msOpenPortal()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        Open i3MS Portal
+      </button>
+      <button class="i3ms-btn-secondary" onclick="closeI3ms()">
+        Cancel
+      </button>
+
+      <!-- Step 2+: Pick file (hidden until portal opened) -->
+      <button class="i3ms-btn-green" id="i3msBtnPick" style="display:none" onclick="i3msPickFile()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+        </svg>
+        Pick Downloaded File
+      </button>
+      <button class="i3ms-btn-secondary" id="i3msBtnReopenPortal" style="display:none" onclick="i3msOpenPortal()">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        Reopen i3MS
+      </button>
+      <button class="i3ms-btn-secondary" id="i3msBtnCancelWait" style="display:none" onclick="closeI3ms()">
+        Cancel
+      </button>
+    </div>
+
   </div>
 </div>
 
@@ -4005,7 +4379,100 @@ function downloadBlob(blob) {
 
 // ── Load DB from GitHub on startup ──────────────────────
 // ═══════════════════════════════════════════════════════
-//  SETTINGS — GitHub-backed config
+//  i3MS FETCH MODAL
+// ═══════════════════════════════════════════════════════
+let _i3msState = 'idle'; // 'idle' | 'waiting'
+
+function openI3msModal() {
+  _i3msState = 'idle';
+  _i3msSetStep(1);
+  // Reset to initial state
+  document.getElementById('i3msCredCard').style.display = '';
+  document.getElementById('i3msWarn').style.display = '';
+  document.getElementById('i3msWaiting').classList.remove('show');
+  document.getElementById('i3msBtnOpen').style.display = '';
+  document.getElementById('i3msBtnPick').style.display = 'none';
+  document.getElementById('i3msBtnReopenPortal').style.display = 'none';
+  document.getElementById('i3msBtnCancelWait').style.display = 'none';
+  document.querySelector('#i3msActions .i3ms-btn-secondary').style.display = ''; // Cancel
+  document.getElementById('i3msBackdrop').classList.add('open');
+}
+
+function closeI3ms() {
+  document.getElementById('i3msBackdrop').classList.remove('open');
+}
+
+function _i3msSetStep(n) {
+  [1,2,3].forEach(i => {
+    const el = document.getElementById('i3msStep' + i);
+    el.classList.remove('active', 'done');
+    if (i < n) el.classList.add('done');
+    else if (i === n) el.classList.add('active');
+  });
+}
+
+function i3msOpenPortal() {
+  // Open i3MS in a new tab
+  window.open('https://i3ms.odishaminerals.gov.in/', '_blank', 'noopener');
+
+  // Transition to waiting state
+  _i3msState = 'waiting';
+  _i3msSetStep(2);
+
+  document.getElementById('i3msCredCard').style.display = 'none';
+  document.getElementById('i3msWarn').style.display = 'none';
+  document.getElementById('i3msWaiting').classList.add('show');
+
+  // Swap buttons
+  document.getElementById('i3msBtnOpen').style.display = 'none';
+  document.querySelector('#i3msActions .i3ms-btn-secondary').style.display = 'none'; // original Cancel
+  document.getElementById('i3msBtnPick').style.display = '';
+  document.getElementById('i3msBtnReopenPortal').style.display = '';
+  document.getElementById('i3msBtnCancelWait').style.display = '';
+
+  // After a short delay, advance step indicator to show "return here" done
+  setTimeout(() => { if (_i3msState === 'waiting') _i3msSetStep(2); }, 800);
+}
+
+function i3msPickFile() {
+  _i3msSetStep(3);
+  // Trigger the existing file input — reuse all existing parse logic
+  document.getElementById('fileInput').click();
+  // Listen for file selection once, then close modal
+  const handler = () => {
+    closeI3ms();
+    document.getElementById('fileInput').removeEventListener('change', handler);
+  };
+  document.getElementById('fileInput').addEventListener('change', handler, { once: true });
+}
+
+function i3msCopy(text, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'Copied!';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+    }).catch(() => _i3msFallbackCopy(text, btn));
+  } else {
+    _i3msFallbackCopy(text, btn);
+  }
+}
+
+function _i3msFallbackCopy(text, btn) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.cssText = 'position:fixed;opacity:0;';
+  document.body.appendChild(ta);
+  ta.select();
+  try {
+    document.execCommand('copy');
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1800);
+  } catch(e) { /* silent */ }
+  document.body.removeChild(ta);
+}
+
 // ═══════════════════════════════════════════════════════
 // ═══════════════════════════════════════════════════════
 //  CUSTOM TIME PICKER
