@@ -1292,38 +1292,37 @@ body {
 /* Material palette — lighter pastels */
 :root {
   --gs-surface:     #ffffff;
-  --gs-surface-2:   #f7fbfb;    /* zebra even — barely-there teal tint */
-  --gs-header-bg:   #eef7f7;    /* header — very light teal */
-  --gs-header-text: #37747a;    /* muted teal */
-  --gs-divider:     #d4ecea;    /* very soft teal line */
-  --gs-divider-h:   #aad8d4;    /* slightly stronger divider */
-  --gs-cf-bg:       #edf6f5;    /* CF total — whisper teal */
-  --gs-mcl-bg:      #ddf0ee;    /* MCL total — slightly deeper */
-  --gs-highest-bg:  #f9fdfd;    /* near-white */
-  --gs-highest-txt: #4a9a96;    /* muted teal */
-  --gs-text:        #1a2e2e;    /* near-black teal */
-  --gs-text-dim:    #8eaaaa;    /* muted */
-  --gs-hover:       #edfaf9;    /* hover tint */
-  /* Column accent tints — applied via nth-child on td */
-  --gs-col-balance: #f5f7ff;    /* very light indigo — RDO Balance */
-  --gs-col-target:  #fffaf0;    /* very light warm — Target */
+  --gs-surface-2:   #f6f7fa;    /* zebra even — very light blue-grey */
+  --gs-header-bg:   #eaecf4;    /* header — light slate blue */
+  --gs-header-text: #3a4a7a;    /* deep slate blue */
+  --gs-divider:     #d8dcea;    /* soft blue-grey line */
+  --gs-divider-h:   #b4bada;    /* stronger divider */
+  --gs-cf-bg:       #eceef8;    /* CF total — whisper indigo */
+  --gs-mcl-bg:      #dde0f2;    /* MCL total — slightly deeper indigo */
+  --gs-highest-bg:  #f8f9fd;    /* near-white */
+  --gs-highest-txt: #5566a8;    /* slate blue */
+  --gs-text:        #1a1e2e;    /* near-black navy */
+  --gs-text-dim:    #8890b0;    /* muted blue-grey */
+  --gs-hover:       #eef0fa;    /* hover tint */
+  --gs-col-balance: #f0f4ff;    /* very light periwinkle — RDO Balance */
+  --gs-col-target:  #fff8ee;    /* very light warm — Target */
 }
 body.dark {
-  --gs-surface:     #192424;
-  --gs-surface-2:   #162020;
-  --gs-header-bg:   #1a3030;
-  --gs-header-text: #7abfba;
-  --gs-divider:     #253c3c;
-  --gs-divider-h:   #335050;
-  --gs-cf-bg:       #1c3232;
-  --gs-mcl-bg:      #163030;
-  --gs-highest-bg:  #1a2e2e;
-  --gs-highest-txt: #4db6ac;
-  --gs-text:        #e0eaea;
-  --gs-text-dim:    #5a7878;
-  --gs-hover:       #1e3838;
-  --gs-col-balance: #1e2040;
-  --gs-col-target:  #28240c;
+  --gs-surface:     #191c2a;
+  --gs-surface-2:   #161824;
+  --gs-header-bg:   #1e2240;
+  --gs-header-text: #8890d8;
+  --gs-divider:     #252840;
+  --gs-divider-h:   #333860;
+  --gs-cf-bg:       #1e2240;
+  --gs-mcl-bg:      #181c38;
+  --gs-highest-bg:  #1a1e30;
+  --gs-highest-txt: #7080c8;
+  --gs-text:        #dde0ee;
+  --gs-text-dim:    #5560a0;
+  --gs-hover:       #1e2248;
+  --gs-col-balance: #1a1e38;
+  --gs-col-target:  #282010;
 }
 
 .ss-gsheet-table {
@@ -1521,7 +1520,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B44</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B45</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3292,17 +3291,17 @@ async function shareReport() {
 
   const isDark = document.body.classList.contains('dark');
   const C = isDark ? {
-    bg:'#192424', surface:'#192424', raise:'#1a3030', edge:'#253c3c', line:'#335050',
-    amber:'#f0a500', green:'#2fc97e', blue:'#4db6ac', dim:'#5a7878', mid:'#7abfba', text:'#e0eaea', red:'#e05454',
-    headerBg:'#1a3030', headerText:'#7abfba', divider:'#253c3c', dividerH:'#335050',
-    cfBg:'#1c3232', mclBg:'#163030', highBg:'#1a2e2e', highTxt:'#4db6ac',
-    colBalance:'#1e2040', colTarget:'#28240c',
+    bg:'#191c2a', surface:'#191c2a', raise:'#1e2240', edge:'#252840', line:'#333860',
+    amber:'#f0a500', green:'#2fc97e', blue:'#7080c8', dim:'#5560a0', mid:'#8890d8', text:'#dde0ee', red:'#e05454',
+    headerBg:'#1e2240', headerText:'#8890d8', divider:'#252840', dividerH:'#333860',
+    cfBg:'#1e2240', mclBg:'#181c38', highBg:'#1a1e30', highTxt:'#7080c8',
+    colBalance:'#1a1e38', colTarget:'#282010',
   } : {
-    bg:'#f4fafa', surface:'#ffffff', raise:'#f7fbfb', edge:'#d4ecea', line:'#aad8d4',
-    amber:'#d4860a', green:'#1a9e5c', blue:'#37747a', dim:'#8eaaaa', mid:'#37747a', text:'#1a2e2e', red:'#c0392b',
-    headerBg:'#eef7f7', headerText:'#37747a', divider:'#d4ecea', dividerH:'#aad8d4',
-    cfBg:'#edf6f5', mclBg:'#ddf0ee', highBg:'#f9fdfd', highTxt:'#4a9a96',
-    colBalance:'#f5f7ff', colTarget:'#fffaf0',
+    bg:'#f4f5fa', surface:'#ffffff', raise:'#f6f7fa', edge:'#d8dcea', line:'#b4bada',
+    amber:'#d4860a', green:'#1a9e5c', blue:'#3a4a7a', dim:'#8890b0', mid:'#3a4a7a', text:'#1a1e2e', red:'#c0392b',
+    headerBg:'#eaecf4', headerText:'#3a4a7a', divider:'#d8dcea', dividerH:'#b4bada',
+    cfBg:'#eceef8', mclBg:'#dde0f2', highBg:'#f8f9fd', highTxt:'#5566a8',
+    colBalance:'#f0f4ff', colTarget:'#fff8ee',
   };
 
   const shownTime  = document.getElementById('asofBarTime').textContent;
