@@ -1296,13 +1296,13 @@ body {
   /* Base */
   --gs-surface:     #ffffff;
   --gs-surface-2:   #fafaf8;    /* zebra — warm white */
-  --gs-text:        #2c2c2c;
-  --gs-text-dim:    #a0a0a0;
+  --gs-text:        #111111;
+  --gs-text-dim:    #707070;
   --gs-hover:       #f0f4ff;
 
   /* Header — soft sage */
   --gs-header-bg:   #eef2eb;
-  --gs-header-text: #3a5240;
+  --gs-header-text: #1a3220;
 
   /* Dividers — warm stone */
   --gs-divider:     #e4e2dc;
@@ -1310,15 +1310,15 @@ body {
 
   /* CF rows — blush rose, very light */
   --gs-cf-bg:       #fdf0f0;
-  --gs-cf-text:     #7a3a3a;
+  --gs-cf-text:     #5a1a1a;
 
   /* MCL row — soft gold */
   --gs-mcl-bg:      #fdf6e4;
-  --gs-mcl-text:    #6a5000;
+  --gs-mcl-text:    #4a3800;
 
   /* Highest rows — pale sky */
   --gs-highest-bg:  #f0f5ff;
-  --gs-highest-txt: #3a5080;
+  --gs-highest-txt: #1a3060;
 
   /* Column tints */
   --gs-col-balance: #f4f2ff;   /* lavender — RDO Balance */
@@ -1564,7 +1564,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B61</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B62</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1625,13 +1625,7 @@ body.dark {
   <div id="ssGSheetWrapDrop" style="display:none;width:100%;max-width:900px;margin-top:8px;">
     <div id="ssGSheetStatusDrop" style="padding:18px 14px;text-align:center;font-size:13px;color:var(--dim);display:none;"></div>
     <!-- Toolbar for drop screen sheet view -->
-    <div id="hideEmptyWrapDrop" style="display:none;padding:4px 10px 8px;display:flex;align-items:center;justify-content:space-between;gap:6px;flex-wrap:wrap;">
-      <div class="trips-switch-wrap" onclick="toggleHideEmpty()" style="display:flex;">
-        <span class="trips-switch-label">Hide Empty</span>
-        <div class="switch-track on" id="hideEmptyTrackDrop">
-          <div class="switch-thumb"></div>
-        </div>
-      </div>
+    <div id="hideEmptyWrapDrop" style="display:none;padding:4px 10px 8px;display:flex;align-items:center;justify-content:flex-end;gap:6px;flex-wrap:wrap;">
       <div style="display:flex;gap:6px;align-items:center;">
         <button class="share-btn" onclick="fetchAndRenderGSheet()" title="Refresh sheet data" style="border-color:var(--blue);color:var(--blue);">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;flex-shrink:0;">
@@ -1779,12 +1773,7 @@ body.dark {
             <div class="switch-thumb"></div>
           </div>
         </div>
-        <div class="trips-switch-wrap" id="hideEmptyWrap" onclick="toggleHideEmpty()" style="display:none;">
-          <span class="trips-switch-label">Hide Empty</span>
-          <div class="switch-track on" id="hideEmptyTrack">
-            <div class="switch-thumb"></div>
-          </div>
-        </div>
+
       </div>
       <!-- Right: action buttons -->
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
@@ -2319,7 +2308,7 @@ let currentTabMaxDateStr = '';
 let tripsVisible  = false;
 let areaViewOn    = false;
 let ssViewOn      = true;   // Spreadsheet view ON by default
-let gsHideEmpty   = true;   // Hide empty columns in GSheet view by default
+const gsHideEmpty = true;   // Always hide empty columns
 let lastUnknownDOs = new Set();
 
 // ═══════════════════════════════════════════════════════
@@ -3023,11 +3012,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     if (!hasData) gsEmptyColIndices.add(ci);
   }
 
-  // Show/hide both Hide Empty switches based on whether any empty cols exist
-  const hasEmpty = gsEmptyColIndices.size > 0;
-  const hideWrap = document.getElementById('hideEmptyWrap');
-  if (hideWrap) hideWrap.style.display = hasEmpty ? '' : 'none';
-  // Drop screen toolbar always visible when sheet is on (contains refresh + share too)
+  // Drop screen toolbar always visible when sheet is on
   const dropWrap = document.getElementById('hideEmptyWrapDrop');
   if (dropWrap) dropWrap.style.display = '';
 
@@ -3146,13 +3131,6 @@ function toggleTrips() {
   document.getElementById('tripsSwitchTrack').classList.toggle('on', tripsVisible);
 }
 
-function toggleHideEmpty() {
-  gsHideEmpty = !gsHideEmpty;
-  document.getElementById('hideEmptyTrack').classList.toggle('on', gsHideEmpty);
-  const dropTrack = document.getElementById('hideEmptyTrackDrop');
-  if (dropTrack) dropTrack.classList.toggle('on', gsHideEmpty);
-  applyGSheetToAllTables();
-}
 
 // ═══════════════════════════════════════════════════════
 //  CLOCK PICKER
@@ -3371,10 +3349,10 @@ async function shareReport() {
     colBalance:'#1e1c30', colTarget:'#162018',
   } : {
     bg:'#f8f8f5', surface:'#ffffff', raise:'#fafaf8', edge:'#e4e2dc', line:'#c8c4b8',
-    amber:'#d4860a', green:'#1a9e5c', blue:'#3a5080', dim:'#a0a0a0', mid:'#3a5240', text:'#2c2c2c', red:'#c0392b',
-    headerBg:'#eef2eb', headerText:'#3a5240', divider:'#e4e2dc', dividerH:'#c8c4b8',
-    cfBg:'#fdf0f0', cfText:'#7a3a3a', mclBg:'#fdf6e4', mclText:'#6a5000',
-    highBg:'#f0f5ff', highTxt:'#3a5080',
+    amber:'#d4860a', green:'#1a9e5c', blue:'#3a5080', dim:'#a0a0a0', mid:'#3a5240', text:'#111111', red:'#c0392b',
+    headerBg:'#eef2eb', headerText:'#1a3220', divider:'#e4e2dc', dividerH:'#c8c4b8',
+    cfBg:'#fdf0f0', cfText:'#5a1a1a', mclBg:'#fdf6e4', mclText:'#4a3800',
+    highBg:'#f0f5ff', highTxt:'#1a3060',
     colBalance:'#f4f2ff', colTarget:'#f0faf4',
   };
 
