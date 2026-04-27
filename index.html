@@ -1434,7 +1434,7 @@ body.dark {
   font-family: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
   font-size: 12px;
   line-height: 1.25;
-  vertical-align: top;
+  vertical-align: middle;
 }
 .ss-gsheet-table td:first-child {
   text-align: left;
@@ -1562,7 +1562,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B58</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B59</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1631,6 +1631,13 @@ body.dark {
         </div>
       </div>
       <div style="flex:1;"></div>
+      <button class="share-btn" onclick="fetchAndRenderGSheet()" title="Refresh sheet data" style="border-color:var(--blue);color:var(--blue);">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Refresh
+      </button>
       <button class="share-btn" onclick="shareReport()">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -1773,6 +1780,13 @@ body.dark {
             <div class="switch-thumb"></div>
           </div>
         </div>
+        <button class="share-btn" id="refreshSheetBtn" onclick="fetchAndRenderGSheet()" title="Refresh sheet data" style="display:none;border-color:var(--blue);color:var(--blue);">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;flex-shrink:0;">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+          </svg>
+          Refresh
+        </button>
         <button class="share-btn" id="shareBtn" onclick="shareReport()">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2806,9 +2820,11 @@ function applyTableVisibility() {
   const ssWrap     = document.getElementById('ssGSheetWrap');
   const ssWrapDrop = document.getElementById('ssGSheetWrapDrop');
   const areaTable  = document.getElementById('areaTable');
+  const refreshBtn = document.getElementById('refreshSheetBtn');
   ssWrap.style.display     = ssViewOn ? '' : 'none';
   ssWrapDrop.style.display = ssViewOn ? '' : 'none';
   areaTable.style.display  = ssViewOn ? 'none' : '';
+  if (refreshBtn) refreshBtn.style.display = ssViewOn ? '' : 'none';
 }
 
 function toggleSpreadsheet() {
@@ -3081,7 +3097,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       td.textContent = txt;
       if (ci === remarkColIdx) {
         // Remarks: left-aligned, condensed font, tight padding, wrapping
-        td.style.cssText = 'text-align:left;font-size:12px;white-space:normal;padding:5px 6px;font-family:"IBM Plex Sans Condensed","IBM Plex Sans",sans-serif;line-height:1.25;vertical-align:top;';
+        td.style.cssText = 'text-align:left;font-size:12px;white-space:normal;padding:5px 6px;font-family:"IBM Plex Sans Condensed","IBM Plex Sans",sans-serif;line-height:1.25;vertical-align:middle;';
       } else {
         if (pos > 0) td.style.textAlign = 'right';
         if (!txt && !isHighest) td.style.color = 'var(--edge)';
