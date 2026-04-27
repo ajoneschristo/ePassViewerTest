@@ -1289,38 +1289,41 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* Material palette — light mode pastels */
+/* Material palette — lighter pastels */
 :root {
   --gs-surface:     #ffffff;
-  --gs-surface-2:   #f5f9f9;   /* zebra even row — very light teal tint */
-  --gs-header-bg:   #e8f4f4;   /* header — light teal */
-  --gs-header-text: #00695c;   /* teal 800 */
-  --gs-divider:     #b2dfdb;   /* teal 100 */
-  --gs-divider-h:   #80cbc4;   /* teal 200 — stronger divider */
-  --gs-cf-bg:       #e0f2f1;   /* teal 50 — CF total rows */
-  --gs-mcl-bg:      #b2dfdb;   /* teal 100 — MCL total row */
-  --gs-highest-bg:  #f1f8f8;   /* near-white teal — Highest rows */
-  --gs-highest-txt: #00796b;   /* teal 700 */
-  --gs-text:        #212121;   /* grey 900 */
-  --gs-text-mid:    #546e7a;   /* blue-grey 600 */
-  --gs-text-dim:    #90a4ae;   /* blue-grey 300 */
-  --gs-hover:       #e0f7fa;   /* cyan 50 */
+  --gs-surface-2:   #f7fbfb;    /* zebra even — barely-there teal tint */
+  --gs-header-bg:   #eef7f7;    /* header — very light teal */
+  --gs-header-text: #37747a;    /* muted teal */
+  --gs-divider:     #d4ecea;    /* very soft teal line */
+  --gs-divider-h:   #aad8d4;    /* slightly stronger divider */
+  --gs-cf-bg:       #edf6f5;    /* CF total — whisper teal */
+  --gs-mcl-bg:      #ddf0ee;    /* MCL total — slightly deeper */
+  --gs-highest-bg:  #f9fdfd;    /* near-white */
+  --gs-highest-txt: #4a9a96;    /* muted teal */
+  --gs-text:        #1a2e2e;    /* near-black teal */
+  --gs-text-dim:    #8eaaaa;    /* muted */
+  --gs-hover:       #edfaf9;    /* hover tint */
+  /* Column accent tints — applied via nth-child on td */
+  --gs-col-balance: #f5f7ff;    /* very light indigo — RDO Balance */
+  --gs-col-target:  #fffaf0;    /* very light warm — Target */
 }
 body.dark {
-  --gs-surface:     #1e2a2a;
-  --gs-surface-2:   #1a2424;
-  --gs-header-bg:   #1b3535;
-  --gs-header-text: #80cbc4;
-  --gs-divider:     #2e4a4a;
-  --gs-divider-h:   #3d6060;
-  --gs-cf-bg:       #1e3535;
+  --gs-surface:     #192424;
+  --gs-surface-2:   #162020;
+  --gs-header-bg:   #1a3030;
+  --gs-header-text: #7abfba;
+  --gs-divider:     #253c3c;
+  --gs-divider-h:   #335050;
+  --gs-cf-bg:       #1c3232;
   --gs-mcl-bg:      #163030;
-  --gs-highest-bg:  #1c3232;
+  --gs-highest-bg:  #1a2e2e;
   --gs-highest-txt: #4db6ac;
-  --gs-text:        #eceff1;
-  --gs-text-mid:    #90a4ae;
-  --gs-text-dim:    #546e7a;
-  --gs-hover:       #1e3a3a;
+  --gs-text:        #e0eaea;
+  --gs-text-dim:    #5a7878;
+  --gs-hover:       #1e3838;
+  --gs-col-balance: #1e2040;
+  --gs-col-target:  #28240c;
 }
 
 .ss-gsheet-table {
@@ -1328,9 +1331,10 @@ body.dark {
   border-collapse: collapse;
   width: 100%;
   background: var(--gs-surface);
+  border: 1px solid var(--gs-divider-h);
   border-radius: 8px;
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.12);
+  box-shadow: 0 1px 4px rgba(0,0,0,.07);
 }
 
 /* Caption */
@@ -1371,7 +1375,7 @@ body.dark {
   background: var(--gs-header-bg);
   z-index: 1;
 }
-.ss-gsheet-table th:last-child { border-right: none; }
+.ss-gsheet-table th:last-child  { border-right: none; }
 .ss-gsheet-table th:first-child {
   text-align: left;
   min-width: 90px;
@@ -1379,11 +1383,12 @@ body.dark {
   white-space: nowrap;
   border-right: 2px solid var(--gs-divider-h);
 }
+/* RDO Balance header tint */
+.ss-gsheet-table th:nth-child(2) { background: color-mix(in srgb, var(--gs-header-bg) 70%, var(--gs-col-balance) 30%); }
+/* Target header tint */
+.ss-gsheet-table th:nth-child(3) { background: color-mix(in srgb, var(--gs-header-bg) 70%, var(--gs-col-target) 30%); }
 
-/* ── Data cells — full-row zebra ── */
-.ss-gsheet-table tbody tr:nth-child(even) td { background: var(--gs-surface-2); }
-.ss-gsheet-table tbody tr:nth-child(odd)  td { background: var(--gs-surface); }
-
+/* ── Data cells ── */
 .ss-gsheet-table td {
   padding: 8px 12px;
   border-bottom: 1px solid var(--gs-divider);
@@ -1396,8 +1401,9 @@ body.dark {
   font-variant-numeric: tabular-nums;
   color: var(--gs-text);
   transition: background .12s;
+  /* No inline background — controlled entirely by rules below */
 }
-.ss-gsheet-table td:last-child { border-right: none; }
+.ss-gsheet-table td:last-child  { border-right: none; }
 .ss-gsheet-table td:first-child {
   text-align: left;
   font-family: var(--sans);
@@ -1408,7 +1414,17 @@ body.dark {
 }
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
 
-/* Hover — overrides zebra */
+/* ── Full-row zebra on plain data rows only ── */
+.ss-gsheet-table tbody tr:nth-child(even) td         { background: var(--gs-surface-2); }
+.ss-gsheet-table tbody tr:nth-child(odd)  td         { background: var(--gs-surface); }
+
+/* ── Column tints for RDO Balance (col 2) and Target (col 3) ── */
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: var(--gs-col-balance); }
+.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(2) { background: color-mix(in srgb, var(--gs-col-balance) 80%, var(--gs-surface-2) 20%); }
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: var(--gs-col-target); }
+.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: color-mix(in srgb, var(--gs-col-target) 80%, var(--gs-surface-2) 20%); }
+
+/* Hover overrides everything */
 .ss-gsheet-table tbody tr:hover td { background: var(--gs-hover) !important; transition: background .08s; }
 
 /* ── CF total rows (IBCF / TCF) ── */
@@ -1433,7 +1449,6 @@ body.dark {
   background: var(--gs-mcl-bg) !important;
   font-weight: 800;
   border-top: 3px solid var(--gs-divider-h);
-  border-bottom: 1px solid var(--gs-divider);
   font-size: clamp(13px, 1.8vw, 16px);
   color: var(--gs-text);
 }
@@ -1506,7 +1521,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B40r</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B44</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3030,6 +3045,12 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     tbody.appendChild(tr);
   });
   table.appendChild(tbody);
+  // Strip any inline background/color that gviz cell styles may have injected
+  table.querySelectorAll('td, th').forEach(el => {
+    el.style.removeProperty('background');
+    el.style.removeProperty('background-color');
+    el.style.removeProperty('color');
+  });
 }
 
 function applyGSheetToAllTables() {
@@ -3271,15 +3292,17 @@ async function shareReport() {
 
   const isDark = document.body.classList.contains('dark');
   const C = isDark ? {
-    bg:'#1e2a2a', surface:'#1e2a2a', raise:'#1b3535', edge:'#2e4a4a', line:'#3d6060',
-    amber:'#f0a500', green:'#2fc97e', blue:'#4db6ac', dim:'#546e7a', mid:'#80cbc4', text:'#eceff1', red:'#e05454',
-    headerBg:'#1b3535', headerText:'#80cbc4', divider:'#2e4a4a', dividerH:'#3d6060',
-    cfBg:'#1e3535', mclBg:'#163030', highBg:'#1c3232', highTxt:'#4db6ac',
+    bg:'#192424', surface:'#192424', raise:'#1a3030', edge:'#253c3c', line:'#335050',
+    amber:'#f0a500', green:'#2fc97e', blue:'#4db6ac', dim:'#5a7878', mid:'#7abfba', text:'#e0eaea', red:'#e05454',
+    headerBg:'#1a3030', headerText:'#7abfba', divider:'#253c3c', dividerH:'#335050',
+    cfBg:'#1c3232', mclBg:'#163030', highBg:'#1a2e2e', highTxt:'#4db6ac',
+    colBalance:'#1e2040', colTarget:'#28240c',
   } : {
-    bg:'#f5f9f9', surface:'#ffffff', raise:'#f5f9f9', edge:'#b2dfdb', line:'#80cbc4',
-    amber:'#d4860a', green:'#1a9e5c', blue:'#00796b', dim:'#90a4ae', mid:'#546e7a', text:'#212121', red:'#c0392b',
-    headerBg:'#e8f4f4', headerText:'#00695c', divider:'#b2dfdb', dividerH:'#80cbc4',
-    cfBg:'#e0f2f1', mclBg:'#b2dfdb', highBg:'#f1f8f8', highTxt:'#00796b',
+    bg:'#f4fafa', surface:'#ffffff', raise:'#f7fbfb', edge:'#d4ecea', line:'#aad8d4',
+    amber:'#d4860a', green:'#1a9e5c', blue:'#37747a', dim:'#8eaaaa', mid:'#37747a', text:'#1a2e2e', red:'#c0392b',
+    headerBg:'#eef7f7', headerText:'#37747a', divider:'#d4ecea', dividerH:'#aad8d4',
+    cfBg:'#edf6f5', mclBg:'#ddf0ee', highBg:'#f9fdfd', highTxt:'#4a9a96',
+    colBalance:'#f5f7ff', colTarget:'#fffaf0',
   };
 
   const shownTime  = document.getElementById('asofBarTime').textContent;
@@ -3349,6 +3372,11 @@ async function shareReport() {
           color:C.text,whiteSpace:'nowrap',textAlign:'right',verticalAlign:'middle',
           fontFamily:'IBM Plex Mono,monospace',fontSize:'16px',fontVariantNumeric:'tabular-nums',background:rowBg});
         const ci=Array.from(td.parentElement.children).indexOf(td);
+        // Column tints — RDO Balance (col 2) and Target (col 3)
+        if (!isBoldRow && !isMclRow && !isHighestRow) {
+          if(ci===1) td.style.background = C.colBalance;
+          if(ci===2) td.style.background = C.colTarget;
+        }
         if(ci===0){
           td.style.textAlign='left';td.style.fontFamily='IBM Plex Sans,sans-serif';
           td.style.borderRight=`2px solid ${C.dividerH}`;
