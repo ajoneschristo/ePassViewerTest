@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ePass MCL Coalnet Viewer</title>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Sans+Condensed:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 :root {
@@ -1553,7 +1553,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B56</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B57</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3073,7 +3073,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       if (pos > 0) td.style.textAlign = 'right';
       if (ci === remarkColIdx) td.style.textAlign = 'left';
       if (!txt && !isHighest) td.style.color = 'var(--edge)';
-      if (ci === remarkColIdx) { td.style.fontSize = '12px'; td.style.whiteSpace = 'normal'; td.style.minWidth = '80px'; }
+      if (ci === remarkColIdx) { td.style.fontSize = '12px'; td.style.whiteSpace = 'normal'; td.style.minWidth = '80px'; td.style.fontFamily = "'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif"; td.style.lineHeight = '1.3'; }
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -3420,7 +3420,7 @@ async function shareReport() {
           if(isBoldRow&&!isMclRow){td.style.color=C.cfText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';} if(isMclRow){td.style.color=C.mclText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';}
           if(isHighestRow){td.style.color=C.dim;td.style.fontSize='14px';td.style.textTransform='uppercase';td.style.letterSpacing='.08em';td.style.fontFamily='IBM Plex Sans,sans-serif';td.style.paddingLeft='22px';}
         }
-        if(td===td.parentElement.children[td.parentElement.children.length-1]) { td.style.borderRight='none'; td.style.whiteSpace='normal'; td.style.fontSize='12px'; td.style.minWidth='90px'; td.style.verticalAlign='top'; }
+        if(td===td.parentElement.children[td.parentElement.children.length-1]) { td.style.borderRight='none'; td.style.whiteSpace='normal'; td.style.fontSize='12px'; td.style.minWidth='90px'; td.style.verticalAlign='top'; td.style.fontFamily="'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif"; td.style.lineHeight='1.3'; }
         if(isBoldRow||isMclRow){td.style.fontWeight=isMclRow?'800':'700';td.style.fontSize=isMclRow?'21px':'20px';td.style.borderTop=`2px solid ${C.dividerH}`;}
         if(isHighestRow){td.style.color=C.highTxt;td.style.fontSize='17px';}
       });
