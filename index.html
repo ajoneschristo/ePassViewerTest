@@ -1348,6 +1348,7 @@ body.dark {
   --gs-col-balance-2: #18162a; /* dark lavender even */
   --gs-col-target:  #162018;   /* dark mint odd */
   --gs-col-target-2: #121a14;  /* dark mint even */
+}
 
 .ss-gsheet-table {
   font-size: 12.5px;
@@ -1407,9 +1408,8 @@ body.dark {
   border-right: 2px solid var(--gs-divider-h);
 }
 /* RDO Balance header tint */
-.ss-gsheet-table th:nth-child(2) { background: color-mix(in srgb, var(--gs-header-bg) 70%, var(--gs-col-balance) 30%); }
-/* Target header tint */
-.ss-gsheet-table th:nth-child(3) { background: color-mix(in srgb, var(--gs-header-bg) 70%, var(--gs-col-target) 30%); }
+.ss-gsheet-table th:nth-child(2) { background: #eeeaf8; } /* lavender tint on RDO Balance header */
+.ss-gsheet-table th:nth-child(3) { background: #e8f5ee; } /* mint tint on Target header */
 
 /* ── Data cells ── */
 .ss-gsheet-table td {
@@ -1553,7 +1553,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B48</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B50</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
