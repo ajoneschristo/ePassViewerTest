@@ -1562,7 +1562,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B59</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B60</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1623,16 +1623,15 @@ body.dark {
   <div id="ssGSheetWrapDrop" style="display:none;width:100%;max-width:900px;margin-top:8px;">
     <div id="ssGSheetStatusDrop" style="padding:18px 14px;text-align:center;font-size:13px;color:var(--dim);display:none;"></div>
     <!-- Toolbar for drop screen sheet view -->
-    <div id="hideEmptyWrapDrop" style="display:none;padding:4px 10px 6px;display:flex;align-items:center;gap:8px;">
-      <div class="trips-switch-wrap" onclick="toggleHideEmpty()" style="display:flex;">
+    <div id="hideEmptyWrapDrop" style="display:none;padding:4px 10px 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+      <div class="trips-switch-wrap" onclick="toggleHideEmpty()" style="display:flex;margin-right:auto;">
         <span class="trips-switch-label">Hide Empty</span>
         <div class="switch-track on" id="hideEmptyTrackDrop">
           <div class="switch-thumb"></div>
         </div>
       </div>
-      <div style="flex:1;"></div>
       <button class="share-btn" onclick="fetchAndRenderGSheet()" title="Refresh sheet data" style="border-color:var(--blue);color:var(--blue);">
-        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;flex-shrink:0;">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
         </svg>
@@ -1645,6 +1644,7 @@ body.dark {
         </svg>
         Share
       </button>
+    </div>
     </div>
     <div style="overflow-x:auto;-webkit-overflow-scrolling:touch;">
       <table class="ss-table ss-gsheet-table" id="ssTableDrop" style="display:none;width:100%;border-collapse:collapse;"></table>
@@ -3017,10 +3017,11 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
   // Show/hide both Hide Empty switches based on whether any empty cols exist
   const hasEmpty = gsEmptyColIndices.size > 0;
-  ['hideEmptyWrap', 'hideEmptyWrapDrop'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = hasEmpty ? '' : 'none';
-  });
+  const hideWrap = document.getElementById('hideEmptyWrap');
+  if (hideWrap) hideWrap.style.display = hasEmpty ? '' : 'none';
+  // Drop screen toolbar always visible when sheet is on (contains refresh + share too)
+  const dropWrap = document.getElementById('hideEmptyWrapDrop');
+  if (dropWrap) dropWrap.style.display = '';
 
   // ── Caption (title · date) ──
   if (captionRows.length > 0) {
