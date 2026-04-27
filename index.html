@@ -1441,10 +1441,18 @@ body.dark {
 .ss-gsheet-table tbody tr:nth-child(odd)  td         { background: var(--gs-surface); }
 
 /* ── Column tints for RDO Balance (col 2) and Target (col 3) ── */
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: var(--gs-col-balance); }
-.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(2) { background: color-mix(in srgb, var(--gs-col-balance) 80%, var(--gs-surface-2) 20%); }
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: var(--gs-col-target); }
-.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: color-mix(in srgb, var(--gs-col-target) 80%, var(--gs-surface-2) 20%); }
+/* These must appear AFTER the zebra rules and use higher specificity */
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: var(--gs-col-balance) !important; }
+.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(2) { background: color-mix(in srgb, var(--gs-col-balance) 85%, var(--gs-surface-2) 15%) !important; }
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: var(--gs-col-target) !important; }
+.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: color-mix(in srgb, var(--gs-col-target) 85%, var(--gs-surface-2) 15%) !important; }
+/* Don't apply column tints to special rows */
+.ss-gsheet-table .gs-bold    td:nth-child(2),
+.ss-gsheet-table .gs-bold    td:nth-child(3),
+.ss-gsheet-table .gs-mcl     td:nth-child(2),
+.ss-gsheet-table .gs-mcl     td:nth-child(3),
+.ss-gsheet-table .gs-highest td:nth-child(2),
+.ss-gsheet-table .gs-highest td:nth-child(3) { background: inherit !important; }
 
 /* Hover overrides everything */
 .ss-gsheet-table tbody tr:hover td { background: var(--gs-hover) !important; transition: background .08s; }
@@ -1543,7 +1551,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B48</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B49</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
