@@ -1291,38 +1291,61 @@ body {
 
 /* Material palette — lighter pastels */
 :root {
+  /* Base */
   --gs-surface:     #ffffff;
-  --gs-surface-2:   #f9f8f6;    /* zebra — barely-there warm grey */
-  --gs-header-bg:   #f0ede8;    /* header — light warm charcoal */
-  --gs-header-text: #4a3f34;    /* warm charcoal */
-  --gs-divider:     #e2ddd8;    /* soft warm line */
-  --gs-divider-h:   #c8c0b4;    /* stronger warm divider */
-  --gs-cf-bg:       #edeae5;    /* CF total — warm grey tint */
-  --gs-mcl-bg:      #e2ddd8;    /* MCL total — slightly deeper */
-  --gs-highest-bg:  #faf9f7;    /* near-white warm */
-  --gs-highest-txt: #7a6a58;    /* warm brown-grey */
-  --gs-text:        #1e1a16;    /* near-black warm */
-  --gs-text-dim:    #a09080;    /* muted warm */
-  --gs-hover:       #f4f1ec;    /* hover — warm cream */
-  --gs-col-balance: #f4f2ff;    /* very light lavender — RDO Balance */
-  --gs-col-target:  #fffbf0;    /* very light cream — Target */
+  --gs-surface-2:   #fafaf8;    /* zebra — warm white */
+  --gs-text:        #2c2c2c;
+  --gs-text-dim:    #a0a0a0;
+  --gs-hover:       #f0f4ff;
+
+  /* Header — soft sage */
+  --gs-header-bg:   #eef2eb;
+  --gs-header-text: #3a5240;
+
+  /* Dividers — warm stone */
+  --gs-divider:     #e4e2dc;
+  --gs-divider-h:   #c8c4b8;
+
+  /* CF rows — blush rose, very light */
+  --gs-cf-bg:       #fdf0f0;
+  --gs-cf-text:     #7a3a3a;
+
+  /* MCL row — soft gold */
+  --gs-mcl-bg:      #fdf6e4;
+  --gs-mcl-text:    #6a5000;
+
+  /* Highest rows — pale sky */
+  --gs-highest-bg:  #f0f5ff;
+  --gs-highest-txt: #3a5080;
+
+  /* Column tints */
+  --gs-col-balance: #f4f2ff;   /* lavender — RDO Balance */
+  --gs-col-target:  #f0faf4;   /* mint — Target */
 }
 body.dark {
-  --gs-surface:     #1e1c18;
-  --gs-surface-2:   #1a1814;
-  --gs-header-bg:   #2a2520;
-  --gs-header-text: #b0a090;
-  --gs-divider:     #2e2a24;
-  --gs-divider-h:   #4a4038;
-  --gs-cf-bg:       #2a2520;
-  --gs-mcl-bg:      #242018;
-  --gs-highest-bg:  #201e18;
-  --gs-highest-txt: #9a8870;
-  --gs-text:        #e8e0d4;
-  --gs-text-dim:    #6a5a48;
-  --gs-hover:       #2e2820;
-  --gs-col-balance: #1e1c2e;
-  --gs-col-target:  #28240e;
+  --gs-surface:     #1c1c1a;
+  --gs-surface-2:   #181816;
+  --gs-text:        #ddd8d0;
+  --gs-text-dim:    #686460;
+  --gs-hover:       #1e2030;
+
+  --gs-header-bg:   #1e2820;
+  --gs-header-text: #7aaa80;
+
+  --gs-divider:     #2c2c28;
+  --gs-divider-h:   #484440;
+
+  --gs-cf-bg:       #2c1e1e;
+  --gs-cf-text:     #c08080;
+
+  --gs-mcl-bg:      #2c2610;
+  --gs-mcl-text:    #c0a840;
+
+  --gs-highest-bg:  #1a1e2c;
+  --gs-highest-txt: #7090c0;
+
+  --gs-col-balance: #1e1c30;
+  --gs-col-target:  #162018;
 }
 
 .ss-gsheet-table {
@@ -1436,7 +1459,7 @@ body.dark {
   color: var(--gs-text);
 }
 .ss-gsheet-table .gs-bold td:first-child {
-  color: var(--gs-header-text);
+  color: var(--gs-cf-text, var(--gs-header-text));
   font-family: var(--sans);
   font-weight: 700;
   letter-spacing: .03em;
@@ -1452,7 +1475,7 @@ body.dark {
   color: var(--gs-text);
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
-  color: var(--gs-header-text);
+  color: var(--gs-mcl-text);
   font-family: var(--sans);
   font-weight: 800;
   letter-spacing: .03em;
@@ -1520,7 +1543,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B46</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B47</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3291,17 +3314,19 @@ async function shareReport() {
 
   const isDark = document.body.classList.contains('dark');
   const C = isDark ? {
-    bg:'#1e1c18', surface:'#1e1c18', raise:'#2a2520', edge:'#2e2a24', line:'#4a4038',
-    amber:'#f0a500', green:'#2fc97e', blue:'#9a8870', dim:'#6a5a48', mid:'#b0a090', text:'#e8e0d4', red:'#e05454',
-    headerBg:'#2a2520', headerText:'#b0a090', divider:'#2e2a24', dividerH:'#4a4038',
-    cfBg:'#2a2520', mclBg:'#242018', highBg:'#201e18', highTxt:'#9a8870',
-    colBalance:'#1e1c2e', colTarget:'#28240e',
+    bg:'#1c1c1a', surface:'#1c1c1a', raise:'#1e2820', edge:'#2c2c28', line:'#484440',
+    amber:'#f0a500', green:'#2fc97e', blue:'#7090c0', dim:'#686460', mid:'#7aaa80', text:'#ddd8d0', red:'#e05454',
+    headerBg:'#1e2820', headerText:'#7aaa80', divider:'#2c2c28', dividerH:'#484440',
+    cfBg:'#2c1e1e', cfText:'#c08080', mclBg:'#2c2610', mclText:'#c0a840',
+    highBg:'#1a1e2c', highTxt:'#7090c0',
+    colBalance:'#1e1c30', colTarget:'#162018',
   } : {
-    bg:'#f5f3f0', surface:'#ffffff', raise:'#f9f8f6', edge:'#e2ddd8', line:'#c8c0b4',
-    amber:'#d4860a', green:'#1a9e5c', blue:'#4a3f34', dim:'#a09080', mid:'#4a3f34', text:'#1e1a16', red:'#c0392b',
-    headerBg:'#f0ede8', headerText:'#4a3f34', divider:'#e2ddd8', dividerH:'#c8c0b4',
-    cfBg:'#edeae5', mclBg:'#e2ddd8', highBg:'#faf9f7', highTxt:'#7a6a58',
-    colBalance:'#f4f2ff', colTarget:'#fffbf0',
+    bg:'#f8f8f5', surface:'#ffffff', raise:'#fafaf8', edge:'#e4e2dc', line:'#c8c4b8',
+    amber:'#d4860a', green:'#1a9e5c', blue:'#3a5080', dim:'#a0a0a0', mid:'#3a5240', text:'#2c2c2c', red:'#c0392b',
+    headerBg:'#eef2eb', headerText:'#3a5240', divider:'#e4e2dc', dividerH:'#c8c4b8',
+    cfBg:'#fdf0f0', cfText:'#7a3a3a', mclBg:'#fdf6e4', mclText:'#6a5000',
+    highBg:'#f0f5ff', highTxt:'#3a5080',
+    colBalance:'#f4f2ff', colTarget:'#f0faf4',
   };
 
   const shownTime  = document.getElementById('asofBarTime').textContent;
@@ -3380,7 +3405,7 @@ async function shareReport() {
           td.style.textAlign='left';td.style.fontFamily='IBM Plex Sans,sans-serif';
           td.style.borderRight=`2px solid ${C.dividerH}`;
           td.style.fontWeight=isMclRow?'800':isBoldRow?'700':'500';
-          if(isBoldRow||isMclRow){td.style.color=C.headerText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';}
+          if(isBoldRow&&!isMclRow){td.style.color=C.cfText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';} if(isMclRow){td.style.color=C.mclText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';}
           if(isHighestRow){td.style.color=C.dim;td.style.fontSize='12px';td.style.textTransform='uppercase';td.style.letterSpacing='.08em';td.style.fontFamily='IBM Plex Sans,sans-serif';td.style.paddingLeft='22px';}
         }
         if(td===td.parentElement.children[td.parentElement.children.length-1]) td.style.borderRight='none';
