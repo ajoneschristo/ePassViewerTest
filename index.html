@@ -1285,214 +1285,187 @@ body {
 .ss-table tr:last-child td { border-bottom: none; }
 .ss-table.hide-trips .ss-col-trips { display: none; }
 
-/* ════════════════════════════════════════════════════════
-   GSheet — Road Despatch table
-   Material Design 3 · Pastel palette
-   ─────────────────────────────────────────────────────
-   MD3 tones used (all light, accessible):
-     IB CF    → Blue 50 / Blue 100 / Blue 200  (#E3F2FD / #BBDEFB / #90CAF9)
-     TC CF    → Amber 50 / Amber 100           (#FFF8E1 / #FFECB3)
-     IBCF tot → Blue 200 surface, Blue 800 text
-     TCF tot  → Amber 200 surface, Amber 900 text
-     MCL tot  → Deep Purple 50, Deep Purple 800 text
-     Highest  → Purple 50, italic dim
-   ════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   GSheet table — Material Design, pastel zebra
+   ══════════════════════════════════════════════════════ */
 
-/* MD3 elevation tokens for table */
+/* Material palette — light mode pastels */
+:root {
+  --gs-surface:     #ffffff;
+  --gs-surface-2:   #f5f9f9;   /* zebra even row — very light teal tint */
+  --gs-header-bg:   #e8f4f4;   /* header — light teal */
+  --gs-header-text: #00695c;   /* teal 800 */
+  --gs-divider:     #b2dfdb;   /* teal 100 */
+  --gs-divider-h:   #80cbc4;   /* teal 200 — stronger divider */
+  --gs-cf-bg:       #e0f2f1;   /* teal 50 — CF total rows */
+  --gs-mcl-bg:      #b2dfdb;   /* teal 100 — MCL total row */
+  --gs-highest-bg:  #f1f8f8;   /* near-white teal — Highest rows */
+  --gs-highest-txt: #00796b;   /* teal 700 */
+  --gs-text:        #212121;   /* grey 900 */
+  --gs-text-mid:    #546e7a;   /* blue-grey 600 */
+  --gs-text-dim:    #90a4ae;   /* blue-grey 300 */
+  --gs-hover:       #e0f7fa;   /* cyan 50 */
+}
+body.dark {
+  --gs-surface:     #1e2a2a;
+  --gs-surface-2:   #1a2424;
+  --gs-header-bg:   #1b3535;
+  --gs-header-text: #80cbc4;
+  --gs-divider:     #2e4a4a;
+  --gs-divider-h:   #3d6060;
+  --gs-cf-bg:       #1e3535;
+  --gs-mcl-bg:      #163030;
+  --gs-highest-bg:  #1c3232;
+  --gs-highest-txt: #4db6ac;
+  --gs-text:        #eceff1;
+  --gs-text-mid:    #90a4ae;
+  --gs-text-dim:    #546e7a;
+  --gs-hover:       #1e3a3a;
+}
+
 .ss-gsheet-table {
-  border-collapse: separate;
-  border-spacing: 0;
+  font-size: 12.5px;
+  border-collapse: collapse;
   width: 100%;
-  border-radius: 12px;
+  background: var(--gs-surface);
+  border-radius: 8px;
   overflow: hidden;
-  border: 1px solid #CAC4D0;   /* MD3 Outline */
-  box-shadow: 0 1px 2px rgba(0,0,0,.08), 0 2px 6px rgba(0,0,0,.06);
-  font-family: var(--sans);
-  font-size: clamp(11px, 1.4vw, 13px);
-}
-body.dark .ss-gsheet-table {
-  border-color: #49454F;
-  box-shadow: 0 1px 3px rgba(0,0,0,.3);
+  box-shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.12);
 }
 
-.ss-gsheet-table caption { display: none; }
-
-/* ── Title row  ·  MD3 Surface Variant ── */
-.ss-gsheet-table thead tr.gs-title-row td {
-  background: #E7E0EC;          /* MD3 Surface Variant */
-  color: #1C1B1F;               /* MD3 On Surface */
-  font-family: var(--sans);
-  font-size: clamp(12px, 1.6vw, 14px);
-  font-weight: 600;
-  letter-spacing: .03em;
-  text-align: center;
-  padding: 10px 16px;
-  border-bottom: 1px solid #CAC4D0;
-}
-body.dark .ss-gsheet-table thead tr.gs-title-row td {
-  background: #36343B;          /* MD3 Surface Variant dark */
-  color: #E6E1E5;
-  border-color: #49454F;
+/* Caption */
+.ss-gsheet-table caption {
+  caption-side: top;
+  text-align: left;
+  padding: 8px 14px 6px;
+  font-size: 10px;
+  font-family: var(--mono);
+  letter-spacing: .08em;
+  color: var(--gs-header-text);
+  text-transform: uppercase;
+  background: var(--gs-header-bg);
+  border-bottom: 1px solid var(--gs-divider);
 }
 
-/* ── Column header row  ·  MD3 Secondary Container ── */
-.ss-gsheet-table thead tr.gs-header-row th {
-  background: #E8DEF8;          /* MD3 Secondary Container */
-  color: #21005E;               /* MD3 On Secondary Container */
+/* ── Header ── */
+.ss-gsheet-table thead tr { background: var(--gs-header-bg); }
+.ss-gsheet-table th {
   font-family: var(--sans);
-  font-size: clamp(9px, 1.1vw, 11px);
+  font-size: clamp(10px, 1.2vw, 12px);
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: .07em;
-  padding: 9px 10px;
-  border-bottom: 2px solid #B0A7C0;
-  border-right: 1px solid #CAC4D0;
+  color: var(--gs-header-text);
+  padding: 10px 12px;
+  border-top: 2px solid var(--gs-divider-h);
+  border-bottom: 2px solid var(--gs-divider-h);
+  border-right: 1px solid var(--gs-divider);
   white-space: normal;
   word-break: break-word;
   text-align: center;
   vertical-align: middle;
-  line-height: 1.35;
+  max-width: 80px;
+  line-height: 1.3;
   position: sticky;
   top: 0;
+  background: var(--gs-header-bg);
   z-index: 1;
 }
-.ss-gsheet-table thead tr.gs-header-row th:last-child { border-right: none; }
-body.dark .ss-gsheet-table thead tr.gs-header-row th {
-  background: #4A4458;
-  color: #CCC2DC;
-  border-color: #49454F;
+.ss-gsheet-table th:last-child { border-right: none; }
+.ss-gsheet-table th:first-child {
+  text-align: left;
+  min-width: 90px;
+  max-width: 130px;
+  white-space: nowrap;
+  border-right: 2px solid var(--gs-divider-h);
 }
 
-/* ── Default data cell ── */
+/* ── Data cells — full-row zebra ── */
+.ss-gsheet-table tbody tr:nth-child(even) td { background: var(--gs-surface-2); }
+.ss-gsheet-table tbody tr:nth-child(odd)  td { background: var(--gs-surface); }
+
 .ss-gsheet-table td {
-  padding: 7px 12px;
-  border-bottom: 1px solid #E7E0EC;
-  border-right: 1px solid #E7E0EC;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--gs-divider);
+  border-right: 1px solid var(--gs-divider);
   white-space: nowrap;
   text-align: right;
   vertical-align: middle;
   font-family: var(--mono);
-  font-size: clamp(11px, 1.4vw, 13px);
+  font-size: clamp(11px, 1.5vw, 14px);
   font-variant-numeric: tabular-nums;
-  color: #1C1B1F;
-  background: #FFFBFE;          /* MD3 Surface */
+  color: var(--gs-text);
+  transition: background .12s;
 }
 .ss-gsheet-table td:last-child { border-right: none; }
-body.dark .ss-gsheet-table td {
-  color: #E6E1E5;
-  background: #1C1B1F;
-  border-color: #49454F;
-}
-
-/* Mine name col */
-.ss-gsheet-table tbody td:first-child {
-  font-family: var(--sans);
-  font-weight: 600;
+.ss-gsheet-table td:first-child {
   text-align: left;
-  padding-left: 14px;
-  border-right: 1px solid #CAC4D0;
-}
-
-/* ── IB Coalfield  ·  MD3 Blue tone ──────────────────
-   Odd rows: Blue 50 mine cell · white data
-   Even rows: Blue 50 mine cell · Blue 50 data (hairline tint) ── */
-.ss-gsheet-table tr.gs-ib-odd td,
-.ss-gsheet-table tr.gs-ib-even td { background: #FFFBFE; }
-
-.ss-gsheet-table tr.gs-ib-odd  td:first-child { background: #E3F2FD; color: #0D47A1; }
-.ss-gsheet-table tr.gs-ib-even td:first-child { background: #BBDEFB; color: #0D47A1; }
-body.dark .ss-gsheet-table tr.gs-ib-odd  td:first-child { background: #1A2E50; color: #90CAF9; }
-body.dark .ss-gsheet-table tr.gs-ib-even td:first-child { background: #0D2040; color: #90CAF9; }
-body.dark .ss-gsheet-table tr.gs-ib-odd  td,
-body.dark .ss-gsheet-table tr.gs-ib-even td { background: #1C1B1F; }
-
-/* ── Talcher Coalfield  ·  MD3 Amber tone ────────────
-   Odd rows: Amber 50 mine cell · white data
-   Even rows: Amber 100 mine cell · white data ── */
-.ss-gsheet-table tr.gs-tc-odd td,
-.ss-gsheet-table tr.gs-tc-even td { background: #FFFBFE; }
-
-.ss-gsheet-table tr.gs-tc-odd  td:first-child { background: #FFF8E1; color: #E65100; }
-.ss-gsheet-table tr.gs-tc-even td:first-child { background: #FFECB3; color: #E65100; }
-body.dark .ss-gsheet-table tr.gs-tc-odd  td:first-child { background: #2C1B00; color: #FFD54F; }
-body.dark .ss-gsheet-table tr.gs-tc-even td:first-child { background: #1E1200; color: #FFD54F; }
-body.dark .ss-gsheet-table tr.gs-tc-odd  td,
-body.dark .ss-gsheet-table tr.gs-tc-even td { background: #1C1B1F; }
-
-/* ── IBCF field total  ·  Blue 200 surface, MD3 elevation ── */
-.ss-gsheet-table tr.gs-ibcf-total td {
-  background: #90CAF9;          /* Blue 200 */
-  color: #0D47A1;               /* Blue 900 */
-  font-weight: 700;
-  font-size: clamp(11px, 1.4vw, 13px);
-  border-top: 2px solid #64B5F6;
-  border-bottom: 2px solid #64B5F6;
-  border-right: 1px solid #90CAF9;
-}
-.ss-gsheet-table tr.gs-ibcf-total td:first-child {
-  background: #BBDEFB;          /* Blue 100 — slightly lighter for name cell */
-  letter-spacing: .04em;
-  border-right: 1px solid #64B5F6;
-}
-body.dark .ss-gsheet-table tr.gs-ibcf-total td { background: #1A3A6A; color: #90CAF9; border-color: #1E4080; }
-body.dark .ss-gsheet-table tr.gs-ibcf-total td:first-child { background: #122850; }
-
-/* ── TCF field total  ·  Amber 200 surface ── */
-.ss-gsheet-table tr.gs-tcf-total td {
-  background: #FFD54F;          /* Amber 300 */
-  color: #E65100;               /* Deep Orange 900 */
-  font-weight: 700;
-  font-size: clamp(11px, 1.4vw, 13px);
-  border-top: 2px solid #FFCA28;
-  border-bottom: 2px solid #FFCA28;
-  border-right: 1px solid #FFD54F;
-}
-.ss-gsheet-table tr.gs-tcf-total td:first-child {
-  background: #FFECB3;          /* Amber 100 */
-  letter-spacing: .04em;
-  border-right: 1px solid #FFCA28;
-}
-body.dark .ss-gsheet-table tr.gs-tcf-total td { background: #4A3000; color: #FFD54F; border-color: #5A3A00; }
-body.dark .ss-gsheet-table tr.gs-tcf-total td:first-child { background: #3A2000; }
-
-/* ── MCL grand total  ·  MD3 Primary Container (deep purple pastel) ── */
-.ss-gsheet-table tr.gs-mcl td {
-  background: #D0BCFF;          /* MD3 Primary Container */
-  color: #21005E;               /* MD3 On Primary Container */
-  font-weight: 700;
-  font-size: clamp(12px, 1.5vw, 14px);
-  border-top: 2px solid #B39DDB;
-  border-bottom: none;
-  letter-spacing: .01em;
-}
-.ss-gsheet-table tr.gs-mcl td:first-child {
-  background: #B39DDB;          /* slightly deeper — name anchor */
-  letter-spacing: .05em;
-  border-right: 1px solid #9C7CC0;
-}
-.ss-gsheet-table tr.gs-mcl td:last-child { border-right: none; }
-body.dark .ss-gsheet-table tr.gs-mcl td { background: #4A3880; color: #E9DDFF; border-color: #381E72; }
-body.dark .ss-gsheet-table tr.gs-mcl td:first-child { background: #381E72; }
-
-/* ── Highest rows  ·  Purple 50, italic, quiet ── */
-.ss-gsheet-table tr.gs-highest td {
-  background: #F3E5F5;          /* Purple 50 */
-  color: #6A1B9A;               /* Purple 800 */
-  font-style: italic;
-  font-size: clamp(10px, 1.3vw, 12px);
-  border-top: none;
-  border-bottom: 2px solid #CE93D8;
-}
-.ss-gsheet-table tr.gs-highest td:first-child {
-  background: #F3E5F5;
+  font-family: var(--sans);
+  font-size: clamp(11px, 1.5vw, 14px);
   font-weight: 500;
-  padding-left: 22px;
-  font-size: clamp(10px, 1.2vw, 11px);
-  letter-spacing: .04em;
+  color: var(--gs-text);
+  border-right: 2px solid var(--gs-divider-h);
+}
+.ss-gsheet-table tr:last-child td { border-bottom: none; }
+
+/* Hover — overrides zebra */
+.ss-gsheet-table tbody tr:hover td { background: var(--gs-hover) !important; transition: background .08s; }
+
+/* ── CF total rows (IBCF / TCF) ── */
+.ss-gsheet-table .gs-bold td {
+  background: var(--gs-cf-bg) !important;
+  font-weight: 700;
+  border-top: 2px solid var(--gs-divider-h);
+  border-bottom: 1px solid var(--gs-divider);
+  font-size: clamp(12px, 1.6vw, 15px);
+  color: var(--gs-text);
+}
+.ss-gsheet-table .gs-bold td:first-child {
+  color: var(--gs-header-text);
+  font-family: var(--sans);
+  font-weight: 700;
+  letter-spacing: .03em;
   text-transform: uppercase;
 }
-body.dark .ss-gsheet-table tr.gs-highest td { background: #2A1040; color: #CE93D8; border-color: #4A2070; }
-body.dark .ss-gsheet-table tr.gs-highest td:first-child { background: #2A1040; }
+
+/* ── MCL grand total ── */
+.ss-gsheet-table tr.gs-mcl td {
+  background: var(--gs-mcl-bg) !important;
+  font-weight: 800;
+  border-top: 3px solid var(--gs-divider-h);
+  border-bottom: 1px solid var(--gs-divider);
+  font-size: clamp(13px, 1.8vw, 16px);
+  color: var(--gs-text);
+}
+.ss-gsheet-table tr.gs-mcl td:first-child {
+  color: var(--gs-header-text);
+  font-family: var(--sans);
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+/* ── Highest rows ── */
+.ss-gsheet-table .gs-highest td {
+  background: var(--gs-highest-bg) !important;
+  font-family: var(--mono);
+  font-size: clamp(13px, 1.6vw, 15px);
+  font-weight: 500;
+  color: var(--gs-highest-txt);
+  border-bottom: 2px solid var(--gs-divider);
+  padding-top: 4px;
+  padding-bottom: 6px;
+}
+.ss-gsheet-table .gs-highest td:first-child {
+  font-family: var(--sans);
+  font-size: clamp(11px, 1.4vw, 13px);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--gs-text-dim);
+  border-right: 2px solid var(--gs-divider-h);
+  padding-left: 20px;
+}
 
 /* loading spinner */
 .gs-spinner {
@@ -1533,7 +1506,7 @@ body.dark .ss-gsheet-table tr.gs-highest td:first-child { background: #2A1040; }
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B40r-fork</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B40r</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2978,10 +2951,9 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   });
 
   // ── Caption (title · date) ──
-  // Build a spanning title row inside <thead> instead of a <caption>
-  let captionText = '';
-  let captionDate = '';
   if (captionRows.length > 0) {
+    const cap = document.createElement('caption');
+    cap.style.cssText = 'caption-side:top;text-align:left;padding:6px 10px 2px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:';
     const parts = [];
     for (const row of captionRows) {
       for (const cell of (row.c || [])) {
@@ -2989,10 +2961,11 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
         if (txt) parts.push(txt);
       }
     }
-    captionText = parts.filter(p => !/road sale despatch/i.test(p)).join('  ·  ');
+    cap.textContent = parts.join('  ·  ');
+    table.appendChild(cap);
     // Extract the date part from caption (looks like "25-Apr-26")
     const datePart = parts.find(p => /\d{1,2}-[A-Za-z]+-\d{2,4}/.test(p));
-    if (datePart) { gsSheetDate = datePart; captionDate = datePart; }
+    if (datePart) gsSheetDate = datePart;
   }
 
   // ── Apply column visibility ──
@@ -3007,28 +2980,14 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
   // ── Header ──
   if (numCols > 0) {
     const thead = document.createElement('thead');
-
-    // Title row (cyan banner)
-    const titleTr = document.createElement('tr');
-    titleTr.className = 'gs-title-row';
-    const titleTd = document.createElement('td');
-    titleTd.setAttribute('colspan', visibleCols.length);
-    // Left part: "Road Sale Despatch", right part: date
-    titleTd.innerHTML =
-      '<span style="font-weight:700;font-size:clamp(13px,1.8vw,15px);">Road Sale Despatch</span>' +
-      (captionDate ? `<span style="float:right;font-size:clamp(11px,1.5vw,13px);font-weight:700;">${captionDate}</span>` : '');
-    titleTr.appendChild(titleTd);
-    thead.appendChild(titleTr);
-
-    // Column header row (yellow)
-    const htr = document.createElement('tr');
-    htr.className = 'gs-header-row';
+    const htr   = document.createElement('tr');
     visibleCols.forEach(ci => {
       const th   = document.createElement('th');
       const cell = headerCells[ci];
       const col  = (dt.cols || [])[ci] || {};
       const txt  = fmtGvizCell(cell) || col.label || KNOWN_HEADERS[ci] || col.id || '';
       th.textContent = txt;
+      if (ci !== 0 && ci !== remarkColIdx) th.style.textAlign = 'right';
       htr.appendChild(th);
     });
     thead.appendChild(htr);
@@ -3037,8 +2996,6 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
   // ── Body ──
   const tbody = document.createElement('tbody');
-  let ibRowCount = 0, tcRowCount = 0;
-  let currentSection = null; // 'IB' | 'TC' | null
   dataRows.forEach((row, rowIdx) => {
     const cells = row.c || [];
     if (cells.length === 0 || cells.every(c => !c || (c.v === null && c.v !== 0 && !c.f))) return;
@@ -3050,38 +3007,15 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     const isHighest = firstEmpty && !secondTxt && cells.length > 2 &&
       cells[2] && typeof cells[2].v === 'number';
     const isMCL  = !firstEmpty && /^mcl$/i.test(firstTxt.trim());
-    const isIBCF = !firstEmpty && /^ibcf$/i.test(firstTxt.trim());
-    const isTCF  = !firstEmpty && /^tcf$/i.test(firstTxt.trim());
-    const isBold = isIBCF || isTCF || isMCL;
-
-    // Track section transitions
-    if (isIBCF) currentSection = null; // after IBCF total, pause until TCF mine rows
-    else if (isTCF || isMCL) currentSection = null;
-    else if (!isBold && !isHighest) {
-      // Mine data row — determine section from position
-      // Section is IB until we hit IBCF, then TC until TCF
-      if (currentSection === null) {
-        // Check if we've passed the IBCF row
-        const pastIBCF = dataRows.slice(0, rowIdx).some(r => {
-          const f = fmtGvizCell((r.c || [])[0]);
-          return f && /ibcf/i.test(f);
-        });
-        currentSection = pastIBCF ? 'TC' : 'IB';
-      }
-    }
+    const isBold = !firstEmpty && /ibcf|tcf|mcl/i.test(firstTxt);
 
     const tr = document.createElement('tr');
-    if (isHighest)       tr.className = 'gs-highest';
-    else if (isMCL)      tr.className = 'gs-bold gs-mcl';
-    else if (isIBCF)     tr.className = 'gs-bold gs-ibcf-total';
-    else if (isTCF)      tr.className = 'gs-bold gs-tcf-total';
-    else if (currentSection === 'IB') {
-      ibRowCount++;
-      tr.className = ibRowCount % 2 === 1 ? 'gs-ib-odd' : 'gs-ib-even';
-    } else if (currentSection === 'TC') {
-      tcRowCount++;
-      tr.className = tcRowCount % 2 === 1 ? 'gs-tc-odd' : 'gs-tc-even';
-    }
+    if (isHighest)          tr.className = 'gs-highest';
+    else if (isMCL)         tr.className = 'gs-bold gs-mcl';
+    else if (isBold)        tr.className = 'gs-bold';
+
+    // Last non-Remarks numeric col for MCL qty highlight
+    const lastNumPos = visibleCols.length - 2;
 
     visibleCols.forEach((ci, pos) => {
       const td  = document.createElement('td');
@@ -3089,8 +3023,8 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
       if (isHighest && pos === 0) txt = 'Highest';
       if (isHighest && pos === 1) txt = '';
       td.textContent = txt;
-      if (!txt && !isHighest) td.style.color = 'var(--dim)';
-
+      if (pos > 0) td.style.textAlign = 'right';
+      if (!txt && !isHighest) td.style.color = 'var(--edge)';
       tr.appendChild(td);
     });
     tbody.appendChild(tr);
@@ -3337,11 +3271,15 @@ async function shareReport() {
 
   const isDark = document.body.classList.contains('dark');
   const C = isDark ? {
-    bg:'#0e1117',surface:'#161b24',raise:'#1c2333',edge:'#253047',line:'#2e3d56',
-    amber:'#f0a500',green:'#2fc97e',blue:'#4a9eff',dim:'#5a7299',mid:'#8ba3c2',text:'#dde6f4',red:'#e05454',
+    bg:'#1e2a2a', surface:'#1e2a2a', raise:'#1b3535', edge:'#2e4a4a', line:'#3d6060',
+    amber:'#f0a500', green:'#2fc97e', blue:'#4db6ac', dim:'#546e7a', mid:'#80cbc4', text:'#eceff1', red:'#e05454',
+    headerBg:'#1b3535', headerText:'#80cbc4', divider:'#2e4a4a', dividerH:'#3d6060',
+    cfBg:'#1e3535', mclBg:'#163030', highBg:'#1c3232', highTxt:'#4db6ac',
   } : {
-    bg:'#f0f2f5',surface:'#ffffff',raise:'#f7f8fa',edge:'#dde3ec',line:'#c8d2e0',
-    amber:'#d4860a',green:'#1a9e5c',blue:'#1a6fc4',dim:'#7a8fa8',mid:'#4a6080',text:'#1a2436',red:'#c0392b',
+    bg:'#f5f9f9', surface:'#ffffff', raise:'#f5f9f9', edge:'#b2dfdb', line:'#80cbc4',
+    amber:'#d4860a', green:'#1a9e5c', blue:'#00796b', dim:'#90a4ae', mid:'#546e7a', text:'#212121', red:'#c0392b',
+    headerBg:'#e8f4f4', headerText:'#00695c', divider:'#b2dfdb', dividerH:'#80cbc4',
+    cfBg:'#e0f2f1', mclBg:'#b2dfdb', highBg:'#f1f8f8', highTxt:'#00796b',
   };
 
   const shownTime  = document.getElementById('asofBarTime').textContent;
@@ -3372,34 +3310,58 @@ async function shareReport() {
 
   // Clone whichever table is currently active
   if (ssViewOn) {
-    // ── GSheet live table — purposeful field-identity design ──
+    // ── GSheet live table ──────────────────────────────
     const tbl = document.getElementById('ssTable').cloneNode(true);
-    tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Sans,sans-serif;font-size:13px;border:1px solid #CAC4D0;border-radius:12px;overflow:hidden;table-layout:auto;`;
-    tbl.querySelectorAll('tr.gs-title-row td').forEach(td => Object.assign(td.style, {background:'#E7E0EC',color:'#1C1B1F',fontWeight:'600',fontSize:'14px',padding:'10px 16px',borderBottom:'1px solid #CAC4D0',textAlign:'center',letterSpacing:'.03em',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('tr.gs-header-row th').forEach(th => Object.assign(th.style, {background:'#E8DEF8',color:'#21005E',fontWeight:'700',fontSize:'11px',textTransform:'uppercase',letterSpacing:'.07em',padding:'9px 10px',borderBottom:'2px solid #B0A7C0',borderRight:'1px solid #CAC4D0',textAlign:'center',verticalAlign:'middle',position:'static',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('td').forEach(td => {
-      if (td.parentElement && td.parentElement.classList.contains('gs-title-row')) return;
-      Object.assign(td.style, {padding:'7px 12px',borderBottom:'1px solid #E7E0EC',borderRight:'1px solid #E7E0EC',textAlign:'right',verticalAlign:'middle',fontFamily:'IBM Plex Mono,monospace',fontSize:'13px',color:'#1C1B1F',background:'#FFFBFE',fontVariantNumeric:'tabular-nums'});
+    tbl.style.cssText = `width:100%;border-collapse:collapse;font-family:IBM Plex Mono,monospace;font-size:16px;background:${C.surface};border-radius:6px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.1);`;
+    tbl.querySelectorAll('caption').forEach(cap => cap.remove());
+    const colCount = tbl.querySelector('tr') ? tbl.querySelector('tr').children.length : 7;
+    // Title row
+    const titleThead = document.createElement('thead');
+    const titleTr    = document.createElement('tr');
+    const titleTd    = document.createElement('td');
+    titleTd.setAttribute('colspan', colCount);
+    titleTd.style.cssText = `padding:12px 16px;background:${C.headerBg};border-bottom:2px solid ${C.dividerH};border-top:1px solid ${C.divider};border-left:1px solid ${C.divider};border-right:1px solid ${C.divider};text-align:center;`;
+    titleTd.innerHTML =
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.headerText};">Road Despatch dated&nbsp;&nbsp;</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:18px;font-weight:700;color:${C.text};letter-spacing:.5px;">${displayDate}</span>`;
+    titleTr.appendChild(titleTd); titleThead.appendChild(titleTr);
+    tbl.insertBefore(titleThead, tbl.firstChild);
+    // Header
+    tbl.querySelectorAll('th').forEach((th, i) => {
+      sc(th, {fontSize:'13px',textTransform:'uppercase',letterSpacing:'.06em',color:C.headerText,fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'700',
+        padding:'10px 14px',borderTop:`2px solid ${C.dividerH}`,borderBottom:`2px solid ${C.dividerH}`,
+        borderRight:`1px solid ${C.divider}`,background:C.headerBg,whiteSpace:'normal',wordBreak:'break-word',
+        textAlign:'center',verticalAlign:'middle',position:'static',maxWidth:'100px',lineHeight:'1.3'});
+      if (i===0){th.style.textAlign='left';th.style.whiteSpace='nowrap';th.style.borderRight=`2px solid ${C.dividerH}`;}
+      if (i===th.parentElement.children.length-1) th.style.borderRight='none';
     });
-    tbl.querySelectorAll('tbody td:first-child').forEach(td => Object.assign(td.style, {fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'600',textAlign:'left',paddingLeft:'14px',borderRight:'1px solid #CAC4D0'}));
-    // IB mines
-    tbl.querySelectorAll('tr.gs-ib-odd  td:first-child').forEach(td => Object.assign(td.style, {background:'#E3F2FD',color:'#0D47A1'}));
-    tbl.querySelectorAll('tr.gs-ib-even td:first-child').forEach(td => Object.assign(td.style, {background:'#BBDEFB',color:'#0D47A1'}));
-    // TC mines
-    tbl.querySelectorAll('tr.gs-tc-odd  td:first-child').forEach(td => Object.assign(td.style, {background:'#FFF8E1',color:'#E65100'}));
-    tbl.querySelectorAll('tr.gs-tc-even td:first-child').forEach(td => Object.assign(td.style, {background:'#FFECB3',color:'#E65100'}));
-    // IBCF total
-    tbl.querySelectorAll('tr.gs-ibcf-total td').forEach(td => Object.assign(td.style, {background:'#90CAF9',color:'#0D47A1',fontWeight:'700',fontSize:'14px',borderTop:'2px solid #64B5F6',borderBottom:'2px solid #64B5F6',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('tr.gs-ibcf-total td:first-child').forEach(td => Object.assign(td.style, {background:'#BBDEFB',letterSpacing:'.04em'}));
-    // TCF total
-    tbl.querySelectorAll('tr.gs-tcf-total td').forEach(td => Object.assign(td.style, {background:'#FFD54F',color:'#E65100',fontWeight:'700',fontSize:'14px',borderTop:'2px solid #FFCA28',borderBottom:'2px solid #FFCA28',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('tr.gs-tcf-total td:first-child').forEach(td => Object.assign(td.style, {background:'#FFECB3',letterSpacing:'.04em'}));
-    // MCL total
-    tbl.querySelectorAll('tr.gs-mcl td').forEach(td => Object.assign(td.style, {background:'#D0BCFF',color:'#21005E',fontWeight:'700',fontSize:'15px',borderTop:'2px solid #B39DDB',fontFamily:'IBM Plex Sans,sans-serif'}));
-    tbl.querySelectorAll('tr.gs-mcl td:first-child').forEach(td => Object.assign(td.style, {background:'#B39DDB',letterSpacing:'.05em',borderRight:'1px solid #9C7CC0'}));
-    // Highest rows
-    tbl.querySelectorAll('tr.gs-highest td').forEach(td => Object.assign(td.style, {background:'#F3E5F5',color:'#6A1B9A',fontStyle:'italic',fontSize:'12px',borderTop:'none',borderBottom:'2px solid #CE93D8',fontFamily:'IBM Plex Mono,monospace'}));
-    tbl.querySelectorAll('tr.gs-highest td:first-child').forEach(td => Object.assign(td.style, {paddingLeft:'22px',fontWeight:'500',textTransform:'uppercase',fontSize:'11px',letterSpacing:'.04em',fontFamily:'IBM Plex Sans,sans-serif'}));
+    // Body rows with zebra + row-type styling
+    let snapRow=0;
+    tbl.querySelectorAll('tbody tr').forEach(tr => {
+      snapRow++;
+      const isBoldRow=tr.classList.contains('gs-bold');
+      const isMclRow=tr.classList.contains('gs-mcl');
+      const isHighestRow=tr.classList.contains('gs-highest');
+      const zebraBg = snapRow%2===0?(isDark?'#1a2424':'#f5f9f9'):C.surface;
+      const rowBg = isMclRow?C.mclBg:isBoldRow?C.cfBg:isHighestRow?C.highBg:zebraBg;
+      tr.querySelectorAll('td').forEach((td,i) => {
+        sc(td,{padding:'9px 14px',borderBottom:`1px solid ${C.divider}`,borderRight:`1px solid ${C.divider}`,
+          color:C.text,whiteSpace:'nowrap',textAlign:'right',verticalAlign:'middle',
+          fontFamily:'IBM Plex Mono,monospace',fontSize:'16px',fontVariantNumeric:'tabular-nums',background:rowBg});
+        const ci=Array.from(td.parentElement.children).indexOf(td);
+        if(ci===0){
+          td.style.textAlign='left';td.style.fontFamily='IBM Plex Sans,sans-serif';
+          td.style.borderRight=`2px solid ${C.dividerH}`;
+          td.style.fontWeight=isMclRow?'800':isBoldRow?'700':'500';
+          if(isBoldRow||isMclRow){td.style.color=C.headerText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';}
+          if(isHighestRow){td.style.color=C.dim;td.style.fontSize='12px';td.style.textTransform='uppercase';td.style.letterSpacing='.08em';td.style.fontFamily='IBM Plex Sans,sans-serif';td.style.paddingLeft='22px';}
+        }
+        if(td===td.parentElement.children[td.parentElement.children.length-1]) td.style.borderRight='none';
+        if(isBoldRow||isMclRow){td.style.fontWeight=isMclRow?'800':'700';td.style.fontSize=isMclRow?'18px':'17px';td.style.borderTop=`2px solid ${C.dividerH}`;}
+        if(isHighestRow){td.style.color=C.highTxt;td.style.fontSize='14px';}
+      });
+    });
+    tbl.querySelectorAll('tr:last-child td').forEach(td=>{td.style.borderBottom='none';});
     snap.appendChild(tbl);
 
   } else {
