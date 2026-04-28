@@ -1570,7 +1570,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B70</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B71</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -2998,7 +2998,7 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
   // Known column headers — fallback when sheet cells are merged/null
   // Maps to columns I, J, K, L, M, N, O (7 columns)
-  const KNOWN_HEADERS = ['MINE', 'RDO Balance (LT)', 'Target (T)', 'till 11.00 AM (T)', 'till 1.30 PM (T)', 'till 5.30 PM (T)', 'Remarks'];
+  const KNOWN_HEADERS = ['MINE', 'RDO Balance (LT)', 'Target (T)', 'till 11:00 AM (T)', 'till 1:30 PM (T)', 'till 5:30 PM (T)', 'Remarks'];
 
   // ── Determine which columns are empty (ignoring Highest rows) ──
   const remarkColIdx = numCols - 1;
