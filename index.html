@@ -1564,7 +1564,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B63</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B64</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1625,7 +1625,7 @@ body.dark {
   <div id="ssGSheetWrapDrop" style="display:none;width:100%;max-width:900px;margin-top:8px;">
     <div id="ssGSheetStatusDrop" style="padding:18px 14px;text-align:center;font-size:13px;color:var(--dim);display:none;"></div>
     <!-- Toolbar for drop screen sheet view -->
-    <div id="hideEmptyWrapDrop" style="display:none;width:100%;padding:4px 10px 8px;box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:6px;">
+    <div id="hideEmptyWrapDrop" style="width:100%;padding:4px 10px 8px;box-sizing:border-box;display:none;align-items:center;justify-content:flex-end;gap:6px;">
       <button class="share-btn" onclick="fetchAndRenderGSheet()" title="Refresh sheet data" style="border-color:var(--blue);color:var(--blue);">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;flex-shrink:0;">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2817,6 +2817,8 @@ function applyTableVisibility() {
   const refreshBtn = document.getElementById('refreshSheetBtn');
   ssWrap.style.display     = ssViewOn ? '' : 'none';
   ssWrapDrop.style.display = ssViewOn ? '' : 'none';
+  const dw = document.getElementById('hideEmptyWrapDrop');
+  if (dw) dw.style.display = ssViewOn ? 'flex' : 'none';
   areaTable.style.display  = ssViewOn ? 'none' : '';
   if (refreshBtn) refreshBtn.style.display = ssViewOn ? '' : 'none';
 }
@@ -3011,12 +3013,12 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
 
   // Drop screen toolbar always visible when sheet is on
   const dropWrap = document.getElementById('hideEmptyWrapDrop');
-  if (dropWrap) dropWrap.style.display = '';
+  if (dropWrap) { dropWrap.style.display = 'flex'; }
 
   // ── Caption (title · date) ──
   if (captionRows.length > 0) {
     const cap = document.createElement('caption');
-    cap.style.cssText = 'caption-side:top;text-align:left;padding:6px 10px 2px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:';
+    cap.style.cssText = 'caption-side:top;text-align:center;padding:6px 10px 2px;font-size:11px;color:var(--dim);font-family:var(--mono);letter-spacing:.04em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;background:';
     const parts = [];
     for (const row of captionRows) {
       for (const cell of (row.c || [])) {
