@@ -984,7 +984,7 @@ body {
   justify-content: space-between;
   margin-top: 8px;
   margin-bottom: 8px;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: nowrap;
 }
 .area-btn-group {
@@ -992,12 +992,13 @@ body {
   align-items: center;
   justify-content: flex-end;
   gap: 4px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   flex: 1;
 }
-/* On very narrow screens shrink button text */
-@media (max-width: 400px) {
-  .share-btn { font-size: 10px; padding: 4px 6px; gap: 3px; }
+/* Compact buttons on mobile */
+@media (max-width: 480px) {
+  .share-btn { font-size: 10px; padding: 4px 7px; gap: 3px; }
+  .share-btn svg { width: 10px; height: 10px; }
   .area-view-label, .trips-switch-label { font-size: 10px; }
 }
 
@@ -1569,7 +1570,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B65</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B66</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1778,7 +1779,7 @@ body.dark {
 
       </div>
       <!-- Right: action buttons -->
-      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end;">
+      <div style="display:flex;align-items:center;gap:4px;flex-wrap:nowrap;justify-content:flex-end;">
         <button class="share-btn" id="refreshSheetBtn" onclick="fetchAndRenderGSheet()" title="Refresh sheet data" style="display:none;border-color:var(--blue);color:var(--blue);">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:11px;height:11px;flex-shrink:0;">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
