@@ -985,15 +985,20 @@ body {
   margin-top: 8px;
   margin-bottom: 8px;
   gap: 6px;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 .area-btn-group {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 6px;
+  gap: 4px;
   flex-wrap: wrap;
   flex: 1;
+}
+/* On very narrow screens shrink button text */
+@media (max-width: 400px) {
+  .share-btn { font-size: 10px; padding: 4px 6px; gap: 3px; }
+  .area-view-label, .trips-switch-label { font-size: 10px; }
 }
 
 /* Trips toggle switch */
@@ -1564,7 +1569,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B64</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B65</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3395,8 +3400,10 @@ async function shareReport() {
     titleTd.setAttribute('colspan', colCount);
     titleTd.style.cssText = `padding:12px 16px;background:${C.headerBg};border-bottom:2px solid ${C.dividerH};border-top:1px solid ${C.divider};border-left:1px solid ${C.divider};border-right:1px solid ${C.divider};text-align:center;`;
     titleTd.innerHTML =
+      `<div style="text-align:center;width:100%;">` +
       `<span style="font-family:IBM Plex Mono,monospace;font-size:17px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.headerText};">Road Despatch dated&nbsp;&nbsp;</span>` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:18px;font-weight:700;color:${C.text};letter-spacing:.5px;">${displayDate}</span>`;
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:18px;font-weight:700;color:${C.text};letter-spacing:.5px;">${displayDate}</span>` +
+      `</div>`;
     titleTr.appendChild(titleTd); titleThead.appendChild(titleTr);
     tbl.insertBefore(titleThead, tbl.firstChild);
     // Header
@@ -3706,6 +3713,10 @@ async function exportXls() {
   btn.innerHTML = '⏳'; btn.disabled = true;
 
   try {
+    // If sheet view is ON but data hasn't been fetched yet, fetch it first
+    if (ssViewOn && !gsLastDt) {
+      await fetchAndRenderGSheet();
+    }
     const shownTime  = document.getElementById('asofBarTime').textContent;
     const shownDate  = document.getElementById('asofBarDate').textContent;
     const reportDate = document.getElementById('metaPeriod').textContent.trim();
