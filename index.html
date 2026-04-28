@@ -1570,7 +1570,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B69</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B70</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1632,12 +1632,6 @@ body.dark {
     <div id="ssGSheetStatusDrop" style="padding:18px 14px;text-align:center;font-size:13px;color:var(--dim);display:none;"></div>
     <!-- Toolbar for drop screen sheet view -->
     <div id="hideEmptyWrapDrop" style="width:100%;padding:4px 10px 8px;box-sizing:border-box;display:none;align-items:center;justify-content:flex-end;gap:6px;">
-      <button class="share-btn" onclick="exportXls()" title="Export to Excel" style="border-color:var(--green);color:var(--green);">
-          <svg viewBox="0 0 24 24" fill="currentColor" style="flex-shrink:0;">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8l-6-6zm-1 1.5L18.5 9H13V3.5zM8.5 16.5l1.5-2.5-1.5-2.5h1.3l.9 1.6.9-1.6H13l-1.5 2.5 1.5 2.5h-1.3l-.9-1.6-.9 1.6H8.5z"/>
-          </svg>
-          XLSX
-        </button>
         <button class="share-btn" onclick="fetchAndRenderGSheet()" title="Refresh sheet data" style="border-color:var(--blue);color:var(--blue);">
         <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="flex-shrink:0;">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -2831,6 +2825,8 @@ function applyTableVisibility() {
   ssWrapDrop.style.display = ssViewOn ? '' : 'none';
   const dw = document.getElementById('hideEmptyWrapDrop');
   if (dw) dw.style.display = ssViewOn ? 'flex' : 'none';
+  const xlsB = document.getElementById('xlsBtn');
+  if (xlsB) xlsB.style.display = ssViewOn ? 'none' : '';
   areaTable.style.display  = ssViewOn ? 'none' : '';
   if (refreshBtn) refreshBtn.style.display = ssViewOn ? '' : 'none';
 }
