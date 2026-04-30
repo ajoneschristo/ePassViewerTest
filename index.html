@@ -1297,38 +1297,37 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* Material palette — lighter pastels */
+/* Cool grey palette — black borders */
 :root {
-  /* Base */
   --gs-surface:     #ffffff;
-  --gs-surface-2:   #fafafa;    /* zebra — near-white */
+  --gs-surface-2:   #f7f7f7;    /* zebra — light neutral grey */
   --gs-text:        #111111;
-  --gs-text-dim:    #707070;
-  --gs-hover:       #f2f2f2;
+  --gs-text-dim:    #666666;
+  --gs-hover:       #f0f0f0;
 
-  /* Header — light grey */
-  --gs-header-bg:   #f0f0f0;
-  --gs-header-text: #222222;
+  /* Header — cool grey */
+  --gs-header-bg:   #eeeeee;
+  --gs-header-text: #1a1a1a;
 
-  /* Dividers — solid grey */
-  --gs-divider:     #d8d8d8;
-  --gs-divider-h:   #b0b0b0;
+  /* Dividers — BLACK solid borders */
+  --gs-divider:     #000000;
+  --gs-divider-h:   #000000;
 
-  /* CF rows — very light warm grey */
-  --gs-cf-bg:       #f5f3f0;
-  --gs-cf-text:     #3a2a1a;
+  /* CF rows — very light cool grey, no brown */
+  --gs-cf-bg:       #f4f4f6;
+  --gs-cf-text:     #18181e;
 
-  /* MCL row — slightly deeper grey */
-  --gs-mcl-bg:      #eeecea;
-  --gs-mcl-text:    #2a2010;
+  /* MCL row — slightly deeper cool grey */
+  --gs-mcl-bg:      #e8e8ec;
+  --gs-mcl-text:    #0a0a12;
 
   /* Highest rows — near white */
-  --gs-highest-bg:  #f8f8f8;
-  --gs-highest-txt: #404040;
+  --gs-highest-bg:  #f9f9f9;
+  --gs-highest-txt: #444444;
 
-  /* Column tints — very light grey families */
-  --gs-col-balance: #f0f0f8;   /* cool grey-blue — RDO Balance */
-  --gs-col-target:  #f0f8f0;   /* cool grey-green — Target */
+  /* Column tints — very light, cool, no warm cast */
+  --gs-col-balance: #f0f0f8;   /* cool blue-grey — RDO Balance */
+  --gs-col-target:  #f0f8f4;   /* cool grey-green — Target */
 }
 body.dark {
   --gs-surface:     #1e1e1e;
@@ -1338,24 +1337,24 @@ body.dark {
   --gs-hover:       #2a2a2a;
 
   --gs-header-bg:   #2a2a2a;
-  --gs-header-text: #c0c0c0;
+  --gs-header-text: #d0d0d0;
 
-  --gs-divider:     #383838;
-  --gs-divider-h:   #505050;
+  --gs-divider:     #ffffff;
+  --gs-divider-h:   #ffffff;
 
-  --gs-cf-bg:       #282420;
-  --gs-cf-text:     #c8b8a0;
+  --gs-cf-bg:       #26262c;
+  --gs-cf-text:     #c0c0d0;
 
-  --gs-mcl-bg:      #242220;
-  --gs-mcl-text:    #d0c0a0;
+  --gs-mcl-bg:      #22222a;
+  --gs-mcl-text:    #d0d0e0;
 
   --gs-highest-bg:  #242424;
   --gs-highest-txt: #a0a0a0;
 
   --gs-col-balance: #1e1e28;
-  --gs-col-balance-2: #181820;
-  --gs-col-target:  #1e2018;
-  --gs-col-target-2: #181a14;
+  --gs-col-balance-2: #18181e;
+  --gs-col-target:  #1e2420;
+  --gs-col-target-2: #18201a;
 }
 
 .ss-gsheet-table {
@@ -1416,8 +1415,8 @@ body.dark {
   border-right: 2px solid var(--gs-divider-h);
 }
 /* RDO Balance header tint */
-.ss-gsheet-table th:nth-child(2) { background: #e8e8f4; } /* cool grey-blue tint on RDO Balance header */
-.ss-gsheet-table th:nth-child(3) { background: #e8f4e8; } /* cool grey-green tint on Target header */
+.ss-gsheet-table th:nth-child(2) { background: #e8e8f6; } /* cool grey-blue tint on RDO Balance header */
+.ss-gsheet-table th:nth-child(3) { background: #e8f4ec; } /* cool grey-green tint on Target header */
 
 /* ── Data cells ── */
 .ss-gsheet-table td {
@@ -1462,8 +1461,8 @@ body.dark {
 /* Odd rows: base tint. Even rows: slightly deeper same hue for zebra effect */
 .ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: #f0f0f8 !important; }
 .ss-gsheet-table tbody tr:nth-child(even) td:nth-child(2) { background: #ece9fa !important; }
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: #f0f8f0 !important; }
-.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: #e4f0e4 !important; }
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: #f0f8f4 !important; }
+.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: #e4f0ea !important; }
 
 /* Don't apply column tints to special rows — let their bg show through */
 .ss-gsheet-table .gs-bold    td:nth-child(2),
@@ -1570,7 +1569,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B72-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B73-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3348,19 +3347,19 @@ async function shareReport() {
 
   const isDark = document.body.classList.contains('dark');
   const C = isDark ? {
-    bg:'#1e1e1e', surface:'#1e1e1e', raise:'#2a2a2a', edge:'#383838', line:'#505050',
-    amber:'#f0a500', green:'#2fc97e', blue:'#8090a0', dim:'#686868', mid:'#c0c0c0', text:'#e0e0e0', red:'#e05454',
-    headerBg:'#2a2a2a', headerText:'#c0c0c0', divider:'#383838', dividerH:'#505050',
-    cfBg:'#282420', cfText:'#c8b8a0', mclBg:'#242220', mclText:'#d0c0a0',
+    bg:'#1e1e1e', surface:'#1e1e1e', raise:'#2a2a2a', edge:'#ffffff', line:'#ffffff',
+    amber:'#f0a500', green:'#2fc97e', blue:'#8090c0', dim:'#686868', mid:'#d0d0d0', text:'#e0e0e0', red:'#e05454',
+    headerBg:'#2a2a2a', headerText:'#d0d0d0', divider:'#ffffff', dividerH:'#ffffff',
+    cfBg:'#26262e', cfText:'#c0c0d8', mclBg:'#222230', mclText:'#d0d0e8',
     highBg:'#242424', highTxt:'#a0a0a0',
-    colBalance:'#1e1e28', colTarget:'#1e2018',
+    colBalance:'#1e1e2a', colTarget:'#1e2420',
   } : {
-    bg:'#f5f5f5', surface:'#ffffff', raise:'#fafafa', edge:'#d8d8d8', line:'#b0b0b0',
-    amber:'#d4860a', green:'#1a9e5c', blue:'#404880', dim:'#909090', mid:'#505050', text:'#111111', red:'#c0392b',
-    headerBg:'#f0f0f0', headerText:'#222222', divider:'#d8d8d8', dividerH:'#b0b0b0',
-    cfBg:'#f5f3f0', cfText:'#3a2a1a', mclBg:'#eeecea', mclText:'#2a2010',
-    highBg:'#f8f8f8', highTxt:'#404040',
-    colBalance:'#f0f0f8', colTarget:'#f0f8f0',
+    bg:'#f5f5f5', surface:'#ffffff', raise:'#f8f8f8', edge:'#000000', line:'#000000',
+    amber:'#d4860a', green:'#1a9e5c', blue:'#304080', dim:'#666666', mid:'#333333', text:'#111111', red:'#c0392b',
+    headerBg:'#efefef', headerText:'#1a1a1a', divider:'#000000', dividerH:'#000000',
+    cfBg:'#f4f4f6', cfText:'#1a1a2a', mclBg:'#eaeaee', mclText:'#0a0a1a',
+    highBg:'#f9f9f9', highTxt:'#444444',
+    colBalance:'#f0f0f8', colTarget:'#f0f8f4',
   };
 
   const shownTime  = document.getElementById('asofBarTime').textContent;
