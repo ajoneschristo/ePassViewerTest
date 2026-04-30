@@ -1556,6 +1556,69 @@ body.dark {
 </style>
 </head>
 <body>
+  <!-- PASSWORD SCREEN -->
+<div id="loginScreen" style="
+  position:fixed;
+  inset:0;
+  background:#111827;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  font-family:Arial,sans-serif;
+">
+  <div style="
+    background:white;
+    padding:30px;
+    width:320px;
+    border-radius:12px;
+    text-align:center;
+    box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  ">
+    <h2 style="margin-bottom:20px;">ePass Viewer Login</h2>
+
+    <input
+      type="password"
+      id="sitePassword"
+      placeholder="Enter Password"
+      style="
+        width:100%;
+        padding:12px;
+        font-size:16px;
+        border:1px solid #ccc;
+        border-radius:8px;
+        margin-bottom:15px;
+        box-sizing:border-box;
+      "
+    >
+
+    <button
+      onclick="checkPassword()"
+      style="
+        width:100%;
+        padding:12px;
+        font-size:16px;
+        border:none;
+        border-radius:8px;
+        background:#d4860a;
+        color:white;
+        cursor:pointer;
+      "
+    >
+      Login
+    </button>
+
+    <p id="loginError" style="
+      color:red;
+      margin-top:12px;
+      display:none;
+      font-size:14px;
+    ">
+      Wrong password
+    </p>
+  </div>
+</div>
+  // password input close
 <input type="file" id="fileInput" style="display:none" accept="application/octet-stream,.xls">
 <input type="file" id="mclhoInput" style="display:none" accept=".mhtml,.mht,message/rfc822">
 
@@ -2207,7 +2270,46 @@ async function parseMclho(raw) {
 
   // Parse just the table
   const doc = new DOMParser().parseFromString(
-    `<html><body>${tableHTML}</body></html>`, 'text/html'
+    `<html><body>${tableHTML}<script>
+function checkPassword() {
+
+  // CHANGE THIS PASSWORD
+  const correctPassword = "mcl123";
+
+  const entered =
+    document.getElementById("sitePassword").value;
+
+  if (entered === correctPassword) {
+
+    document.getElementById("loginScreen").style.display = "none";
+
+    // save login for current browser
+    localStorage.setItem("epass_logged_in", "yes");
+
+  } else {
+
+    document.getElementById("loginError").style.display = "block";
+  }
+}
+
+// auto login if already authenticated
+window.addEventListener("load", () => {
+
+  if (
+    localStorage.getItem("epass_logged_in") === "yes"
+  ) {
+    document.getElementById("loginScreen").style.display = "none";
+  }
+});
+
+// allow Enter key
+document.addEventListener("keydown", function(e) {
+
+  if (e.key === "Enter") {
+    checkPassword();
+  }
+});
+</script></body></html>`, 'text/html'
   );
   const rows = doc.querySelectorAll('tr');
 
