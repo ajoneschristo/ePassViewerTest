@@ -913,12 +913,13 @@ body {
 .provisional-mark {
   text-align: center;
   font-family: var(--mono);
-  font-size: 10px;
+  font-size: 9px;
   color: var(--dim);
-  letter-spacing: 3px;
+  letter-spacing: 4px;
   text-transform: uppercase;
-  padding: 6px 0 2px;
+  padding: 8px 0 4px;
   user-select: none;
+  opacity: .55;
 }
 .multiday-tabs-wrap {
   margin-bottom: 12px;
@@ -1301,31 +1302,31 @@ body {
 :root {
   --gs-surface:       #ffffff;
   --gs-surface-2:     #ffffff;  /* no zebra — use padding instead */
-  --gs-text:          #0d0d0d;  /* near-black for max contrast after WhatsApp compression */
-  --gs-text-dim:      #5f6368;
-  --gs-hover:         #f1f3f4;
+  --gs-text:          #111827;
+  --gs-text-dim:      #6b7280;
+  --gs-hover:         #f3f4f6;
 
   /* Header — dark slate, anchors the eye */
-  --gs-header-bg:     #1a1f36;
-  --gs-header-text:   #ffffff;
+  --gs-header-bg:     #1e2240;
+  --gs-header-text:   #e8edf8;
 
   /* Dividers — light, minimal */
-  --gs-divider:       #e0e0e0;
-  --gs-divider-h:     #c0c0c0;
+  --gs-divider:       #e5e7eb;
+  --gs-divider-h:     #d1d5db;
 
   /* IBCF — warm amber wash + strong left accent */
-  --gs-cf-bg:         #fffbf0;
-  --gs-cf-text:       #b35c00;
-  --gs-cf-accent:     #f59e0b;  /* left border stripe */
+  --gs-cf-bg:         #fff9ed;
+  --gs-cf-text:       #92400e;
+  --gs-cf-accent:     #d97706;
 
   /* MCL — deep teal wash + accent */
-  --gs-mcl-bg:        #f0faf8;
-  --gs-mcl-text:      #0d6e5a;
-  --gs-mcl-accent:    #0d9488;
+  --gs-mcl-bg:        #ecfdf5;
+  --gs-mcl-text:      #065f46;
+  --gs-mcl-accent:    #059669;
 
   /* Highest — muted, clearly subordinate */
-  --gs-highest-bg:    #fafafa;
-  --gs-highest-txt:   #1a73e8;
+  --gs-highest-bg:    #f8faff;
+  --gs-highest-txt:   #2563eb;
 
   /* No column tints — clean */
   --gs-col-balance:   #ffffff;
@@ -1363,9 +1364,9 @@ body.dark {
   border-collapse: collapse;
   width: 100%;
   background: var(--gs-surface);
-  border-radius: 10px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,.10);
+  box-shadow: 0 4px 24px rgba(30,34,64,.13), 0 1px 4px rgba(0,0,0,.06);
 }
 
 /* Caption */
@@ -1444,10 +1445,11 @@ body.dark {
   text-align: left;
   font-family: var(--sans);
   font-size: clamp(13px, 1.6vw, 15px);
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gs-text);
   border-right: 1px solid var(--gs-divider);
   padding-left: 16px;
+  letter-spacing: .01em;
 }
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
 
@@ -1463,7 +1465,7 @@ body.dark {
   font-weight: 700;
   font-size: clamp(14px, 1.7vw, 16px);
   color: var(--gs-text);
-  border-top: 2px solid var(--gs-cf-accent);
+  border-top: 3px solid var(--gs-cf-accent);
   border-bottom: 1px solid var(--gs-divider);
 }
 .ss-gsheet-table .gs-bold td:first-child {
@@ -1471,8 +1473,8 @@ body.dark {
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 4px solid var(--gs-cf-accent);
-  padding-left: 12px;
+  border-left: 5px solid var(--gs-cf-accent);
+  padding-left: 11px;
 }
 
 /* ── MCL grand total — teal accent ── */
@@ -1481,37 +1483,41 @@ body.dark {
   font-weight: 800;
   font-size: clamp(15px, 1.9vw, 17px);
   color: var(--gs-text);
-  border-top: 3px solid var(--gs-mcl-accent);
+  border-top: 4px solid var(--gs-mcl-accent);
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
   color: var(--gs-mcl-text);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 4px solid var(--gs-mcl-accent);
-  padding-left: 12px;
+  border-left: 5px solid var(--gs-mcl-accent);
+  padding-left: 11px;
 }
 
 /* ── Highest rows — subdued footnote style ── */
 .ss-gsheet-table .gs-highest td {
   background: var(--gs-highest-bg) !important;
   font-family: var(--sans);
-  font-size: clamp(12px, 1.4vw, 14px);
+  font-size: clamp(11px, 1.3vw, 13px);
   font-weight: 400;
+  font-style: italic;
   color: var(--gs-highest-txt);
   border-bottom: 2px solid var(--gs-divider);
-  padding-top: 5px;
-  padding-bottom: 5px;
-  opacity: .85;
+  padding-top: 4px;
+  padding-bottom: 4px;
+  opacity: .9;
+  letter-spacing: .01em;
 }
 .ss-gsheet-table .gs-highest td:first-child {
-  font-size: clamp(10px, 1.2vw, 12px);
-  font-weight: 600;
+  font-size: clamp(9px, 1.1vw, 11px);
+  font-weight: 700;
+  font-style: normal;
   text-transform: uppercase;
-  letter-spacing: .1em;
-  color: var(--gs-text-dim);
+  letter-spacing: .12em;
+  color: var(--gs-highest-txt);
+  opacity: .7;
   border-left: 4px solid transparent;
-  padding-left: 20px;
+  padding-left: 22px;
 }
 
 /* loading spinner */
@@ -1553,7 +1559,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B75-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B76-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3493,7 +3499,7 @@ async function shareReport() {
   // Footer
   const footer = document.createElement('div');
   const provisionalColor = isDark ? '#667a99' : '#8999a0';
-  footer.style.cssText = `margin-top:10px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:13px;color:${provisionalColor};letter-spacing:3px;text-transform:uppercase;`;
+  footer.style.cssText = `margin-top:12px;text-align:center;font-family:IBM Plex Mono,monospace;font-size:10px;color:${provisionalColor};letter-spacing:5px;text-transform:uppercase;opacity:.5;`;
   footer.textContent = 'Provisional';
   snap.appendChild(footer);
   document.body.appendChild(snap);
