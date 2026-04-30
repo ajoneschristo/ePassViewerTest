@@ -1298,75 +1298,75 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* Classic spreadsheet theme — reference screenshot */
+/* Periwinkle blue theme — matching reference screenshot */
 :root {
   --gs-surface:       #ffffff;
   --gs-surface-2:     #ffffff;
   --gs-text:          #000000;
-  --gs-text-dim:      #222222;
-  --gs-hover:         #fffde7;
+  --gs-text-dim:      #1f3864;
+  --gs-hover:         #e8f0fe;
 
-  /* Title bar — bright yellow */
-  --gs-header-bg:     #ffff00;
-  --gs-header-text:   #000000;
+  /* Title & header — periwinkle blue */
+  --gs-header-bg:     #dce6f1;
+  --gs-header-text:   #1f3864;
 
-  /* Borders — solid black */
-  --gs-divider:       #000000;
-  --gs-divider-h:     #000000;
+  /* Borders — soft grey-blue */
+  --gs-divider:       #adb9ca;
+  --gs-divider-h:     #8496b0;
 
-  /* IBCF/TCF — light blue */
-  --gs-cf-bg:         #add8e6;
-  --gs-cf-text:       #000000;
-  --gs-cf-accent:     #5b9bd5;
+  /* IBCF/TCF — light cyan-blue, orange label */
+  --gs-cf-bg:         #b8dce8;
+  --gs-cf-text:       #e07b00;
+  --gs-cf-accent:     #e07b00;
 
-  /* MCL — cyan */
-  --gs-mcl-bg:        #00bcd4;
-  --gs-mcl-text:      #000000;
-  --gs-mcl-accent:    #0097a7;
+  /* MCL — bright cyan, orange label */
+  --gs-mcl-bg:        #00b0f0;
+  --gs-mcl-text:      #e07b00;
+  --gs-mcl-accent:    #0086b3;
 
-  /* Highest — light sky blue */
-  --gs-highest-bg:    #e0f7fa;
-  --gs-highest-txt:   #000000;
+  /* Highest — pale blue, blue numbers */
+  --gs-highest-bg:    #c9daf8;
+  --gs-highest-txt:   #1f4e79;
 
   --gs-col-balance:   #ffffff;
   --gs-col-target:    #ffffff;
 }
 body.dark {
-  --gs-surface:       #1a1a1a;
-  --gs-surface-2:     #1a1a1a;
-  --gs-text:          #ffffff;
-  --gs-text-dim:      #cccccc;
-  --gs-hover:         #2a2a00;
+  --gs-surface:       #1a1a2e;
+  --gs-surface-2:     #1a1a2e;
+  --gs-text:          #e8eaed;
+  --gs-text-dim:      #8ab4f8;
+  --gs-hover:         #1e2a3a;
 
-  --gs-header-bg:     #aaaa00;
-  --gs-header-text:   #000000;
+  --gs-header-bg:     #1e2a3a;
+  --gs-header-text:   #8ab4f8;
 
-  --gs-divider:       #888888;
-  --gs-divider-h:     #aaaaaa;
+  --gs-divider:       #3c4a5a;
+  --gs-divider-h:     #5a6a7a;
 
   --gs-cf-bg:         #1a3a4a;
-  --gs-cf-text:       #add8e6;
-  --gs-cf-accent:     #5b9bd5;
+  --gs-cf-text:       #ffa040;
+  --gs-cf-accent:     #ffa040;
 
-  --gs-mcl-bg:        #003a44;
-  --gs-mcl-text:      #00bcd4;
-  --gs-mcl-accent:    #0097a7;
+  --gs-mcl-bg:        #003a5a;
+  --gs-mcl-text:      #ffa040;
+  --gs-mcl-accent:    #0086b3;
 
-  --gs-highest-bg:    #001a1e;
-  --gs-highest-txt:   #80deea;
+  --gs-highest-bg:    #1a2a44;
+  --gs-highest-txt:   #8ab4f8;
 
-  --gs-col-balance:   #1a1a1a;
-  --gs-col-target:    #1a1a1a;
+  --gs-col-balance:   #1a1a2e;
+  --gs-col-target:    #1a1a2e;
 }
 
 .ss-gsheet-table {
   border-collapse: collapse;
   width: 100%;
   background: var(--gs-surface);
-  border: 2px solid #000000;
-  border-radius: 0;
-  overflow: visible;
-  box-shadow: none;
+  border: 2px solid #adb9ca;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(31,56,100,.10);
 }
 
 /* Caption */
@@ -1391,10 +1391,10 @@ body.dark {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: #000000;
-  padding: 8px 10px;
-  background: #ffffff;
-  border: 1px solid #000000;
+  color: var(--gs-header-text);
+  padding: 10px 12px;
+  background: var(--gs-header-bg);
+  border: 1px solid var(--gs-divider);
   font-size: clamp(10px, 1.2vw, 12px);
   white-space: normal;
   word-break: break-word;
@@ -1406,8 +1406,8 @@ body.dark {
   background: var(--gs-header-bg);
   z-index: 1;
 }
-.ss-gsheet-table th:last-child  { border-right: 1px solid #000000; }
-.ss-gsheet-table thead tr { background: #ffffff; }
+.ss-gsheet-table th:last-child  { border-right: 1px solid var(--gs-divider); }
+.ss-gsheet-table thead tr { background: var(--gs-header-bg); }
 .ss-gsheet-table th:first-child {
   text-align: left;
   min-width: 90px;
@@ -1418,8 +1418,8 @@ body.dark {
 /* ── Data cells — generous padding, clean ── */
 .ss-gsheet-table td {
   padding: 11px 14px;
-  border-bottom: 1px solid #000000;
-  border-right: 1px solid #000000;
+  border-bottom: 1px solid var(--gs-divider);
+  border-right: 1px solid var(--gs-divider);
   white-space: nowrap;
   text-align: right;
   vertical-align: middle;
@@ -1427,7 +1427,7 @@ body.dark {
   font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: #000000;
+  color: var(--gs-text);
 }
 .ss-gsheet-table td:last-child {
   border-right: none;
@@ -1447,8 +1447,8 @@ body.dark {
   font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 600;
   color: var(--gs-text);
-  border-right: 2px solid #000000;
-  padding-left: 10px;
+  border-right: 2px solid var(--gs-divider-h);
+  padding-left: 12px;
   letter-spacing: .01em;
 }
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
@@ -1465,16 +1465,16 @@ body.dark {
   font-weight: 700;
   font-size: clamp(14px, 1.7vw, 16px);
   color: var(--gs-text);
-  border-top: 2px solid #000000;
-  border-bottom: 1px solid #000000;
+  border-top: 2px solid var(--gs-divider-h);
+  border-bottom: 1px solid var(--gs-divider);
 }
 .ss-gsheet-table .gs-bold td:first-child {
   color: var(--gs-cf-text);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 2px solid #000000;
-  padding-left: 10px;
+  border-left: 4px solid var(--gs-cf-accent);
+  padding-left: 8px;
 }
 
 /* ── MCL grand total ── */
@@ -1483,15 +1483,15 @@ body.dark {
   font-weight: 800;
   font-size: clamp(15px, 1.9vw, 17px);
   color: var(--gs-text);
-  border-top: 3px solid #000000;
+  border-top: 3px solid var(--gs-mcl-accent);
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
   color: var(--gs-mcl-text);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 2px solid #000000;
-  padding-left: 10px;
+  border-left: 4px solid var(--gs-mcl-accent);
+  padding-left: 8px;
 }
 
 /* ── Highest rows — subdued footnote style ── */
@@ -1502,10 +1502,9 @@ body.dark {
   font-weight: 700;
   font-style: normal;
   color: var(--gs-highest-txt);
-  border-bottom: 1px solid #000000;
-  padding-top: 4px;
-  padding-bottom: 4px;
-  opacity: 1;
+  border-bottom: 1px solid var(--gs-divider);
+  padding-top: 5px;
+  padding-bottom: 5px;
 }
 .ss-gsheet-table .gs-highest td:first-child {
   font-size: clamp(9px, 1.1vw, 11px);
@@ -1558,7 +1557,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B79-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B80-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
