@@ -1298,35 +1298,43 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* Exact reference screenshot theme */
+/* Gemini-specified colour rules */
 :root {
   --gs-surface:       #ffffff;
-  --gs-surface-2:     #ffffe0;  /* light yellow zebra on mine rows */
+  --gs-surface-2:     #ffffff;
   --gs-text:          #000000;
   --gs-text-dim:      #000000;
-  --gs-hover:         #f0f8e8;
+  --gs-hover:         #e8f8f8;
 
-  /* Title row — green */
-  --gs-header-bg:     #92d050;
+  /* Title row — cyan */
+  --gs-header-bg:     #00ffff;
   --gs-header-text:   #000000;
+
+  /* Column headers — tan/cream */
+  --gs-col-header-bg: #fce4d6;
 
   /* Borders — solid black */
   --gs-divider:       #000000;
   --gs-divider-h:     #000000;
 
-  /* IBCF/TCF — light green, black text */
-  --gs-cf-bg:         #e2efda;
-  --gs-cf-text:       #000000;
-  --gs-cf-accent:     #70ad47;
+  /* IBCF/TCF/MCL total rows — green */
+  --gs-cf-bg:         #d9ead3;
+  --gs-cf-text:       #38761d;
+  --gs-cf-accent:     #38761d;
 
-  /* MCL — light blue, black text */
-  --gs-mcl-bg:        #ddebf7;
-  --gs-mcl-text:      #000000;
-  --gs-mcl-accent:    #2e75b6;
+  /* MCL total row — same green */
+  --gs-mcl-bg:        #d9ead3;
+  --gs-mcl-text:      #38761d;
+  --gs-mcl-accent:    #38761d;
 
-  /* Highest — light blue */
-  --gs-highest-bg:    #bdd7ee;
+  /* Highest rows — blue */
+  --gs-highest-bg:    #cfe2f3;
   --gs-highest-txt:   #000000;
+
+  /* Mine group A (IBCF section) — pink/mauve first col */
+  --gs-mine-a-bg:     #ead1dc;
+  /* Mine group B (TCF section) — peach/beige first col */
+  --gs-mine-b-bg:     #fce5cd;
 
   --gs-col-balance:   #ffffff;
   --gs-col-target:    #ffffff;
@@ -1393,7 +1401,7 @@ body.dark {
   letter-spacing: .08em;
   color: #000000;
   padding: 8px 10px;
-  background: #ffffff;
+  background: var(--gs-col-header-bg);
   border: 1px solid #000000;
   white-space: normal;
   word-break: break-word;
@@ -1405,7 +1413,7 @@ body.dark {
   z-index: 1;
 }
 .ss-gsheet-table th:last-child  { border-right: 1px solid #000000; }
-.ss-gsheet-table thead tr { background: #ffffff; }
+.ss-gsheet-table thead tr { background: var(--gs-col-header-bg); }
 .ss-gsheet-table th:first-child {
   text-align: left;
   min-width: 90px;
@@ -1467,7 +1475,7 @@ body.dark {
   border-bottom: 1px solid #000000;
 }
 .ss-gsheet-table .gs-bold td:first-child {
-  color: #e07b00;
+  color: #38761d;
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
@@ -1484,7 +1492,7 @@ body.dark {
   border-top: 2px solid #000000;
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
-  color: #e07b00;
+  color: #38761d;
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
@@ -1510,11 +1518,15 @@ body.dark {
   font-style: normal;
   text-transform: uppercase;
   letter-spacing: .12em;
-  color: var(--gs-highest-txt);
-  opacity: .7;
+  color: #1155cc;
   border-left: 1px solid #000000;
   padding-left: 10px;
 }
+
+/* Mine group A (IBCF section) first-col — pink/mauve */
+.ss-gsheet-table tr.gs-mine-a td:first-child { background: var(--gs-mine-a-bg) !important; font-weight: 600; }
+/* Mine group B (TCF section) first-col — peach/beige */
+.ss-gsheet-table tr.gs-mine-b td:first-child { background: var(--gs-mine-b-bg) !important; font-weight: 600; }
 
 /* loading spinner */
 .gs-spinner {
@@ -1555,7 +1567,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B83-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B84-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3052,6 +3064,20 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     table.appendChild(thead);
   }
 
+  // ── Pre-label mine groups via forward scan ──
+  // Mines before IBCF = group A (pink), mines before TCF = group B (peach)
+  const mineGroupLabel = new Array(dataRows.length).fill(null);
+  let nextMineGroup = null;
+  for (let i = dataRows.length - 1; i >= 0; i--) {
+    const c = dataRows[i].c || [];
+    const t = fmtGvizCell(c[0]);
+    if (/ibcf/i.test(t))       nextMineGroup = 'mine-a';
+    else if (/tcf/i.test(t))   nextMineGroup = 'mine-b';
+    else if (/mcl/i.test(t))   nextMineGroup = null;
+    else if (t && nextMineGroup) mineGroupLabel[i] = nextMineGroup;
+  }
+  let gsCurrentMineGroup = null;
+
   // ── Body ──
   const tbody = document.createElement('tbody');
   dataRows.forEach((row, rowIdx) => {
@@ -3071,6 +3097,14 @@ function renderGSheetTable(dt, table, dataStartRow, fetchRange) {
     if (isHighest)          tr.className = 'gs-highest';
     else if (isMCL)         tr.className = 'gs-bold gs-mcl';
     else if (isBold)        tr.className = 'gs-bold';
+
+    // Track mine group — update when we hit a CF total row
+    if (!firstEmpty && /ibcf/i.test(firstTxt))     gsCurrentMineGroup = null;
+    else if (!firstEmpty && /tcf/i.test(firstTxt)) gsCurrentMineGroup = null;
+    else if (!firstEmpty && /mcl/i.test(firstTxt)) gsCurrentMineGroup = null;
+    // Non-bold mine rows before IBCF = mine-a, before TCF = mine-b
+    if (!isBold && !isHighest && !firstEmpty && mineGroupLabel[rowIdx])
+      tr.classList.add('gs-' + mineGroupLabel[rowIdx]);
 
     // Last non-Remarks numeric col for MCL qty highlight
     const lastNumPos = visibleCols.length - 2;
@@ -3386,7 +3420,7 @@ async function shareReport() {
     const titleTr    = document.createElement('tr');
     const titleTd    = document.createElement('td');
     titleTd.setAttribute('colspan', colCount);
-    titleTd.style.cssText = 'padding:12px 16px;background:#92d050;border:2px solid #000000;border-bottom:2px solid #000000;text-align:center;';
+    titleTd.style.cssText = 'padding:12px 16px;background:#00ffff;border:2px solid #000000;border-bottom:2px solid #000000;text-align:center;';
     titleTd.innerHTML =
       `<div style="text-align:center;width:100%;">` +
       `<span style="font-family:IBM Plex Mono,monospace;font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#000000;">Road Despatch dated&nbsp;&nbsp;</span>` +
@@ -3399,7 +3433,7 @@ async function shareReport() {
       sc(th, {fontSize:'13px',textTransform:'uppercase',letterSpacing:'.05em',color:'#000000',
         fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'700',
         padding:'9px 12px',borderTop:'1px solid #000000',borderBottom:'2px solid #000000',
-        borderRight:'1px solid #000000',background:'#ffffff',whiteSpace:'normal',
+        borderRight:'1px solid #000000',background:'#fce4d6',whiteSpace:'normal',
         wordBreak:'break-word',textAlign:'center',verticalAlign:'middle',
         position:'static',lineHeight:'1.3'});
       if(i===0){th.style.textAlign='left';th.style.whiteSpace='nowrap';}
@@ -3409,7 +3443,9 @@ async function shareReport() {
       const isBoldRow=tr.classList.contains('gs-bold');
       const isMclRow=tr.classList.contains('gs-mcl');
       const isHighestRow=tr.classList.contains('gs-highest');
-      const rowBg=isMclRow?'#ddebf7':isBoldRow?'#e2efda':isHighestRow?'#bdd7ee':'#ffffff';
+      const isMineA=tr.classList.contains('gs-mine-a');
+      const isMineB=tr.classList.contains('gs-mine-b');
+      const rowBg=isMclRow?'#d9ead3':isBoldRow?'#d9ead3':isHighestRow?'#cfe2f3':'#ffffff';
       tr.querySelectorAll('td').forEach((td,ci) => {
         sc(td,{padding:'9px 12px',borderBottom:'1px solid #000000',borderRight:'1px solid #000000',
           color:'#000000',whiteSpace:'nowrap',textAlign:'right',verticalAlign:'middle',
@@ -3418,18 +3454,23 @@ async function shareReport() {
         if(ci===0){
           td.style.textAlign='left';
           td.style.fontFamily='IBM Plex Sans,sans-serif';
+          td.style.fontWeight='600';
           if(isBoldRow||isMclRow){
-            td.style.color='#e07b00';
+            td.style.color='#38761d';
             td.style.fontWeight='800';
             td.style.textTransform='uppercase';
             td.style.fontSize='18px';
           } else if(isHighestRow){
-            td.style.color='#2e75b6';
+            td.style.color='#1155cc';
             td.style.fontSize='13px';
             td.style.fontWeight='700';
             td.style.textTransform='uppercase';
             td.style.letterSpacing='.06em';
-            td.style.paddingLeft='14px';
+            td.style.paddingLeft='12px';
+          } else if(tr.classList.contains('gs-mine-a')){
+            td.style.background='#ead1dc';
+          } else if(tr.classList.contains('gs-mine-b')){
+            td.style.background='#fce5cd';
           }
         }
         if(ci===td.parentElement.children.length-1){
