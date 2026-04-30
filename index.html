@@ -1298,75 +1298,75 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* Periwinkle blue theme — matching reference screenshot */
+/* Exact reference screenshot theme */
 :root {
   --gs-surface:       #ffffff;
-  --gs-surface-2:     #ffffff;
+  --gs-surface-2:     #ffffe0;  /* light yellow zebra on mine rows */
   --gs-text:          #000000;
-  --gs-text-dim:      #1f3864;
-  --gs-hover:         #e8f0fe;
+  --gs-text-dim:      #000000;
+  --gs-hover:         #f0f8e8;
 
-  /* Title & header — periwinkle blue */
-  --gs-header-bg:     #dce6f1;
-  --gs-header-text:   #1f3864;
+  /* Title row — green */
+  --gs-header-bg:     #92d050;
+  --gs-header-text:   #000000;
 
-  /* Borders — soft grey-blue */
-  --gs-divider:       #adb9ca;
-  --gs-divider-h:     #8496b0;
+  /* Borders — solid black */
+  --gs-divider:       #000000;
+  --gs-divider-h:     #000000;
 
-  /* IBCF/TCF — light cyan-blue, orange label */
-  --gs-cf-bg:         #b8dce8;
-  --gs-cf-text:       #e07b00;
-  --gs-cf-accent:     #e07b00;
+  /* IBCF/TCF — light green, black text */
+  --gs-cf-bg:         #e2efda;
+  --gs-cf-text:       #000000;
+  --gs-cf-accent:     #70ad47;
 
-  /* MCL — bright cyan, orange label */
-  --gs-mcl-bg:        #00b0f0;
-  --gs-mcl-text:      #e07b00;
-  --gs-mcl-accent:    #0086b3;
+  /* MCL — light blue, black text */
+  --gs-mcl-bg:        #ddebf7;
+  --gs-mcl-text:      #000000;
+  --gs-mcl-accent:    #2e75b6;
 
-  /* Highest — pale blue, blue numbers */
-  --gs-highest-bg:    #c9daf8;
-  --gs-highest-txt:   #1f4e79;
+  /* Highest — light blue */
+  --gs-highest-bg:    #bdd7ee;
+  --gs-highest-txt:   #000000;
 
   --gs-col-balance:   #ffffff;
   --gs-col-target:    #ffffff;
 }
 body.dark {
-  --gs-surface:       #1a1a2e;
-  --gs-surface-2:     #1a1a2e;
-  --gs-text:          #e8eaed;
-  --gs-text-dim:      #8ab4f8;
-  --gs-hover:         #1e2a3a;
+  --gs-surface:       #1a1a1a;
+  --gs-surface-2:     #1a1a10;
+  --gs-text:          #ffffff;
+  --gs-text-dim:      #cccccc;
+  --gs-hover:         #1a2a1a;
 
-  --gs-header-bg:     #1e2a3a;
-  --gs-header-text:   #8ab4f8;
+  --gs-header-bg:     #2d5a1b;
+  --gs-header-text:   #ffffff;
 
-  --gs-divider:       #3c4a5a;
-  --gs-divider-h:     #5a6a7a;
+  --gs-divider:       #555555;
+  --gs-divider-h:     #888888;
 
-  --gs-cf-bg:         #1a3a4a;
-  --gs-cf-text:       #ffa040;
-  --gs-cf-accent:     #ffa040;
+  --gs-cf-bg:         #1a2e10;
+  --gs-cf-text:       #92d050;
+  --gs-cf-accent:     #70ad47;
 
-  --gs-mcl-bg:        #003a5a;
-  --gs-mcl-text:      #ffa040;
-  --gs-mcl-accent:    #0086b3;
+  --gs-mcl-bg:        #0a1e3a;
+  --gs-mcl-text:      #9dc3e6;
+  --gs-mcl-accent:    #2e75b6;
 
-  --gs-highest-bg:    #1a2a44;
-  --gs-highest-txt:   #8ab4f8;
+  --gs-highest-bg:    #0a1a2e;
+  --gs-highest-txt:   #9dc3e6;
 
-  --gs-col-balance:   #1a1a2e;
-  --gs-col-target:    #1a1a2e;
+  --gs-col-balance:   #1a1a1a;
+  --gs-col-target:    #1a1a1a;
 }
 
 .ss-gsheet-table {
   border-collapse: collapse;
   width: 100%;
   background: var(--gs-surface);
-  border: 2px solid #adb9ca;
-  border-radius: 8px;
+  border: 2px solid #000000;
+  border-radius: 4px;
   overflow: hidden;
-  box-shadow: 0 2px 8px rgba(31,56,100,.10);
+  box-shadow: none;
 }
 
 /* Caption */
@@ -1391,10 +1391,10 @@ body.dark {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--gs-header-text);
-  padding: 10px 12px;
-  background: var(--gs-header-bg);
-  border: 1px solid var(--gs-divider);
+  color: #000000;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #000000;
   font-size: clamp(10px, 1.2vw, 12px);
   white-space: normal;
   word-break: break-word;
@@ -1406,8 +1406,8 @@ body.dark {
   background: var(--gs-header-bg);
   z-index: 1;
 }
-.ss-gsheet-table th:last-child  { border-right: 1px solid var(--gs-divider); }
-.ss-gsheet-table thead tr { background: var(--gs-header-bg); }
+.ss-gsheet-table th:last-child  { border-right: 1px solid #000000; }
+.ss-gsheet-table thead tr { background: #ffffff; }
 .ss-gsheet-table th:first-child {
   text-align: left;
   min-width: 90px;
@@ -1418,8 +1418,8 @@ body.dark {
 /* ── Data cells — generous padding, clean ── */
 .ss-gsheet-table td {
   padding: 11px 14px;
-  border-bottom: 1px solid var(--gs-divider);
-  border-right: 1px solid var(--gs-divider);
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
   white-space: nowrap;
   text-align: right;
   vertical-align: middle;
@@ -1427,7 +1427,7 @@ body.dark {
   font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--gs-text);
+  color: #000000;
 }
 .ss-gsheet-table td:last-child {
   border-right: none;
@@ -1447,8 +1447,8 @@ body.dark {
   font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 600;
   color: var(--gs-text);
-  border-right: 2px solid var(--gs-divider-h);
-  padding-left: 12px;
+  border-right: 1px solid #000000;
+  padding-left: 10px;
   letter-spacing: .01em;
 }
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
@@ -1465,16 +1465,16 @@ body.dark {
   font-weight: 700;
   font-size: clamp(14px, 1.7vw, 16px);
   color: var(--gs-text);
-  border-top: 2px solid var(--gs-divider-h);
-  border-bottom: 1px solid var(--gs-divider);
+  border-top: 2px solid #000000;
+  border-bottom: 1px solid #000000;
 }
 .ss-gsheet-table .gs-bold td:first-child {
   color: var(--gs-cf-text);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 4px solid var(--gs-cf-accent);
-  padding-left: 8px;
+  border-left: 1px solid #000000;
+  padding-left: 10px;
 }
 
 /* ── MCL grand total ── */
@@ -1483,15 +1483,15 @@ body.dark {
   font-weight: 800;
   font-size: clamp(15px, 1.9vw, 17px);
   color: var(--gs-text);
-  border-top: 3px solid var(--gs-mcl-accent);
+  border-top: 2px solid #000000;
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
   color: var(--gs-mcl-text);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 4px solid var(--gs-mcl-accent);
-  padding-left: 8px;
+  border-left: 1px solid #000000;
+  padding-left: 10px;
 }
 
 /* ── Highest rows — subdued footnote style ── */
@@ -1502,7 +1502,7 @@ body.dark {
   font-weight: 700;
   font-style: normal;
   color: var(--gs-highest-txt);
-  border-bottom: 1px solid var(--gs-divider);
+  border-bottom: 1px solid #000000;
   padding-top: 5px;
   padding-bottom: 5px;
 }
@@ -1514,8 +1514,8 @@ body.dark {
   letter-spacing: .12em;
   color: var(--gs-highest-txt);
   opacity: .7;
-  border-left: 4px solid transparent;
-  padding-left: 22px;
+  border-left: 1px solid #000000;
+  padding-left: 10px;
 }
 
 /* loading spinner */
@@ -1557,7 +1557,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B80-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B81-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
