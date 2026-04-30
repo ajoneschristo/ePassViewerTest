@@ -1297,64 +1297,64 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* Cool grey palette — black borders */
+/* Google Sheet-inspired theme */
 :root {
   --gs-surface:     #ffffff;
-  --gs-surface-2:   #f7f7f7;    /* zebra — light neutral grey */
-  --gs-text:        #111111;
-  --gs-text-dim:    #666666;
-  --gs-hover:       #f0f0f0;
+  --gs-surface-2:   #f8f9fa;    /* zebra — barely-there grey */
+  --gs-text:        #202124;    /* Google's near-black */
+  --gs-text-dim:    #80868b;
+  --gs-hover:       #f1f3f4;
 
-  /* Header — cool grey */
-  --gs-header-bg:   #eeeeee;
-  --gs-header-text: #1a1a1a;
+  /* Header — light blue-grey like GSheet */
+  --gs-header-bg:   #e8eef5;
+  --gs-header-text: #1a237e;    /* deep indigo like GSheet column headers */
 
-  /* Dividers — BLACK solid borders */
-  --gs-divider:     #000000;
-  --gs-divider-h:   #000000;
+  /* Dividers — light grey, not black */
+  --gs-divider:     #dadce0;    /* Google's standard border */
+  --gs-divider-h:   #bdc1c6;
 
-  /* CF rows — very light cool grey, no brown */
-  --gs-cf-bg:       #f4f4f6;
-  --gs-cf-text:     #18181e;
+  /* CF rows (IBCF/TCF) — very light amber wash */
+  --gs-cf-bg:       #fff8e6;
+  --gs-cf-text:     #e37400;    /* amber — matches GSheet CF label colour */
 
-  /* MCL row — slightly deeper cool grey */
-  --gs-mcl-bg:      #e8e8ec;
-  --gs-mcl-text:    #0a0a12;
+  /* MCL row — slightly deeper amber wash */
+  --gs-mcl-bg:      #fff3cd;
+  --gs-mcl-text:    #c67000;
 
-  /* Highest rows — near white */
-  --gs-highest-bg:  #f9f9f9;
-  --gs-highest-txt: #444444;
+  /* Highest rows — very light blue wash */
+  --gs-highest-bg:  #e8f0fe;
+  --gs-highest-txt: #1a73e8;    /* Google blue */
 
-  /* Column tints — very light, cool, no warm cast */
-  --gs-col-balance: #f0f0f8;   /* cool blue-grey — RDO Balance */
-  --gs-col-target:  #f0f8f4;   /* cool grey-green — Target */
+  /* Column tints — subtle, no colour cast */
+  --gs-col-balance: #f8f9fa;
+  --gs-col-target:  #f8f9fa;
 }
 body.dark {
   --gs-surface:     #1e1e1e;
   --gs-surface-2:   #1a1a1a;
-  --gs-text:        #e0e0e0;
-  --gs-text-dim:    #686868;
+  --gs-text:        #e8eaed;
+  --gs-text-dim:    #9aa0a6;
   --gs-hover:       #2a2a2a;
 
-  --gs-header-bg:   #2a2a2a;
-  --gs-header-text: #d0d0d0;
+  --gs-header-bg:   #1e2a3a;
+  --gs-header-text: #8ab4f8;
 
-  --gs-divider:     #ffffff;
-  --gs-divider-h:   #ffffff;
+  --gs-divider:     #3c4043;
+  --gs-divider-h:   #5f6368;
 
-  --gs-cf-bg:       #26262c;
-  --gs-cf-text:     #c0c0d0;
+  --gs-cf-bg:       #2d2200;
+  --gs-cf-text:     #fdd663;
 
-  --gs-mcl-bg:      #22222a;
-  --gs-mcl-text:    #d0d0e0;
+  --gs-mcl-bg:      #261c00;
+  --gs-mcl-text:    #fcc934;
 
-  --gs-highest-bg:  #242424;
-  --gs-highest-txt: #a0a0a0;
+  --gs-highest-bg:  #1a2744;
+  --gs-highest-txt: #8ab4f8;
 
-  --gs-col-balance: #1e1e28;
-  --gs-col-balance-2: #18181e;
-  --gs-col-target:  #1e2420;
-  --gs-col-target-2: #18201a;
+  --gs-col-balance: #1e1e1e;
+  --gs-col-balance-2: #1a1a1a;
+  --gs-col-target:  #1e1e1e;
+  --gs-col-target-2: #1a1a1a;
 }
 
 .ss-gsheet-table {
@@ -1415,8 +1415,8 @@ body.dark {
   border-right: 2px solid var(--gs-divider-h);
 }
 /* RDO Balance header tint */
-.ss-gsheet-table th:nth-child(2) { background: #e8e8f6; } /* cool grey-blue tint on RDO Balance header */
-.ss-gsheet-table th:nth-child(3) { background: #e8f4ec; } /* cool grey-green tint on Target header */
+.ss-gsheet-table th:nth-child(2) { background: var(--gs-header-bg); } /* cool grey-blue tint on RDO Balance header */
+.ss-gsheet-table th:nth-child(3) { background: var(--gs-header-bg); } /* cool grey-green tint on Target header */
 
 /* ── Data cells ── */
 .ss-gsheet-table td {
@@ -1459,10 +1459,10 @@ body.dark {
 
 /* ── Column tints — RDO Balance (col 2) lavender, Target (col 3) mint ── */
 /* Odd rows: base tint. Even rows: slightly deeper same hue for zebra effect */
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: #f0f0f8 !important; }
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: var(--gs-surface) !important; }
 .ss-gsheet-table tbody tr:nth-child(even) td:nth-child(2) { background: #ece9fa !important; }
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: #f0f8f4 !important; }
-.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: #e4f0ea !important; }
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: var(--gs-surface) !important; }
+.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: var(--gs-surface-2) !important; }
 
 /* Don't apply column tints to special rows — let their bg show through */
 .ss-gsheet-table .gs-bold    td:nth-child(2),
@@ -1485,7 +1485,7 @@ body.dark {
   color: var(--gs-text);
 }
 .ss-gsheet-table .gs-bold td:first-child {
-  color: var(--gs-cf-text, var(--gs-header-text));
+  color: var(--gs-cf-text);
   font-family: var(--sans);
   font-weight: 700;
   letter-spacing: .03em;
@@ -1569,7 +1569,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B73-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B74-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3347,19 +3347,19 @@ async function shareReport() {
 
   const isDark = document.body.classList.contains('dark');
   const C = isDark ? {
-    bg:'#1e1e1e', surface:'#1e1e1e', raise:'#2a2a2a', edge:'#ffffff', line:'#ffffff',
-    amber:'#f0a500', green:'#2fc97e', blue:'#8090c0', dim:'#686868', mid:'#d0d0d0', text:'#e0e0e0', red:'#e05454',
-    headerBg:'#2a2a2a', headerText:'#d0d0d0', divider:'#ffffff', dividerH:'#ffffff',
-    cfBg:'#26262e', cfText:'#c0c0d8', mclBg:'#222230', mclText:'#d0d0e8',
-    highBg:'#242424', highTxt:'#a0a0a0',
-    colBalance:'#1e1e2a', colTarget:'#1e2420',
+    bg:'#1e1e1e', surface:'#1e1e1e', raise:'#1e2a3a', edge:'#3c4043', line:'#5f6368',
+    amber:'#fdd663', green:'#2fc97e', blue:'#8ab4f8', dim:'#9aa0a6', mid:'#8ab4f8', text:'#e8eaed', red:'#e05454',
+    headerBg:'#1e2a3a', headerText:'#8ab4f8', divider:'#3c4043', dividerH:'#5f6368',
+    cfBg:'#2d2200', cfText:'#fdd663', mclBg:'#261c00', mclText:'#fcc934',
+    highBg:'#1a2744', highTxt:'#8ab4f8',
+    colBalance:'#1e1e1e', colTarget:'#1e1e1e',
   } : {
-    bg:'#f5f5f5', surface:'#ffffff', raise:'#f8f8f8', edge:'#000000', line:'#000000',
-    amber:'#d4860a', green:'#1a9e5c', blue:'#304080', dim:'#666666', mid:'#333333', text:'#111111', red:'#c0392b',
-    headerBg:'#efefef', headerText:'#1a1a1a', divider:'#000000', dividerH:'#000000',
-    cfBg:'#f4f4f6', cfText:'#1a1a2a', mclBg:'#eaeaee', mclText:'#0a0a1a',
-    highBg:'#f9f9f9', highTxt:'#444444',
-    colBalance:'#f0f0f8', colTarget:'#f0f8f4',
+    bg:'#f8f9fa', surface:'#ffffff', raise:'#f8f9fa', edge:'#dadce0', line:'#bdc1c6',
+    amber:'#e37400', green:'#1a9e5c', blue:'#1a73e8', dim:'#80868b', mid:'#5f6368', text:'#202124', red:'#d93025',
+    headerBg:'#e8eef5', headerText:'#1a237e', divider:'#dadce0', dividerH:'#bdc1c6',
+    cfBg:'#fff8e6', cfText:'#e37400', mclBg:'#fff3cd', mclText:'#c67000',
+    highBg:'#e8f0fe', highTxt:'#1a73e8',
+    colBalance:'#f8f9fa', colTarget:'#f8f9fa',
   };
 
   const shownTime  = document.getElementById('asofBarTime').textContent;
