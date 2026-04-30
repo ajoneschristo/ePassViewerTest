@@ -1297,236 +1297,220 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* Google Sheet-inspired theme */
+/* WhatsApp-optimised report theme */
 :root {
-  --gs-surface:     #ffffff;
-  --gs-surface-2:   #f8f9fa;    /* zebra — barely-there grey */
-  --gs-text:        #202124;    /* Google's near-black */
-  --gs-text-dim:    #80868b;
-  --gs-hover:       #f1f3f4;
+  --gs-surface:       #ffffff;
+  --gs-surface-2:     #ffffff;  /* no zebra — use padding instead */
+  --gs-text:          #0d0d0d;  /* near-black for max contrast after WhatsApp compression */
+  --gs-text-dim:      #5f6368;
+  --gs-hover:         #f1f3f4;
 
-  /* Header — light blue-grey like GSheet */
-  --gs-header-bg:   #e8eef5;
-  --gs-header-text: #1a237e;    /* deep indigo like GSheet column headers */
+  /* Header — dark slate, anchors the eye */
+  --gs-header-bg:     #1a1f36;
+  --gs-header-text:   #ffffff;
 
-  /* Dividers — light grey, not black */
-  --gs-divider:     #dadce0;    /* Google's standard border */
-  --gs-divider-h:   #bdc1c6;
+  /* Dividers — light, minimal */
+  --gs-divider:       #e0e0e0;
+  --gs-divider-h:     #c0c0c0;
 
-  /* CF rows (IBCF/TCF) — very light amber wash */
-  --gs-cf-bg:       #fff8e6;
-  --gs-cf-text:     #e37400;    /* amber — matches GSheet CF label colour */
+  /* IBCF — warm amber wash + strong left accent */
+  --gs-cf-bg:         #fffbf0;
+  --gs-cf-text:       #b35c00;
+  --gs-cf-accent:     #f59e0b;  /* left border stripe */
 
-  /* MCL row — slightly deeper amber wash */
-  --gs-mcl-bg:      #fff3cd;
-  --gs-mcl-text:    #c67000;
+  /* MCL — deep teal wash + accent */
+  --gs-mcl-bg:        #f0faf8;
+  --gs-mcl-text:      #0d6e5a;
+  --gs-mcl-accent:    #0d9488;
 
-  /* Highest rows — very light blue wash */
-  --gs-highest-bg:  #e8f0fe;
-  --gs-highest-txt: #1a73e8;    /* Google blue */
+  /* Highest — muted, clearly subordinate */
+  --gs-highest-bg:    #fafafa;
+  --gs-highest-txt:   #1a73e8;
 
-  /* Column tints — subtle, no colour cast */
-  --gs-col-balance: #f8f9fa;
-  --gs-col-target:  #f8f9fa;
+  /* No column tints — clean */
+  --gs-col-balance:   #ffffff;
+  --gs-col-target:    #ffffff;
 }
 body.dark {
-  --gs-surface:     #1e1e1e;
-  --gs-surface-2:   #1a1a1a;
-  --gs-text:        #e8eaed;
-  --gs-text-dim:    #9aa0a6;
-  --gs-hover:       #2a2a2a;
+  --gs-surface:       #1a1a1a;
+  --gs-surface-2:     #1a1a1a;
+  --gs-text:          #f0f0f0;
+  --gs-text-dim:      #9aa0a6;
+  --gs-hover:         #2a2a2a;
 
-  --gs-header-bg:   #1e2a3a;
-  --gs-header-text: #8ab4f8;
+  --gs-header-bg:     #0d1120;
+  --gs-header-text:   #e8eaed;
 
-  --gs-divider:     #3c4043;
-  --gs-divider-h:   #5f6368;
+  --gs-divider:       #2e2e2e;
+  --gs-divider-h:     #444444;
 
-  --gs-cf-bg:       #2d2200;
-  --gs-cf-text:     #fdd663;
+  --gs-cf-bg:         #1e1800;
+  --gs-cf-text:       #fbbf24;
+  --gs-cf-accent:     #f59e0b;
 
-  --gs-mcl-bg:      #261c00;
-  --gs-mcl-text:    #fcc934;
+  --gs-mcl-bg:        #001e1a;
+  --gs-mcl-text:      #2dd4bf;
+  --gs-mcl-accent:    #0d9488;
 
-  --gs-highest-bg:  #1a2744;
-  --gs-highest-txt: #8ab4f8;
+  --gs-highest-bg:    #1a1a1a;
+  --gs-highest-txt:   #60a5fa;
 
-  --gs-col-balance: #1e1e1e;
-  --gs-col-balance-2: #1a1a1a;
-  --gs-col-target:  #1e1e1e;
-  --gs-col-target-2: #1a1a1a;
+  --gs-col-balance:   #1a1a1a;
+  --gs-col-target:    #1a1a1a;
 }
 
 .ss-gsheet-table {
-  font-size: 12.5px;
   border-collapse: collapse;
   width: 100%;
   background: var(--gs-surface);
-  border: 1px solid var(--gs-divider-h);
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,.07);
+  box-shadow: 0 2px 12px rgba(0,0,0,.10);
 }
 
 /* Caption */
 .ss-gsheet-table caption {
   caption-side: top;
   text-align: center;
-  padding: 8px 14px 6px;
+  padding: 8px 16px 6px;
   font-size: 13px;
   font-family: var(--mono);
   letter-spacing: .08em;
   color: var(--gs-header-text);
   text-transform: uppercase;
   background: var(--gs-header-bg);
-  border-bottom: 1px solid var(--gs-divider);
+  border-bottom: 1px solid rgba(255,255,255,.15);
 }
 
-/* ── Header ── */
+/* ── Header — dark band ── */
 .ss-gsheet-table thead tr { background: var(--gs-header-bg); }
 .ss-gsheet-table th {
   font-family: var(--sans);
-  font-size: clamp(11px, 1.3vw, 13px);
-  font-weight: 700;
+  font-size: clamp(10px, 1.2vw, 12px);
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .07em;
+  letter-spacing: .08em;
   color: var(--gs-header-text);
-  padding: 10px 12px;
-  border-top: 2px solid var(--gs-divider-h);
-  border-bottom: 2px solid var(--gs-divider-h);
-  border-right: 1px solid var(--gs-divider);
+  padding: 12px 14px;
+  border-bottom: 3px solid rgba(255,255,255,.2);
+  border-right: 1px solid rgba(255,255,255,.1);
   white-space: normal;
   word-break: break-word;
   text-align: center;
   vertical-align: middle;
-  max-width: 80px;
   line-height: 1.3;
   position: sticky;
   top: 0;
   background: var(--gs-header-bg);
   z-index: 1;
+  opacity: .9;
 }
 .ss-gsheet-table th:last-child  { border-right: none; }
 .ss-gsheet-table th:first-child {
   text-align: left;
   min-width: 90px;
-  max-width: 130px;
   white-space: nowrap;
-  border-right: 2px solid var(--gs-divider-h);
+  opacity: 1;
+  border-right: 1px solid rgba(255,255,255,.15);
 }
-/* RDO Balance header tint */
-.ss-gsheet-table th:nth-child(2) { background: var(--gs-header-bg); } /* cool grey-blue tint on RDO Balance header */
-.ss-gsheet-table th:nth-child(3) { background: var(--gs-header-bg); } /* cool grey-green tint on Target header */
 
-/* ── Data cells ── */
+/* ── Data cells — generous padding, clean ── */
 .ss-gsheet-table td {
-  padding: 8px 12px;
+  padding: 11px 14px;
   border-bottom: 1px solid var(--gs-divider);
   border-right: 1px solid var(--gs-divider);
   white-space: nowrap;
   text-align: right;
   vertical-align: middle;
-  font-family: var(--mono);
-  font-size: clamp(13px, 1.7vw, 16px);
+  font-family: var(--sans);
+  font-size: clamp(13px, 1.6vw, 15px);
+  font-weight: 500;
   font-variant-numeric: tabular-nums;
   color: var(--gs-text);
-  transition: background .12s;
-  /* No inline background — controlled entirely by rules below */
 }
-.ss-gsheet-table td:last-child  {
+.ss-gsheet-table td:last-child {
   border-right: none;
   text-align: left !important;
-  padding: 5px 6px !important;
+  padding: 8px 10px !important;
   white-space: normal;
   font-family: 'IBM Plex Sans Condensed', 'IBM Plex Sans', sans-serif;
-  font-size: 12px;
-  line-height: 1.25;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.3;
   vertical-align: middle;
+  color: var(--gs-text-dim);
 }
 .ss-gsheet-table td:first-child {
   text-align: left;
   font-family: var(--sans);
-  font-size: clamp(13px, 1.7vw, 16px);
+  font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 500;
   color: var(--gs-text);
-  border-right: 2px solid var(--gs-divider-h);
+  border-right: 1px solid var(--gs-divider);
+  padding-left: 16px;
 }
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
 
-/* ── Full-row zebra on plain data rows only ── */
-.ss-gsheet-table tbody tr:nth-child(even) td         { background: var(--gs-surface-2); }
-.ss-gsheet-table tbody tr:nth-child(odd)  td         { background: var(--gs-surface); }
+/* ── No zebra — rows separated by padding and thin lines ── */
+.ss-gsheet-table tbody tr:nth-child(even) td { background: var(--gs-surface); }
+.ss-gsheet-table tbody tr:nth-child(odd)  td { background: var(--gs-surface); }
+/* Hover */
+.ss-gsheet-table tbody tr:hover td { background: var(--gs-hover) !important; }
 
-/* ── Column tints — RDO Balance (col 2) lavender, Target (col 3) mint ── */
-/* Odd rows: base tint. Even rows: slightly deeper same hue for zebra effect */
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: var(--gs-surface) !important; }
-.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(2) { background: #ece9fa !important; }
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: var(--gs-surface) !important; }
-.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: var(--gs-surface-2) !important; }
-
-/* Don't apply column tints to special rows — let their bg show through */
-.ss-gsheet-table .gs-bold    td:nth-child(2),
-.ss-gsheet-table .gs-bold    td:nth-child(3),
-.ss-gsheet-table .gs-mcl     td:nth-child(2),
-.ss-gsheet-table .gs-mcl     td:nth-child(3),
-.ss-gsheet-table .gs-highest td:nth-child(2),
-.ss-gsheet-table .gs-highest td:nth-child(3) { background: inherit !important; }
-
-/* Hover overrides everything */
-.ss-gsheet-table tbody tr:hover td { background: var(--gs-hover) !important; transition: background .08s; }
-
-/* ── CF total rows (IBCF / TCF) ── */
+/* ── CF total rows — amber accent ── */
 .ss-gsheet-table .gs-bold td {
   background: var(--gs-cf-bg) !important;
   font-weight: 700;
-  border-top: 2px solid var(--gs-divider-h);
-  border-bottom: 1px solid var(--gs-divider);
-  font-size: clamp(14px, 1.8vw, 17px);
+  font-size: clamp(14px, 1.7vw, 16px);
   color: var(--gs-text);
+  border-top: 2px solid var(--gs-cf-accent);
+  border-bottom: 1px solid var(--gs-divider);
 }
 .ss-gsheet-table .gs-bold td:first-child {
   color: var(--gs-cf-text);
-  font-family: var(--sans);
-  font-weight: 700;
-  letter-spacing: .03em;
+  font-weight: 800;
+  letter-spacing: .04em;
   text-transform: uppercase;
+  border-left: 4px solid var(--gs-cf-accent);
+  padding-left: 12px;
 }
 
-/* ── MCL grand total ── */
+/* ── MCL grand total — teal accent ── */
 .ss-gsheet-table tr.gs-mcl td {
   background: var(--gs-mcl-bg) !important;
   font-weight: 800;
-  border-top: 3px solid var(--gs-divider-h);
-  font-size: clamp(15px, 2.0vw, 18px);
+  font-size: clamp(15px, 1.9vw, 17px);
   color: var(--gs-text);
+  border-top: 3px solid var(--gs-mcl-accent);
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
   color: var(--gs-mcl-text);
-  font-family: var(--sans);
   font-weight: 800;
-  letter-spacing: .03em;
+  letter-spacing: .04em;
   text-transform: uppercase;
+  border-left: 4px solid var(--gs-mcl-accent);
+  padding-left: 12px;
 }
 
-/* ── Highest rows ── */
+/* ── Highest rows — subdued footnote style ── */
 .ss-gsheet-table .gs-highest td {
   background: var(--gs-highest-bg) !important;
-  font-family: var(--mono);
-  font-size: clamp(14px, 1.8vw, 17px);
-  font-weight: 500;
+  font-family: var(--sans);
+  font-size: clamp(12px, 1.4vw, 14px);
+  font-weight: 400;
   color: var(--gs-highest-txt);
   border-bottom: 2px solid var(--gs-divider);
-  padding-top: 4px;
-  padding-bottom: 6px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  opacity: .85;
 }
 .ss-gsheet-table .gs-highest td:first-child {
-  font-family: var(--sans);
-  font-size: clamp(13px, 1.5vw, 15px);
+  font-size: clamp(10px, 1.2vw, 12px);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: .08em;
+  letter-spacing: .1em;
   color: var(--gs-text-dim);
-  border-right: 2px solid var(--gs-divider-h);
+  border-left: 4px solid transparent;
   padding-left: 20px;
 }
 
@@ -1569,7 +1553,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B74-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B75-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
