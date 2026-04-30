@@ -1555,7 +1555,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B82-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B83-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3386,52 +3386,69 @@ async function shareReport() {
     const titleTr    = document.createElement('tr');
     const titleTd    = document.createElement('td');
     titleTd.setAttribute('colspan', colCount);
-    titleTd.style.cssText = `padding:12px 16px;background:${C.headerBg};border-bottom:2px solid ${C.dividerH};border-top:1px solid ${C.divider};border-left:1px solid ${C.divider};border-right:1px solid ${C.divider};text-align:center;`;
+    titleTd.style.cssText = 'padding:12px 16px;background:#92d050;border:2px solid #000000;border-bottom:2px solid #000000;text-align:center;';
     titleTd.innerHTML =
       `<div style="text-align:center;width:100%;">` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:17px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:${C.headerText};">Road Despatch dated&nbsp;&nbsp;</span>` +
-      `<span style="font-family:IBM Plex Mono,monospace;font-size:18px;font-weight:700;color:${C.text};letter-spacing:.5px;">${displayDate}</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:16px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:#000000;">Road Despatch dated&nbsp;&nbsp;</span>` +
+      `<span style="font-family:IBM Plex Mono,monospace;font-size:20px;font-weight:700;color:#000000;letter-spacing:.5px;">${displayDate}</span>` +
       `</div>`;
     titleTr.appendChild(titleTd); titleThead.appendChild(titleTr);
     tbl.insertBefore(titleThead, tbl.firstChild);
-    // Header
+    // Column headers — white bg, black text, black borders (reference screenshot style)
     tbl.querySelectorAll('th').forEach((th, i) => {
-      sc(th, {fontSize:'14px',textTransform:'uppercase',letterSpacing:'.06em',color:C.headerText,fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'700',
-        padding:'10px 14px',borderTop:`2px solid ${C.dividerH}`,borderBottom:`2px solid ${C.dividerH}`,
-        borderRight:`1px solid ${C.divider}`,background:C.headerBg,whiteSpace:'normal',wordBreak:'break-word',
-        textAlign:'center',verticalAlign:'middle',position:'static',maxWidth:'100px',lineHeight:'1.3'});
-      if (i===0){th.style.textAlign='left';th.style.whiteSpace='nowrap';th.style.borderRight=`2px solid ${C.dividerH}`;}
-      if (i===th.parentElement.children.length-1) th.style.borderRight='none';
+      sc(th, {fontSize:'13px',textTransform:'uppercase',letterSpacing:'.05em',color:'#000000',
+        fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'700',
+        padding:'9px 12px',borderTop:'1px solid #000000',borderBottom:'2px solid #000000',
+        borderRight:'1px solid #000000',background:'#ffffff',whiteSpace:'normal',
+        wordBreak:'break-word',textAlign:'center',verticalAlign:'middle',
+        position:'static',lineHeight:'1.3'});
+      if(i===0){th.style.textAlign='left';th.style.whiteSpace='nowrap';}
     });
-    // Body rows with zebra + row-type styling
-    let snapRow=0;
+    // Body rows — reference screenshot colours
     tbl.querySelectorAll('tbody tr').forEach(tr => {
-      snapRow++;
       const isBoldRow=tr.classList.contains('gs-bold');
       const isMclRow=tr.classList.contains('gs-mcl');
       const isHighestRow=tr.classList.contains('gs-highest');
-      const zebraBg = snapRow%2===0?(isDark?'#1a2424':'#f5f9f9'):C.surface;
-      const rowBg = isMclRow?C.mclBg:isBoldRow?C.cfBg:isHighestRow?C.highBg:zebraBg;
-      tr.querySelectorAll('td').forEach((td,i) => {
-        sc(td,{padding:'9px 14px',borderBottom:`1px solid ${C.divider}`,borderRight:`1px solid ${C.divider}`,
-          color:C.text,whiteSpace:'nowrap',textAlign:'right',verticalAlign:'middle',
-          fontFamily:'IBM Plex Mono,monospace',fontSize:'18px',fontVariantNumeric:'tabular-nums',background:rowBg});
-        const ci=Array.from(td.parentElement.children).indexOf(td);
-        // Column tints — RDO Balance (col 2) and Target (col 3)
-        if (!isBoldRow && !isMclRow && !isHighestRow) {
-          if(ci===1) td.style.background = C.colBalance;
-          if(ci===2) td.style.background = C.colTarget;
-        }
+      const rowBg=isMclRow?'#ddebf7':isBoldRow?'#e2efda':isHighestRow?'#bdd7ee':'#ffffff';
+      tr.querySelectorAll('td').forEach((td,ci) => {
+        sc(td,{padding:'9px 12px',borderBottom:'1px solid #000000',borderRight:'1px solid #000000',
+          color:'#000000',whiteSpace:'nowrap',textAlign:'right',verticalAlign:'middle',
+          fontFamily:'IBM Plex Sans,sans-serif',fontSize:'17px',
+          fontVariantNumeric:'tabular-nums',background:rowBg});
         if(ci===0){
-          td.style.textAlign='left';td.style.fontFamily='IBM Plex Sans,sans-serif';
-          td.style.borderRight=`2px solid ${C.dividerH}`;
-          td.style.fontWeight=isMclRow?'800':isBoldRow?'700':'500';
-          if(isBoldRow&&!isMclRow){td.style.color=C.cfText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';} if(isMclRow){td.style.color=C.mclText;td.style.textTransform='uppercase';td.style.letterSpacing='.03em';}
-          if(isHighestRow){td.style.color=C.dim;td.style.fontSize='14px';td.style.textTransform='uppercase';td.style.letterSpacing='.08em';td.style.fontFamily='IBM Plex Sans,sans-serif';td.style.paddingLeft='22px';}
+          td.style.textAlign='left';
+          td.style.fontFamily='IBM Plex Sans,sans-serif';
+          if(isBoldRow||isMclRow){
+            td.style.color='#e07b00';
+            td.style.fontWeight='800';
+            td.style.textTransform='uppercase';
+            td.style.fontSize='18px';
+          } else if(isHighestRow){
+            td.style.color='#2e75b6';
+            td.style.fontSize='13px';
+            td.style.fontWeight='700';
+            td.style.textTransform='uppercase';
+            td.style.letterSpacing='.06em';
+            td.style.paddingLeft='14px';
+          }
         }
-        if(td===td.parentElement.children[td.parentElement.children.length-1]) { td.style.borderRight='none'; td.style.whiteSpace='normal'; td.style.fontSize='12px'; td.style.minWidth='90px'; td.style.verticalAlign='top'; td.style.fontFamily="'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif"; td.style.lineHeight='1.3'; }
-        if(isBoldRow||isMclRow){td.style.fontWeight=isMclRow?'800':'700';td.style.fontSize=isMclRow?'21px':'20px';td.style.borderTop=`2px solid ${C.dividerH}`;}
-        if(isHighestRow){td.style.color=C.highTxt;td.style.fontSize='15px';td.style.fontWeight='700';}
+        if(ci===td.parentElement.children.length-1){
+          td.style.whiteSpace='normal';
+          td.style.fontSize='12px';
+          td.style.minWidth='80px';
+          td.style.fontFamily="'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif";
+          td.style.lineHeight='1.3';
+        }
+        if(isBoldRow||isMclRow){
+          td.style.fontWeight='800';
+          td.style.fontSize='19px';
+          td.style.borderTop='2px solid #000000';
+        }
+        if(isHighestRow){
+          td.style.color='#2e75b6';
+          td.style.fontSize='14px';
+          td.style.fontWeight='700';
+        }
       });
     });
     tbl.querySelectorAll('tr:last-child td').forEach(td=>{td.style.borderBottom='none';});
