@@ -1405,7 +1405,7 @@ body.dark {
   border: 1px solid #000000;
   white-space: normal;
   word-break: break-word;
-  text-align: center;
+  text-align: center !important;
   vertical-align: middle;
   line-height: 1.3;
   position: sticky;
@@ -1427,7 +1427,7 @@ body.dark {
   border-bottom: 1px solid #000000;
   border-right: 1px solid #000000;
   white-space: nowrap;
-  text-align: right;
+  text-align: center;
   vertical-align: middle;
   font-family: var(--sans);
   font-size: clamp(13px, 1.6vw, 15px);
@@ -1513,11 +1513,11 @@ body.dark {
   padding-bottom: 5px;
 }
 .ss-gsheet-table .gs-highest td:first-child {
-  font-size: clamp(9px, 1.1vw, 11px);
+  font-size: clamp(12px, 1.4vw, 14px);
   font-weight: 700;
   font-style: normal;
   text-transform: uppercase;
-  letter-spacing: .12em;
+  letter-spacing: .08em;
   color: #1155cc;
   border-left: 1px solid #000000;
   padding-left: 10px;
@@ -1567,7 +1567,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B84-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B85-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3434,7 +3434,7 @@ async function shareReport() {
         fontFamily:'IBM Plex Sans,sans-serif',fontWeight:'700',
         padding:'9px 12px',borderTop:'1px solid #000000',borderBottom:'2px solid #000000',
         borderRight:'1px solid #000000',background:'#fce4d6',whiteSpace:'normal',
-        wordBreak:'break-word',textAlign:'center',verticalAlign:'middle',
+        wordBreak:'break-word',textAlign:'center !important',verticalAlign:'middle',
         position:'static',lineHeight:'1.3'});
       if(i===0){th.style.textAlign='left';th.style.whiteSpace='nowrap';}
     });
@@ -3448,7 +3448,7 @@ async function shareReport() {
       const rowBg=isMclRow?'#d9ead3':isBoldRow?'#d9ead3':isHighestRow?'#cfe2f3':'#ffffff';
       tr.querySelectorAll('td').forEach((td,ci) => {
         sc(td,{padding:'9px 12px',borderBottom:'1px solid #000000',borderRight:'1px solid #000000',
-          color:'#000000',whiteSpace:'nowrap',textAlign:'right',verticalAlign:'middle',
+          color:'#000000',whiteSpace:'nowrap',textAlign:'center',verticalAlign:'middle',
           fontFamily:'IBM Plex Sans,sans-serif',fontSize:'17px',
           fontVariantNumeric:'tabular-nums',background:rowBg});
         if(ci===0){
@@ -3462,7 +3462,7 @@ async function shareReport() {
             td.style.fontSize='18px';
           } else if(isHighestRow){
             td.style.color='#1155cc';
-            td.style.fontSize='13px';
+            td.style.fontSize='14px';
             td.style.fontWeight='700';
             td.style.textTransform='uppercase';
             td.style.letterSpacing='.06em';
