@@ -1311,8 +1311,8 @@ body {
   --gs-header-text:   #e8edf8;
 
   /* Dividers — light, minimal */
-  --gs-divider:       #e5e7eb;
-  --gs-divider-h:     #d1d5db;
+  --gs-divider:       #9ca3af;
+  --gs-divider-h:     #6b7280;
 
   /* IBCF — warm amber wash + strong left accent */
   --gs-cf-bg:         #fff9ed;
@@ -1326,7 +1326,7 @@ body {
 
   /* Highest — muted, clearly subordinate */
   --gs-highest-bg:    #f8faff;
-  --gs-highest-txt:   #2563eb;
+  --gs-highest-txt:   #1d4ed8;
 
   /* No column tints — clean */
   --gs-col-balance:   #ffffff;
@@ -1342,8 +1342,8 @@ body.dark {
   --gs-header-bg:     #0d1120;
   --gs-header-text:   #e8eaed;
 
-  --gs-divider:       #2e2e2e;
-  --gs-divider-h:     #444444;
+  --gs-divider:       #4b5563;
+  --gs-divider-h:     #6b7280;
 
   --gs-cf-bg:         #1e1800;
   --gs-cf-text:       #fbbf24;
@@ -1499,7 +1499,7 @@ body.dark {
   background: var(--gs-highest-bg) !important;
   font-family: var(--sans);
   font-size: clamp(11px, 1.3vw, 13px);
-  font-weight: 400;
+  font-weight: 700;
   font-style: italic;
   color: var(--gs-highest-txt);
   border-bottom: 2px solid var(--gs-divider);
@@ -1559,7 +1559,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B76-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B77-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3435,7 +3435,7 @@ async function shareReport() {
         }
         if(td===td.parentElement.children[td.parentElement.children.length-1]) { td.style.borderRight='none'; td.style.whiteSpace='normal'; td.style.fontSize='12px'; td.style.minWidth='90px'; td.style.verticalAlign='top'; td.style.fontFamily="'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif"; td.style.lineHeight='1.3'; }
         if(isBoldRow||isMclRow){td.style.fontWeight=isMclRow?'800':'700';td.style.fontSize=isMclRow?'21px':'20px';td.style.borderTop=`2px solid ${C.dividerH}`;}
-        if(isHighestRow){td.style.color=C.highTxt;td.style.fontSize='17px';}
+        if(isHighestRow){td.style.color=C.highTxt;td.style.fontSize='15px';td.style.fontWeight='700';td.style.fontStyle='italic';}
       });
     });
     tbl.querySelectorAll('tr:last-child td').forEach(td=>{td.style.borderBottom='none';});
