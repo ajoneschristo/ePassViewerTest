@@ -1298,63 +1298,62 @@ body {
    GSheet table — Material Design, pastel zebra
    ══════════════════════════════════════════════════════ */
 
-/* WhatsApp-optimised report theme */
+/* Classic spreadsheet theme — reference screenshot */
 :root {
   --gs-surface:       #ffffff;
-  --gs-surface-2:     #ffffff;  /* no zebra — use padding instead */
-  --gs-text:          #111827;
-  --gs-text-dim:      #6b7280;
-  --gs-hover:         #f3f4f6;
+  --gs-surface-2:     #ffffff;
+  --gs-text:          #000000;
+  --gs-text-dim:      #222222;
+  --gs-hover:         #fffde7;
 
-  /* Header — dark slate, anchors the eye */
-  --gs-header-bg:     #1e2240;
-  --gs-header-text:   #e8edf8;
+  /* Title bar — bright yellow */
+  --gs-header-bg:     #ffff00;
+  --gs-header-text:   #000000;
 
-  /* Dividers — light, minimal */
-  --gs-divider:       #9ca3af;
-  --gs-divider-h:     #6b7280;
+  /* Borders — solid black */
+  --gs-divider:       #000000;
+  --gs-divider-h:     #000000;
 
-  /* IBCF — warm amber wash + strong left accent */
-  --gs-cf-bg:         #fff9ed;
-  --gs-cf-text:       #92400e;
-  --gs-cf-accent:     #d97706;
+  /* IBCF/TCF — light blue */
+  --gs-cf-bg:         #add8e6;
+  --gs-cf-text:       #000000;
+  --gs-cf-accent:     #5b9bd5;
 
-  /* MCL — deep teal wash + accent */
-  --gs-mcl-bg:        #ecfdf5;
-  --gs-mcl-text:      #065f46;
-  --gs-mcl-accent:    #059669;
+  /* MCL — cyan */
+  --gs-mcl-bg:        #00bcd4;
+  --gs-mcl-text:      #000000;
+  --gs-mcl-accent:    #0097a7;
 
-  /* Highest — muted, clearly subordinate */
-  --gs-highest-bg:    #f8faff;
-  --gs-highest-txt:   #1d4ed8;
+  /* Highest — light sky blue */
+  --gs-highest-bg:    #e0f7fa;
+  --gs-highest-txt:   #000000;
 
-  /* No column tints — clean */
   --gs-col-balance:   #ffffff;
   --gs-col-target:    #ffffff;
 }
 body.dark {
   --gs-surface:       #1a1a1a;
   --gs-surface-2:     #1a1a1a;
-  --gs-text:          #f0f0f0;
-  --gs-text-dim:      #9aa0a6;
-  --gs-hover:         #2a2a2a;
+  --gs-text:          #ffffff;
+  --gs-text-dim:      #cccccc;
+  --gs-hover:         #2a2a00;
 
-  --gs-header-bg:     #0d1120;
-  --gs-header-text:   #e8eaed;
+  --gs-header-bg:     #aaaa00;
+  --gs-header-text:   #000000;
 
-  --gs-divider:       #4b5563;
-  --gs-divider-h:     #6b7280;
+  --gs-divider:       #888888;
+  --gs-divider-h:     #aaaaaa;
 
-  --gs-cf-bg:         #1e1800;
-  --gs-cf-text:       #fbbf24;
-  --gs-cf-accent:     #f59e0b;
+  --gs-cf-bg:         #1a3a4a;
+  --gs-cf-text:       #add8e6;
+  --gs-cf-accent:     #5b9bd5;
 
-  --gs-mcl-bg:        #001e1a;
-  --gs-mcl-text:      #2dd4bf;
-  --gs-mcl-accent:    #0d9488;
+  --gs-mcl-bg:        #003a44;
+  --gs-mcl-text:      #00bcd4;
+  --gs-mcl-accent:    #0097a7;
 
-  --gs-highest-bg:    #1a1a1a;
-  --gs-highest-txt:   #60a5fa;
+  --gs-highest-bg:    #001a1e;
+  --gs-highest-txt:   #80deea;
 
   --gs-col-balance:   #1a1a1a;
   --gs-col-target:    #1a1a1a;
@@ -1364,9 +1363,10 @@ body.dark {
   border-collapse: collapse;
   width: 100%;
   background: var(--gs-surface);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 4px 24px rgba(30,34,64,.13), 0 1px 4px rgba(0,0,0,.06);
+  border: 2px solid #000000;
+  border-radius: 0;
+  overflow: visible;
+  box-shadow: none;
 }
 
 /* Caption */
@@ -1391,10 +1391,11 @@ body.dark {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: .08em;
-  color: var(--gs-header-text);
-  padding: 12px 14px;
-  border-bottom: 3px solid rgba(255,255,255,.2);
-  border-right: 1px solid rgba(255,255,255,.1);
+  color: #000000;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1px solid #000000;
+  font-size: clamp(10px, 1.2vw, 12px);
   white-space: normal;
   word-break: break-word;
   text-align: center;
@@ -1404,22 +1405,21 @@ body.dark {
   top: 0;
   background: var(--gs-header-bg);
   z-index: 1;
-  opacity: .9;
 }
-.ss-gsheet-table th:last-child  { border-right: none; }
+.ss-gsheet-table th:last-child  { border-right: 1px solid #000000; }
+.ss-gsheet-table thead tr { background: #ffffff; }
 .ss-gsheet-table th:first-child {
   text-align: left;
   min-width: 90px;
   white-space: nowrap;
-  opacity: 1;
-  border-right: 1px solid rgba(255,255,255,.15);
+  border-right: 2px solid #000000;
 }
 
 /* ── Data cells — generous padding, clean ── */
 .ss-gsheet-table td {
   padding: 11px 14px;
-  border-bottom: 1px solid var(--gs-divider);
-  border-right: 1px solid var(--gs-divider);
+  border-bottom: 1px solid #000000;
+  border-right: 1px solid #000000;
   white-space: nowrap;
   text-align: right;
   vertical-align: middle;
@@ -1427,7 +1427,7 @@ body.dark {
   font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 500;
   font-variant-numeric: tabular-nums;
-  color: var(--gs-text);
+  color: #000000;
 }
 .ss-gsheet-table td:last-child {
   border-right: none;
@@ -1447,8 +1447,8 @@ body.dark {
   font-size: clamp(13px, 1.6vw, 15px);
   font-weight: 600;
   color: var(--gs-text);
-  border-right: 1px solid var(--gs-divider);
-  padding-left: 16px;
+  border-right: 2px solid #000000;
+  padding-left: 10px;
   letter-spacing: .01em;
 }
 .ss-gsheet-table tr:last-child td { border-bottom: none; }
@@ -1465,33 +1465,33 @@ body.dark {
   font-weight: 700;
   font-size: clamp(14px, 1.7vw, 16px);
   color: var(--gs-text);
-  border-top: 3px solid var(--gs-cf-accent);
-  border-bottom: 1px solid var(--gs-divider);
+  border-top: 2px solid #000000;
+  border-bottom: 1px solid #000000;
 }
 .ss-gsheet-table .gs-bold td:first-child {
   color: var(--gs-cf-text);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 5px solid var(--gs-cf-accent);
-  padding-left: 11px;
+  border-left: 2px solid #000000;
+  padding-left: 10px;
 }
 
-/* ── MCL grand total — teal accent ── */
+/* ── MCL grand total ── */
 .ss-gsheet-table tr.gs-mcl td {
   background: var(--gs-mcl-bg) !important;
   font-weight: 800;
   font-size: clamp(15px, 1.9vw, 17px);
   color: var(--gs-text);
-  border-top: 4px solid var(--gs-mcl-accent);
+  border-top: 3px solid #000000;
 }
 .ss-gsheet-table tr.gs-mcl td:first-child {
   color: var(--gs-mcl-text);
   font-weight: 800;
   letter-spacing: .04em;
   text-transform: uppercase;
-  border-left: 5px solid var(--gs-mcl-accent);
-  padding-left: 11px;
+  border-left: 2px solid #000000;
+  padding-left: 10px;
 }
 
 /* ── Highest rows — subdued footnote style ── */
@@ -1500,13 +1500,12 @@ body.dark {
   font-family: var(--sans);
   font-size: clamp(11px, 1.3vw, 13px);
   font-weight: 700;
-  font-style: italic;
+  font-style: normal;
   color: var(--gs-highest-txt);
-  border-bottom: 2px solid var(--gs-divider);
+  border-bottom: 1px solid #000000;
   padding-top: 4px;
   padding-bottom: 4px;
-  opacity: .9;
-  letter-spacing: .01em;
+  opacity: 1;
 }
 .ss-gsheet-table .gs-highest td:first-child {
   font-size: clamp(9px, 1.1vw, 11px);
@@ -1559,7 +1558,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B77-test-prod</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B79-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3435,7 +3434,7 @@ async function shareReport() {
         }
         if(td===td.parentElement.children[td.parentElement.children.length-1]) { td.style.borderRight='none'; td.style.whiteSpace='normal'; td.style.fontSize='12px'; td.style.minWidth='90px'; td.style.verticalAlign='top'; td.style.fontFamily="'IBM Plex Sans Condensed','IBM Plex Sans',sans-serif"; td.style.lineHeight='1.3'; }
         if(isBoldRow||isMclRow){td.style.fontWeight=isMclRow?'800':'700';td.style.fontSize=isMclRow?'21px':'20px';td.style.borderTop=`2px solid ${C.dividerH}`;}
-        if(isHighestRow){td.style.color=C.highTxt;td.style.fontSize='15px';td.style.fontWeight='700';td.style.fontStyle='italic';}
+        if(isHighestRow){td.style.color=C.highTxt;td.style.fontSize='15px';td.style.fontWeight='700';}
       });
     });
     tbl.querySelectorAll('tr:last-child td').forEach(td=>{td.style.borderBottom='none';});
