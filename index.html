@@ -1301,61 +1301,61 @@ body {
 :root {
   /* Base */
   --gs-surface:     #ffffff;
-  --gs-surface-2:   #fafaf8;    /* zebra — warm white */
+  --gs-surface-2:   #fafafa;    /* zebra — near-white */
   --gs-text:        #111111;
   --gs-text-dim:    #707070;
-  --gs-hover:       #f0f4ff;
+  --gs-hover:       #f2f2f2;
 
-  /* Header — soft sage */
-  --gs-header-bg:   #eef2eb;
-  --gs-header-text: #1a3220;
+  /* Header — light grey */
+  --gs-header-bg:   #f0f0f0;
+  --gs-header-text: #222222;
 
-  /* Dividers — warm stone */
-  --gs-divider:     #e4e2dc;
-  --gs-divider-h:   #c8c4b8;
+  /* Dividers — solid grey */
+  --gs-divider:     #d8d8d8;
+  --gs-divider-h:   #b0b0b0;
 
-  /* CF rows — blush rose, very light */
-  --gs-cf-bg:       #fdf0f0;
-  --gs-cf-text:     #5a1a1a;
+  /* CF rows — very light warm grey */
+  --gs-cf-bg:       #f5f3f0;
+  --gs-cf-text:     #3a2a1a;
 
-  /* MCL row — soft gold */
-  --gs-mcl-bg:      #fdf6e4;
-  --gs-mcl-text:    #4a3800;
+  /* MCL row — slightly deeper grey */
+  --gs-mcl-bg:      #eeecea;
+  --gs-mcl-text:    #2a2010;
 
-  /* Highest rows — pale sky */
-  --gs-highest-bg:  #f0f5ff;
-  --gs-highest-txt: #1a3060;
+  /* Highest rows — near white */
+  --gs-highest-bg:  #f8f8f8;
+  --gs-highest-txt: #404040;
 
-  /* Column tints */
-  --gs-col-balance: #f4f2ff;   /* lavender — RDO Balance */
-  --gs-col-target:  #f0faf4;   /* mint — Target */
+  /* Column tints — very light grey families */
+  --gs-col-balance: #f0f0f8;   /* cool grey-blue — RDO Balance */
+  --gs-col-target:  #f0f8f0;   /* cool grey-green — Target */
 }
 body.dark {
-  --gs-surface:     #1c1c1a;
-  --gs-surface-2:   #181816;
-  --gs-text:        #ddd8d0;
-  --gs-text-dim:    #686460;
-  --gs-hover:       #1e2030;
+  --gs-surface:     #1e1e1e;
+  --gs-surface-2:   #1a1a1a;
+  --gs-text:        #e0e0e0;
+  --gs-text-dim:    #686868;
+  --gs-hover:       #2a2a2a;
 
-  --gs-header-bg:   #1e2820;
-  --gs-header-text: #7aaa80;
+  --gs-header-bg:   #2a2a2a;
+  --gs-header-text: #c0c0c0;
 
-  --gs-divider:     #2c2c28;
-  --gs-divider-h:   #484440;
+  --gs-divider:     #383838;
+  --gs-divider-h:   #505050;
 
-  --gs-cf-bg:       #2c1e1e;
-  --gs-cf-text:     #c08080;
+  --gs-cf-bg:       #282420;
+  --gs-cf-text:     #c8b8a0;
 
-  --gs-mcl-bg:      #2c2610;
-  --gs-mcl-text:    #c0a840;
+  --gs-mcl-bg:      #242220;
+  --gs-mcl-text:    #d0c0a0;
 
-  --gs-highest-bg:  #1a1e2c;
-  --gs-highest-txt: #7090c0;
+  --gs-highest-bg:  #242424;
+  --gs-highest-txt: #a0a0a0;
 
-  --gs-col-balance: #1e1c30;   /* dark lavender odd */
-  --gs-col-balance-2: #18162a; /* dark lavender even */
-  --gs-col-target:  #162018;   /* dark mint odd */
-  --gs-col-target-2: #121a14;  /* dark mint even */
+  --gs-col-balance: #1e1e28;
+  --gs-col-balance-2: #181820;
+  --gs-col-target:  #1e2018;
+  --gs-col-target-2: #181a14;
 }
 
 .ss-gsheet-table {
@@ -1416,8 +1416,8 @@ body.dark {
   border-right: 2px solid var(--gs-divider-h);
 }
 /* RDO Balance header tint */
-.ss-gsheet-table th:nth-child(2) { background: #eeeaf8; } /* lavender tint on RDO Balance header */
-.ss-gsheet-table th:nth-child(3) { background: #e8f5ee; } /* mint tint on Target header */
+.ss-gsheet-table th:nth-child(2) { background: #e8e8f4; } /* cool grey-blue tint on RDO Balance header */
+.ss-gsheet-table th:nth-child(3) { background: #e8f4e8; } /* cool grey-green tint on Target header */
 
 /* ── Data cells ── */
 .ss-gsheet-table td {
@@ -1460,10 +1460,10 @@ body.dark {
 
 /* ── Column tints — RDO Balance (col 2) lavender, Target (col 3) mint ── */
 /* Odd rows: base tint. Even rows: slightly deeper same hue for zebra effect */
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: #f4f2ff !important; }
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(2) { background: #f0f0f8 !important; }
 .ss-gsheet-table tbody tr:nth-child(even) td:nth-child(2) { background: #ece9fa !important; }
-.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: #f0faf4 !important; }
-.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: #e4f4ea !important; }
+.ss-gsheet-table tbody tr:nth-child(odd)  td:nth-child(3) { background: #f0f8f0 !important; }
+.ss-gsheet-table tbody tr:nth-child(even) td:nth-child(3) { background: #e4f0e4 !important; }
 
 /* Don't apply column tints to special rows — let their bg show through */
 .ss-gsheet-table .gs-bold    td:nth-child(2),
@@ -1570,7 +1570,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B71</span>
+  <span style="font-family:var(--mono);font-size:9px;color:var(--dim);opacity:.5;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID">v4-B72-test-prod</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -3348,19 +3348,19 @@ async function shareReport() {
 
   const isDark = document.body.classList.contains('dark');
   const C = isDark ? {
-    bg:'#1c1c1a', surface:'#1c1c1a', raise:'#1e2820', edge:'#2c2c28', line:'#484440',
-    amber:'#f0a500', green:'#2fc97e', blue:'#7090c0', dim:'#686460', mid:'#7aaa80', text:'#ddd8d0', red:'#e05454',
-    headerBg:'#1e2820', headerText:'#7aaa80', divider:'#2c2c28', dividerH:'#484440',
-    cfBg:'#2c1e1e', cfText:'#c08080', mclBg:'#2c2610', mclText:'#c0a840',
-    highBg:'#1a1e2c', highTxt:'#7090c0',
-    colBalance:'#1e1c30', colTarget:'#162018',
+    bg:'#1e1e1e', surface:'#1e1e1e', raise:'#2a2a2a', edge:'#383838', line:'#505050',
+    amber:'#f0a500', green:'#2fc97e', blue:'#8090a0', dim:'#686868', mid:'#c0c0c0', text:'#e0e0e0', red:'#e05454',
+    headerBg:'#2a2a2a', headerText:'#c0c0c0', divider:'#383838', dividerH:'#505050',
+    cfBg:'#282420', cfText:'#c8b8a0', mclBg:'#242220', mclText:'#d0c0a0',
+    highBg:'#242424', highTxt:'#a0a0a0',
+    colBalance:'#1e1e28', colTarget:'#1e2018',
   } : {
-    bg:'#f8f8f5', surface:'#ffffff', raise:'#fafaf8', edge:'#e4e2dc', line:'#c8c4b8',
-    amber:'#d4860a', green:'#1a9e5c', blue:'#3a5080', dim:'#a0a0a0', mid:'#3a5240', text:'#111111', red:'#c0392b',
-    headerBg:'#eef2eb', headerText:'#1a3220', divider:'#e4e2dc', dividerH:'#c8c4b8',
-    cfBg:'#fdf0f0', cfText:'#5a1a1a', mclBg:'#fdf6e4', mclText:'#4a3800',
-    highBg:'#f0f5ff', highTxt:'#1a3060',
-    colBalance:'#f4f2ff', colTarget:'#f0faf4',
+    bg:'#f5f5f5', surface:'#ffffff', raise:'#fafafa', edge:'#d8d8d8', line:'#b0b0b0',
+    amber:'#d4860a', green:'#1a9e5c', blue:'#404880', dim:'#909090', mid:'#505050', text:'#111111', red:'#c0392b',
+    headerBg:'#f0f0f0', headerText:'#222222', divider:'#d8d8d8', dividerH:'#b0b0b0',
+    cfBg:'#f5f3f0', cfText:'#3a2a1a', mclBg:'#eeecea', mclText:'#2a2010',
+    highBg:'#f8f8f8', highTxt:'#404040',
+    colBalance:'#f0f0f8', colTarget:'#f0f8f0',
   };
 
   const shownTime  = document.getElementById('asofBarTime').textContent;
