@@ -1573,6 +1573,154 @@ body.dark {
   }
   @keyframes fadeIn { from { opacity:0; transform: scale(.97); } to { opacity:1; transform: scale(1); } }
 }
+/* ═══════════════════════════════════════════════════════
+   ROAD POWER REPORT — settings pane + report views
+   ═══════════════════════════════════════════════════════ */
+
+/* ── Launcher button ── */
+.rp-open-btn {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 5px 10px; border-radius: 7px; cursor: pointer;
+  border: 1.5px solid #ff8c00; color: #ff8c00;
+  background: transparent; font-size: 11px; font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif; letter-spacing: .3px;
+  white-space: nowrap;
+}
+.rp-open-btn:active { opacity: .75; }
+.rp-open-btn svg { width: 13px; height: 13px; flex-shrink: 0; }
+
+/* ── Settings pane ── */
+.rp-toolbar {
+  display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.rp-search {
+  flex: 1; min-width: 160px; box-sizing: border-box;
+  padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px;
+  background: var(--bg); color: var(--text); font-size: 12px; outline: none;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.rp-search:focus { border-color: var(--amber); }
+.rp-chip {
+  padding: 6px 10px; border-radius: 7px; cursor: pointer;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--dim); font-size: 11px; font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif; white-space: nowrap;
+}
+.rp-chip.on { border-color: var(--amber); color: var(--amber); background: var(--amber-lo); }
+
+.rp-list-wrap { border: 1.5px solid var(--border); border-radius: 10px; overflow: hidden; }
+.rp-list-head, .rp-party-row {
+  display: grid;
+  grid-template-columns: 92px 1fr 48px 40px 40px;
+  align-items: center; gap: 4px; padding: 0 6px;
+}
+.rp-list-head {
+  background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.rp-list-head span {
+  padding: 7px 2px; font-size: 10px; font-weight: 700;
+  color: var(--dim); text-transform: uppercase; letter-spacing: .6px;
+}
+.rp-list-head span.c, .rp-party-row .c { text-align: center; }
+.rp-scroll { max-height: 340px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.rp-party-row { border-top: 1px solid var(--border); padding-top: 5px; padding-bottom: 5px; }
+.rp-party-row:first-child { border-top: none; }
+.rp-party-row:nth-child(even) { background: var(--bg); }
+.rp-party-row.sel { background: var(--amber-lo); }
+.rp-pcode { font-family: var(--mono); font-size: 11px; color: var(--dim); }
+.rp-pname { font-size: 12px; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rp-party-row input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--amber); cursor: pointer; }
+.rp-count { font-size: 10px; color: var(--dim); margin-top: 5px; }
+
+/* ── Report-2 column editor ── */
+.rp-r2-party {
+  border: 1.5px solid var(--border); border-radius: 10px;
+  margin-bottom: 10px; overflow: hidden;
+}
+.rp-r2-hdr {
+  display: flex; align-items: center; justify-content: space-between; gap: 6px;
+  padding: 7px 10px; background: var(--bg); border-bottom: 1px solid var(--border);
+}
+.rp-r2-name { font-size: 12px; font-weight: 700; color: var(--text); }
+.rp-r2-sub  { font-size: 10px; color: var(--dim); font-family: var(--mono); }
+.rp-col-row {
+  display: grid; grid-template-columns: 1fr 96px 46px 30px;
+  align-items: center; gap: 4px; padding: 4px 6px;
+  border-top: 1px solid var(--border);
+}
+.rp-col-row:first-child { border-top: none; }
+.rp-col-head {
+  display: grid; grid-template-columns: 1fr 96px 46px 30px;
+  gap: 4px; padding: 0 6px; background: var(--bg);
+  border-top: 1px solid var(--border);
+}
+.rp-col-head span {
+  padding: 5px 2px; font-size: 9px; font-weight: 700;
+  color: var(--dim); text-transform: uppercase; letter-spacing: .5px;
+}
+.rp-col-head span.c, .rp-col-row .c { text-align: center; }
+.rp-mini-btn {
+  padding: 4px 8px; border-radius: 6px; cursor: pointer;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--mid); font-size: 10px; font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif; white-space: nowrap;
+}
+.rp-mini-btn:active { opacity: .75; }
+
+/* ── Report view overlay ── */
+.rp-view-body { padding: 12px; }
+.rp-tabs { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.rp-tab {
+  padding: 7px 12px; border-radius: 8px; cursor: pointer;
+  border: 1.5px solid var(--border); background: transparent;
+  color: var(--dim); font-size: 11px; font-weight: 700;
+  font-family: 'IBM Plex Sans', sans-serif;
+}
+.rp-tab.on { border-color: #ff8c00; color: #ff8c00; background: rgba(255,140,0,.09); }
+.rp-note {
+  font-size: 11px; color: var(--dim); margin: 8px 2px 0;
+}
+.rp-warn {
+  font-size: 11px; color: #c0392b; margin: 8px 2px 0; font-weight: 600;
+}
+.rp-tblwrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+/* ── Report tables (reference Google Sheet theme) ── */
+.rp-table {
+  border-collapse: collapse; font-family: var(--mono);
+  font-size: 11px; background: #ffffff; color: #000000;
+  border: 2px solid #000000; margin-bottom: 18px;
+}
+.rp-table th, .rp-table td {
+  border: 1px solid #000000; padding: 3px 6px; white-space: nowrap;
+}
+.rp-table tr.rp-title th {
+  background: #00ffff; color: #000000; font-weight: 700;
+  font-size: 12px; text-align: center; letter-spacing: .3px;
+}
+.rp-table tr.rp-head th {
+  background: #fce4d6; color: #000000; font-weight: 700;
+  text-align: center; font-size: 10px;
+}
+.rp-table td.rp-name {
+  text-align: left; background: #ead1dc; font-weight: 600;
+  font-family: 'IBM Plex Sans', sans-serif; font-size: 11px;
+  max-width: 230px; overflow: hidden; text-overflow: ellipsis;
+}
+.rp-table td.rp-date { text-align: center; background: #fce5cd; font-weight: 600; }
+.rp-table td.rp-num  { text-align: right; }
+.rp-table tr.rp-total td {
+  background: #d9ead3; color: #38761d; font-weight: 700;
+}
+.rp-table tr.rp-total td.rp-name, .rp-table tr.rp-total td.rp-date {
+  background: #d9ead3; color: #38761d;
+}
+.rp-table td.rp-sub  { background: #cfe2f3; color: #1155cc; font-weight: 700; }
+.rp-table th.rp-sub  { background: #cfe2f3; color: #1155cc; }
+.rp-table td.rp-live { box-shadow: inset 0 0 0 2px #ff8c00; font-weight: 700; }
+.rp-table td.rp-zero { color: #999999; }
+
 </style>
 </head>
 <body>
@@ -1587,7 +1735,7 @@ body.dark {
     <p>Mahanadi Coalfields Limited</p>
   </div>
   <div class="header-date" id="headerDate"></div>
-  <span style="font-family:var(--mono);font-size:9px;color:#ff8c00;opacity:1;font-weight:700;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID — TEST BUILD (epass-settings-test)">v4-B113-test</span>
+  <span style="font-family:var(--mono);font-size:9px;color:#ff8c00;opacity:1;font-weight:700;letter-spacing:.04em;flex-shrink:0;align-self:flex-end;padding-bottom:2px;" title="Build ID — TEST BUILD (epass-settings-test)">v4-B114-test</span>
   <button class="theme-icon-btn" onclick="toggleTheme()" title="Toggle theme">
     <svg id="iconSunHeader" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color:var(--amber)">
       <circle cx="12" cy="12" r="4" stroke-width="2"/>
@@ -1641,6 +1789,12 @@ body.dark {
         Upload
       </button>
     </div>
+  </div>
+  <div style="width:100%;max-width:400px;display:flex;justify-content:flex-end;">
+    <button class="rp-open-btn" onclick="openRpView()" title="Road Power Report">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          Power
+        </button>
   </div>
   <p class="privacy-note"></p>
 
@@ -1803,6 +1957,10 @@ body.dark {
                   d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
           </svg>
           Refresh
+        </button>
+        <button class="rp-open-btn" onclick="openRpView()" title="Road Power Report">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2L3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+          Power
         </button>
         <button class="share-btn" id="shareBtn" onclick="shareReport()">
           <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -4204,6 +4362,8 @@ let appSettings = {
     { label: 'TCF',           colCodes: '',           sheetRow: 25, collieryName: 'Talcher Coalfield Total', isTotal: true },
     { label: 'MCL',           colCodes: '',           sheetRow: 27, collieryName: 'MCL Total', isGrandTotal: true },
   ],
+  // powerReport: { historyPath, parties:[{code,name,power,r1,r2,cols:[{label,colCodes,isSubtotal}]}] }
+  powerReport: { historyPath: 'roadpower-history-test.json', parties: [] },
 };
 let _settingsSha = null;
 
@@ -4368,6 +4528,7 @@ async function loadSettingsFromGitHub() {
     if (parsed.sheetName)  appSettings.sheetName  = parsed.sheetName;
     if (parsed.sheetRange) appSettings.sheetRange = parsed.sheetRange;
     if (parsed.scriptUrl) { appSettings.scriptUrl = parsed.scriptUrl; SHEET_WEBAPP_URL = parsed.scriptUrl; }
+    if (parsed.powerReport) appSettings.powerReport = parsed.powerReport;
     buildDynamicMaps(); // rebuild colliery→CF mapping from loaded settings
   } catch(e) { /* use defaults */ }
 }
@@ -4536,6 +4697,8 @@ function collectSettingsFromDOM() {
     scriptUrl:  document.getElementById('cfg_scriptUrl').value.trim(),
     slots,
     mines,
+    // carried through untouched — edited from the ⚡ Road Power Report pane
+    powerReport: appSettings.powerReport || { historyPath: 'roadpower-history-test.json', parties: [] },
   };
 }
 
@@ -4592,6 +4755,710 @@ async function saveSettings() {
   } catch(e) {
     status.textContent = 'Save failed: ' + e.message;
     status.style.color = '#e05';
+  }
+}
+
+
+// ═══════════════════════════════════════════════════════
+//  ROAD POWER REPORT  (v4 test build)
+//  · Settings pane  : pick POWER parties, Report-1 rows, Report-2 blocks
+//  · History store  : epass-db repo, separate JSON file
+//  · Report views   : "Road Despatch to Power Sector" + "Source-wise Daywise"
+// ═══════════════════════════════════════════════════════
+
+const RP_MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+// ── GitHub handle for the history file (shares the epass-db repo) ──
+const RP_GH = {
+  owner:  'ajoneschristo',
+  repo:   'epass-db',
+  branch: 'main',
+  get path() { return (appSettings.powerReport && appSettings.powerReport.historyPath) || 'roadpower-history-test.json'; },
+  get token() { return GH.token; },
+  api:    'https://api.github.com',
+};
+
+let rpHist    = null;   // { updated, days: { 'YYYY-MM-DD': { cut, pc:{ 'party|colliery': qty } } } }
+let _rpHistSha = null;
+let _rpDraft  = null;   // settings draft while the pane is open
+let _rpChips  = { recent: true, sel: false };
+let _rpTab    = 1;
+let _rpPartyIdx = null; // partyCode → { code, name, last }
+
+// ── helpers ─────────────────────────────────────────────
+function rpNum(n) {
+  if (!n) return '';
+  return Math.round(n).toLocaleString('en-IN');
+}
+function rpParseDMY(s) {
+  // "15-Aug-2026" → Date  (also tolerates "15-Aug-26")
+  if (!s) return null;
+  const m = String(s).trim().match(/^(\d{1,2})-([A-Za-z]{3})-(\d{2,4})$/);
+  if (!m) return null;
+  const mi = RP_MON.findIndex(x => x.toLowerCase() === m[2].toLowerCase());
+  if (mi < 0) return null;
+  let y = parseInt(m[3]); if (y < 100) y += 2000;
+  return new Date(y, mi, parseInt(m[1]));
+}
+function rpKey(d) {
+  if (!d) return null;
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+function rpKeyFromDMY(s) { return rpKey(rpParseDMY(s)); }
+
+// The date the loaded despatch file is currently showing
+function rpActiveDMY() { return activeTabDate || currentTabMaxDateStr || maxGWDateStr || ''; }
+function rpActiveKey() { return rpKeyFromDMY(rpActiveDMY()); }
+
+// Cut-off label for the active view
+function rpCutLabel() {
+  if (timeFilterMins !== null) return minsToLabel(timeFilterMins);
+  return maxGWTimeStr || '';
+}
+
+// ── Party index built from the DO database ──────────────
+// Some names arrive HTML-escaped from the MHTML parser ("SARDA ENERGY &amp; ...")
+function rpDecode(s) {
+  return String(s || '')
+    .replace(/&amp;/gi, '&').replace(/&lt;/gi, '<').replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"').replace(/&#0?39;/g, "'").replace(/&nbsp;/gi, ' ')
+    .replace(/\s+/g, ' ').trim();
+}
+function rpBuildPartyIndex(force) {
+  if (_rpPartyIdx && !force) return _rpPartyIdx;
+  const idx = {};
+  for (const k in mclhoDB) {
+    const r = mclhoDB[k];
+    const c = String(r.partyCode || '').trim();
+    if (!c) continue;
+    const nm = rpDecode(r.partyName);
+    const d = rpParseDMY(r.doEndDate || r.doDate);
+    const t = d ? d.getTime() : 0;
+    if (!idx[c]) idx[c] = { code: c, name: nm, last: t };
+    else if (t >= idx[c].last) { idx[c].last = t; if (nm) idx[c].name = nm; }
+  }
+  _rpPartyIdx = idx;
+  return idx;
+}
+// Collieries a party has DOs for → [{code,name}]
+function rpPartyCollieries(code) {
+  const out = {};
+  for (const k in mclhoDB) {
+    const r = mclhoDB[k];
+    if (String(r.partyCode || '').trim() !== String(code)) continue;
+    const cc = String(r.collieryCode || '').trim();
+    if (!cc) continue;
+    const d = rpParseDMY(r.doEndDate || r.doDate);
+    const t = d ? d.getTime() : 0;
+    if (!out[cc] || t > out[cc].last) out[cc] = { code: cc, name: rpDecode(r.collieryName) || cc, last: t };
+  }
+  return Object.values(out).sort((a,b) => b.last - a.last);
+}
+
+// ═══════════════════════════════════════════════════════
+//  SETTINGS PANE
+// ═══════════════════════════════════════════════════════
+function rpDefaults() { return { historyPath: 'roadpower-history-test.json', parties: [] }; }
+
+function openRpSettings() {
+  const pr = appSettings.powerReport || rpDefaults();
+  _rpDraft = { historyPath: pr.historyPath || 'roadpower-history-test.json', sel: {} };
+  (pr.parties || []).forEach(p => {
+    _rpDraft.sel[String(p.code)] = {
+      name:  p.name || '',
+      power: p.power !== false,
+      r1:    !!p.r1,
+      r2:    !!p.r2,
+      cols:  (p.cols || []).map(c => ({ label: c.label || '', colCodes: c.colCodes || '', isSubtotal: !!c.isSubtotal })),
+    };
+  });
+  document.getElementById('rp_histPath').value = _rpDraft.historyPath;
+  document.getElementById('rpSettingsStatus').textContent = '';
+  document.getElementById('rpSearch').value = '';
+  _rpChips = { recent: true, sel: false };
+  document.getElementById('rpChipRecent').classList.add('on');
+  document.getElementById('rpChipSel').classList.remove('on');
+  rpBuildPartyIndex(true);
+  renderRpParties();
+  renderRpR2();
+  document.getElementById('rpSettingsOverlay').style.display = 'block';
+}
+function closeRpSettings() {
+  document.getElementById('rpSettingsOverlay').style.display = 'none';
+}
+function rpToggleChip(which) {
+  _rpChips[which] = !_rpChips[which];
+  document.getElementById(which === 'recent' ? 'rpChipRecent' : 'rpChipSel')
+          .classList.toggle('on', _rpChips[which]);
+  renderRpParties();
+}
+
+function renderRpParties() {
+  const body = document.getElementById('rpPartyBody');
+  const idx  = rpBuildPartyIndex();
+  const q    = (document.getElementById('rpSearch').value || '').trim().toUpperCase();
+  const cut  = Date.now() - 550 * 24 * 3600 * 1000; // ~18 months
+
+  // union of DB parties and anything already selected
+  const all = Object.assign({}, idx);
+  for (const c in _rpDraft.sel) {
+    if (!all[c]) all[c] = { code: c, name: _rpDraft.sel[c].name || '(not in DO database)', last: 0 };
+  }
+
+  let list = Object.values(all).filter(p => {
+    const sel = _rpDraft.sel[p.code];
+    const anyFlag = sel && (sel.power || sel.r1 || sel.r2);
+    if (_rpChips.sel && !anyFlag) return false;
+    if (_rpChips.recent && !anyFlag && p.last < cut) return false;
+    if (q && !(p.name.toUpperCase().includes(q) || p.code.includes(q))) return false;
+    return true;
+  });
+
+  // selected first, then alphabetical
+  list.sort((a,b) => {
+    const sa = _rpDraft.sel[a.code] && (_rpDraft.sel[a.code].power || _rpDraft.sel[a.code].r1 || _rpDraft.sel[a.code].r2) ? 0 : 1;
+    const sb = _rpDraft.sel[b.code] && (_rpDraft.sel[b.code].power || _rpDraft.sel[b.code].r1 || _rpDraft.sel[b.code].r2) ? 0 : 1;
+    if (sa !== sb) return sa - sb;
+    return a.name.localeCompare(b.name);
+  });
+
+  const total = Object.keys(all).length;
+  const shown = Math.min(list.length, 400);
+  document.getElementById('rpCount').textContent =
+    `${shown} of ${list.length} shown · ${total} in database`;
+
+  const frag = document.createDocumentFragment();
+  list.slice(0, 400).forEach(p => {
+    const sel = _rpDraft.sel[p.code] || { power:false, r1:false, r2:false };
+    const row = document.createElement('div');
+    row.className = 'rp-party-row' + ((sel.power||sel.r1||sel.r2) ? ' sel' : '');
+    row.innerHTML =
+      `<div class="rp-pcode">${p.code}</div>` +
+      `<div class="rp-pname" title="${(p.name||'').replace(/"/g,'&quot;')}">${p.name || '—'}</div>` +
+      `<div class="c"><input type="checkbox" data-f="power" ${sel.power?'checked':''}></div>` +
+      `<div class="c"><input type="checkbox" data-f="r1" ${sel.r1?'checked':''}></div>` +
+      `<div class="c"><input type="checkbox" data-f="r2" ${sel.r2?'checked':''}></div>`;
+    row.querySelectorAll('input').forEach(cb => {
+      cb.onchange = () => rpSetFlag(p.code, p.name, cb.dataset.f, cb.checked);
+    });
+    frag.appendChild(row);
+  });
+  body.innerHTML = '';
+  body.appendChild(frag);
+  if (list.length > 400) {
+    const more = document.createElement('div');
+    more.className = 'rp-count';
+    more.style.padding = '8px';
+    more.textContent = 'Narrow the search to see the rest.';
+    body.appendChild(more);
+  }
+}
+
+function rpSetFlag(code, name, field, val) {
+  code = String(code);
+  if (!_rpDraft.sel[code]) _rpDraft.sel[code] = { name: name || '', power:false, r1:false, r2:false, cols: [] };
+  const s = _rpDraft.sel[code];
+  if (name) s.name = name;
+  s[field] = val;
+  if (val && (field === 'r1' || field === 'r2')) s.power = true;   // R1/R2 imply POWER
+  if (!val && field === 'power') { s.r1 = false; s.r2 = false; }   // un-power drops both
+  if (field === 'r2' && val && (!s.cols || !s.cols.length)) rpAutoCols(code, true);
+  renderRpParties();
+  renderRpR2();
+}
+
+function renderRpR2() {
+  const wrap = document.getElementById('rpR2Body');
+  wrap.innerHTML = '';
+  const codes = Object.keys(_rpDraft.sel).filter(c => _rpDraft.sel[c].r2);
+  if (!codes.length) {
+    wrap.innerHTML = '<div class="rp-count" style="padding:4px 2px;">Tick <strong>R2</strong> against a party above to configure its colliery columns.</div>';
+    return;
+  }
+  codes.forEach(code => {
+    const s = _rpDraft.sel[code];
+    const box = document.createElement('div');
+    box.className = 'rp-r2-party';
+    box.innerHTML =
+      `<div class="rp-r2-hdr">
+         <div>
+           <div class="rp-r2-name">${s.name || code}</div>
+           <div class="rp-r2-sub">${code}</div>
+         </div>
+         <div style="display:flex;gap:4px;">
+           <button class="rp-mini-btn" data-a="auto">Auto-fill</button>
+           <button class="rp-mini-btn" data-a="add">+ Column</button>
+         </div>
+       </div>
+       <div class="rp-col-head">
+         <span>Column Label</span><span>Colliery Code(s)</span><span class="c">Sub</span><span></span>
+       </div>`;
+    box.querySelector('[data-a="auto"]').onclick = () => rpAutoCols(code);
+    box.querySelector('[data-a="add"]').onclick  = () => { s.cols.push({label:'',colCodes:'',isSubtotal:false}); renderRpR2(); };
+
+    (s.cols || []).forEach((c, ci) => {
+      const row = document.createElement('div');
+      row.className = 'rp-col-row';
+      row.innerHTML =
+        `<input class="stt-cell-input" value="${(c.label||'').replace(/"/g,'&quot;')}" data-k="label">` +
+        `<input class="stt-cell-input mono" value="${(c.colCodes||'').replace(/"/g,'&quot;')}" data-k="colCodes">` +
+        `<div class="c"><input type="checkbox" ${c.isSubtotal?'checked':''} data-k="isSubtotal" style="width:15px;height:15px;accent-color:var(--amber);"></div>` +
+        `<button class="stt-del-btn" title="Delete column">✕</button>`;
+      row.querySelector('[data-k="label"]').oninput    = e => c.label = e.target.value;
+      row.querySelector('[data-k="colCodes"]').oninput = e => c.colCodes = e.target.value;
+      row.querySelector('[data-k="isSubtotal"]').onchange = e => c.isSubtotal = e.target.checked;
+      row.querySelector('.stt-del-btn').onclick = () => { s.cols.splice(ci,1); renderRpR2(); };
+      box.appendChild(row);
+    });
+    wrap.appendChild(box);
+  });
+}
+
+function rpAutoCols(code, silent) {
+  const s = _rpDraft.sel[code];
+  if (!s) return;
+  const cols = rpPartyCollieries(code);
+  if (!cols.length) { if (!silent) alert('No DOs found for this party in the DO database.'); return; }
+  s.cols = cols.map(c => {
+    const m = codeToMine[c.code];
+    return { label: (m && m.collieryName) || c.name || c.code, colCodes: c.code, isSubtotal: false };
+  });
+  if (!silent) renderRpR2();
+}
+
+async function saveRpSettings() {
+  const status = document.getElementById('rpSettingsStatus');
+  status.textContent = 'Saving…'; status.style.color = 'var(--mid)';
+
+  const histPath = document.getElementById('rp_histPath').value.trim() || 'roadpower-history-test.json';
+  if (!/^[\w.\-/]+\.json$/.test(histPath)) {
+    status.textContent = 'History file must be a .json path (letters, digits, - _ . /).';
+    status.style.color = '#e05'; return;
+  }
+  const parties = [];
+  Object.keys(_rpDraft.sel).forEach(code => {
+    const s = _rpDraft.sel[code];
+    if (!s.power && !s.r1 && !s.r2) return;
+    const e = { code, name: s.name || '', power: !!s.power, r1: !!s.r1, r2: !!s.r2 };
+    if (s.r2) e.cols = (s.cols || []).filter(c => c.label || c.colCodes)
+                                     .map(c => ({ label: c.label.trim(), colCodes: c.colCodes.replace(/\s/g,''), isSubtotal: !!c.isSubtotal }));
+    parties.push(e);
+  });
+  for (const p of parties) {
+    if (p.r2 && (!p.cols || !p.cols.length)) {
+      status.textContent = `"${p.name || p.code}" is ticked R2 but has no colliery columns.`;
+      status.style.color = '#e05'; return;
+    }
+  }
+
+  const newSettings = Object.assign({}, appSettings, { powerReport: { historyPath: histPath, parties } });
+
+  try {
+    const shaRes = await fetch(
+      `${SETTINGS_GH.api}/repos/${SETTINGS_GH.owner}/${SETTINGS_GH.repo}/contents/${SETTINGS_GH.path}`,
+      { headers: { Authorization: 'token ' + SETTINGS_GH.token } }
+    );
+    if (shaRes.ok) { const d = await shaRes.json(); _settingsSha = d.sha; }
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(newSettings, null, 2))));
+    const body = { message: 'Update road power report settings', content, branch: SETTINGS_GH.branch };
+    if (_settingsSha) body.sha = _settingsSha;
+    const res = await fetch(
+      `${SETTINGS_GH.api}/repos/${SETTINGS_GH.owner}/${SETTINGS_GH.repo}/contents/${SETTINGS_GH.path}`,
+      { method: 'PUT', headers: { Authorization: 'token ' + SETTINGS_GH.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    );
+    if (!res.ok) throw new Error('GitHub ' + res.status);
+    const resp = await res.json();
+    _settingsSha = resp.content.sha;
+    appSettings = newSettings;
+    status.textContent = '✓ Saved'; status.style.color = 'var(--green)';
+    if (document.getElementById('rpViewOverlay').style.display === 'block') renderRpReports();
+    setTimeout(closeRpSettings, 1000);
+  } catch(e) {
+    status.textContent = 'Save failed: ' + e.message;
+    status.style.color = '#e05';
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+//  HISTORY DATABASE  (separate JSON in the epass-db repo)
+// ═══════════════════════════════════════════════════════
+async function loadRpHistory(force) {
+  if (rpHist && !force) return rpHist;
+  const headers = { Authorization: `token ${RP_GH.token}`, Accept: 'application/vnd.github.v3+json' };
+  try {
+    const metaRes = await fetch(
+      `${RP_GH.api}/repos/${RP_GH.owner}/${RP_GH.repo}/contents/${RP_GH.path}?ref=${RP_GH.branch}&t=${Date.now()}`,
+      { headers }
+    );
+    if (metaRes.status === 404) { rpHist = { days: {} }; _rpHistSha = null; return rpHist; }
+    if (!metaRes.ok) throw new Error('HTTP ' + metaRes.status);
+    const meta = await metaRes.json();
+    _rpHistSha = meta.sha;
+    const blobRes = await fetch(
+      `${RP_GH.api}/repos/${RP_GH.owner}/${RP_GH.repo}/git/blobs/${meta.sha}`,
+      { headers: { ...headers, Accept: 'application/vnd.github.v3.raw' } }
+    );
+    if (!blobRes.ok) throw new Error('blob HTTP ' + blobRes.status);
+    const json = await blobRes.json();
+    rpHist = { updated: json.updated || '', days: json.days || {} };
+  } catch(e) {
+    console.warn('Road power history load failed:', e);
+    if (!rpHist) rpHist = { days: {} };
+    rpSetStatus('⚠ Could not load history file — showing today only. ' + e.message, true);
+  }
+  return rpHist;
+}
+
+// Live party×colliery map from the loaded despatch file, for the active date + time filter
+function rpLiveMap(powerOnly) {
+  const pr = appSettings.powerReport || {};
+  const powerSet = new Set((pr.parties || []).filter(p => p.power).map(p => String(p.code)));
+  const usePower = powerOnly !== false && powerSet.size > 0;
+  const cutoff = timeFilterMins;
+  const acc = {};
+  for (let i = 0; i < rowGross.length; i++) {
+    if (activeTabDate && rowGWDate[i] !== activeTabDate) continue;
+    if (cutoff !== null && rowMins[i] > cutoff) continue;
+    const rec = mclhoDB[rowDO[i]];
+    if (!rec) continue;
+    const pc = String(rec.partyCode || '').trim();
+    if (!pc) continue;
+    if (usePower && !powerSet.has(pc)) continue;
+    const cc = String(rec.collieryCode || '').trim();
+    const net = rowGross[i] - rowTar[i];
+    const k = pc + '|' + cc;
+    acc[k] = (acc[k] || 0) + net;
+  }
+  // round to 2dp to keep the stored file small
+  for (const k in acc) acc[k] = Math.round(acc[k] * 100) / 100;
+  return acc;
+}
+
+async function saveRpDay() {
+  const key = rpActiveKey();
+  if (!allRows.length) { alert('Load a despatch file first.'); return; }
+  if (!key) { alert('Could not determine the report date from the loaded file.'); return; }
+  if (mclhoCount === 0) { alert('DO database is not loaded — party figures would all be zero.'); return; }
+
+  const pr = appSettings.powerReport || {};
+  if (!(pr.parties || []).some(p => p.power)) {
+    alert('No power parties selected yet. Open ⚙ and tick some parties first.'); return;
+  }
+
+  const pc = rpLiveMap();
+  const tot = Object.values(pc).reduce((a,b) => a+b, 0);
+  const cut = rpCutLabel();
+  const existing = rpHist && rpHist.days && rpHist.days[key];
+  let msg = `Save ${rpActiveDMY()} (cut-off ${cut || '—'}) — ${rpNum(tot)} T across ${Object.keys(pc).length} party/colliery pairs?`;
+  if (existing) {
+    const oldTot = Object.values(existing.pc || {}).reduce((a,b) => a+b, 0);
+    msg += `\n\nThis date is already stored (${rpNum(oldTot)} T, cut-off ${existing.cut || '—'}). It will be overwritten.`;
+    if (tot < oldTot * 0.95) msg += '\n\n⚠ The new figure is LOWER than what is stored. Check the time filter before saving.';
+  }
+  if (!confirm(msg)) return;
+
+  const btn = document.getElementById('rpSaveDayBtn');
+  const old = btn.textContent; btn.textContent = 'Saving…'; btn.disabled = true;
+  try {
+    await loadRpHistory(true);                       // always re-read for a fresh SHA
+    rpHist.days[key] = { cut, pc };
+    rpHist.updated = new Date().toISOString();
+
+    const content = btoa(unescape(encodeURIComponent(JSON.stringify(rpHist))));
+    const body = { message: `Road power history — ${key}`, content, branch: RP_GH.branch };
+    if (_rpHistSha) body.sha = _rpHistSha;
+    const res = await fetch(
+      `${RP_GH.api}/repos/${RP_GH.owner}/${RP_GH.repo}/contents/${RP_GH.path}`,
+      { method: 'PUT', headers: { Authorization: 'token ' + RP_GH.token, 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+    );
+    if (!res.ok) throw new Error('GitHub ' + res.status);
+    const resp = await res.json();
+    _rpHistSha = resp.content.sha;
+    rpSetStatus(`✓ ${rpActiveDMY()} saved to ${RP_GH.path}`, false);
+    renderRpReports();
+  } catch(e) {
+    rpSetStatus('Save failed: ' + e.message, true);
+  } finally {
+    btn.textContent = old; btn.disabled = false;
+  }
+}
+
+function rpSetStatus(txt, isWarn) {
+  const el = document.getElementById('rpStatus');
+  el.textContent = txt || '';
+  el.className = isWarn ? 'rp-warn' : 'rp-note';
+}
+
+// ═══════════════════════════════════════════════════════
+//  REPORT VIEWS
+// ═══════════════════════════════════════════════════════
+async function openRpView() {
+  document.getElementById('rpViewOverlay').style.display = 'block';
+  rpSetStatus('Loading history…', false);
+  await loadRpHistory();
+  rpSetStatus('', false);
+  renderRpReports();
+}
+function closeRpView() { document.getElementById('rpViewOverlay').style.display = 'none'; }
+function rpSwitch(n) {
+  _rpTab = n;
+  document.getElementById('rpTab1').classList.toggle('on', n === 1);
+  document.getElementById('rpTab2').classList.toggle('on', n === 2);
+  document.getElementById('rpPane1').style.display = n === 1 ? 'block' : 'none';
+  document.getElementById('rpPane2').style.display = n === 2 ? 'block' : 'none';
+}
+
+// Build day → { 'party|colliery': qty } for the month of the active date,
+// with the active date overridden by the live file figures.
+function rpMonthData() {
+  const key = rpActiveKey();
+  let Y, M;
+  if (key) { Y = +key.slice(0,4); M = +key.slice(5,7); }
+  else {
+    // no file loaded — fall back to the latest month present in history
+    const ks = Object.keys((rpHist && rpHist.days) || {}).sort();
+    if (!ks.length) return null;
+    Y = +ks[ks.length-1].slice(0,4); M = +ks[ks.length-1].slice(5,7);
+  }
+  const dim  = new Date(Y, M, 0).getDate();
+  const live = key && allRows.length ? rpLiveMap() : null;
+  const days = {};
+  let lastDay = 0;
+  for (let d = 1; d <= dim; d++) {
+    const k = `${Y}-${String(M).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    let pc = null, cut = '';
+    if (key === k && live) { pc = live; cut = rpCutLabel(); }
+    else if (rpHist && rpHist.days[k]) { pc = rpHist.days[k].pc || {}; cut = rpHist.days[k].cut || ''; }
+    if (pc) { days[d] = { pc, cut, live: key === k && !!live }; lastDay = d; }
+  }
+  // previous month totals (for the Report-2 header block)
+  const pm = M === 1 ? { Y: Y-1, M: 12 } : { Y, M: M-1 };
+  const prev = { label: RP_MON[pm.M-1] + '-' + pm.Y, pc: {}, days: 0 };
+  const pdim = new Date(pm.Y, pm.M, 0).getDate();
+  for (let d = 1; d <= pdim; d++) {
+    const k = `${pm.Y}-${String(pm.M).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const rec = rpHist && rpHist.days[k];
+    if (!rec) continue;
+    prev.days++;
+    for (const kk in (rec.pc || {})) prev.pc[kk] = (prev.pc[kk] || 0) + rec.pc[kk];
+  }
+  return { Y, M, dim, days, lastDay, prev, activeKey: key,
+           monLabel: RP_MON[M-1] + '-' + Y };
+}
+
+// sum a day map for one party (all its collieries)
+function rpSumParty(pc, code) {
+  let s = 0; const pre = code + '|';
+  for (const k in pc) if (k.startsWith(pre)) s += pc[k];
+  return s;
+}
+// sum a day map for one party restricted to a set of colliery codes
+function rpSumPartyColl(pc, code, codes) {
+  let s = 0;
+  for (const cc of codes) { const v = pc[code + '|' + cc]; if (v) s += v; }
+  return s;
+}
+
+function renderRpReports() {
+  const md = rpMonthData();
+  const sub = document.getElementById('rpViewSub');
+  const pr  = appSettings.powerReport || {};
+  const n1 = (pr.parties || []).filter(p => p.r1).length;
+  const n2 = (pr.parties || []).filter(p => p.r2).length;
+  sub.textContent = md
+    ? `${md.monLabel} · ${Object.keys(md.days).length} day(s) of data · ${n1} party rows · ${n2} source-wise block(s)`
+    : 'No data yet — load a despatch file or save a day.';
+  renderRp1(md);
+  renderRp2(md);
+  rpSwitch(_rpTab);
+}
+
+function renderRp1(md) {
+  const pane = document.getElementById('rpPane1');
+  pane.innerHTML = '';
+  const pr = appSettings.powerReport || {};
+  const parties = (pr.parties || []).filter(p => p.r1);
+  if (!parties.length) {
+    pane.innerHTML = '<div class="rp-note">No parties ticked for Report 1. Open ⚙ and tick <strong>R1</strong> against the parties you want as rows.</div>';
+    return;
+  }
+  if (!md) { pane.innerHTML = '<div class="rp-note">No data available.</div>'; return; }
+
+  const lastDay = md.lastDay || 0;
+  // per-party per-day totals
+  const rows = parties.map(p => {
+    const code = String(p.code);
+    const vals = {};
+    let prog = 0, cnt = 0;
+    for (let d = 1; d <= lastDay; d++) {
+      if (!md.days[d]) continue;
+      const v = rpSumParty(md.days[d].pc, code);
+      vals[d] = v; prog += v; cnt++;
+    }
+    const actD = md.activeKey ? +md.activeKey.slice(8,10) : 0;
+    return { name: p.name || code, code, vals, prog, cnt, today: vals[actD] || 0 };
+  }).sort((a,b) => b.prog - a.prog);
+
+  const actD = md.activeKey ? +md.activeKey.slice(8,10) : 0;
+  const cut  = (md.days[actD] && md.days[actD].cut) || '';
+  const dayCount = Object.keys(md.days).length;
+
+  const t = document.createElement('table');
+  t.className = 'rp-table';
+  t.id = 'rpTable1';
+  const ncol = 4 + lastDay;
+
+  let html = `<tr class="rp-title"><th colspan="${ncol}">ROAD DESPATCH TO POWER SECTOR</th></tr>`;
+  html += '<tr class="rp-head">';
+  html += `<th>${md.activeKey ? rpActiveDMY() : md.monLabel}</th>`;
+  html += '<th>Today</th><th>Progressive Total</th><th>Avg. Daily despatch</th>';
+  for (let d = 1; d <= lastDay; d++) {
+    const on = !!md.days[d];
+    html += `<th${md.days[d] && md.days[d].live ? ' class="rp-sub"' : ''}>${String(d).padStart(2,'0')}/${String(md.M).padStart(2,'0')}/${String(md.Y).slice(2)}</th>`;
+    void on;
+  }
+  html += '</tr>';
+
+  let tToday = 0, tProg = 0, tAvg = 0;
+  const dayTotals = {};
+  rows.forEach(r => {
+    tToday += r.today; tProg += r.prog; tAvg += r.cnt ? r.prog / r.cnt : 0;
+    html += '<tr>';
+    html += `<td class="rp-name" title="${r.code}">${r.name}</td>`;
+    html += `<td class="rp-num rp-live">${rpNum(r.today)}</td>`;
+    html += `<td class="rp-num">${rpNum(r.prog)}</td>`;
+    html += `<td class="rp-num">${rpNum(r.cnt ? r.prog / r.cnt : 0)}</td>`;
+    for (let d = 1; d <= lastDay; d++) {
+      const v = md.days[d] ? (r.vals[d] || 0) : null;
+      if (v !== null) dayTotals[d] = (dayTotals[d] || 0) + v;
+      html += `<td class="rp-num${v === 0 ? ' rp-zero' : ''}">${v === null ? '' : (v ? rpNum(v) : '0')}</td>`;
+    }
+    html += '</tr>';
+  });
+
+  const dd = md.activeKey ? md.activeKey.slice(8,10) + '.' + md.activeKey.slice(5,7) + '.' + md.activeKey.slice(0,4) : '';
+  html += '<tr class="rp-total">';
+  html += `<td class="rp-name">TOTAL (${md.monLabel}${dd ? ' until ' + dd : ''}${cut ? ' -- ' + cut : ''})</td>`;
+  html += `<td class="rp-num">${rpNum(tToday)}</td><td class="rp-num">${rpNum(tProg)}</td><td class="rp-num">${rpNum(tAvg)}</td>`;
+  for (let d = 1; d <= lastDay; d++) html += `<td class="rp-num">${md.days[d] ? rpNum(dayTotals[d] || 0) : ''}</td>`;
+  html += '</tr>';
+
+  t.innerHTML = html;
+  pane.appendChild(t);
+
+  const note = document.createElement('div');
+  note.className = 'rp-note';
+  note.innerHTML = `Figures in tonnes. The <strong>Today</strong> column and the ${md.activeKey ? String(actD).padStart(2,'0') : '—'}/${String(md.M).padStart(2,'0')} column are live from the loaded file — everything else comes from the history database (${dayCount} day(s) stored this month). Tap <strong>Save Day</strong> to freeze today's figures.`;
+  pane.appendChild(note);
+}
+
+function renderRp2(md) {
+  const pane = document.getElementById('rpPane2');
+  pane.innerHTML = '';
+  const pr = appSettings.powerReport || {};
+  const parties = (pr.parties || []).filter(p => p.r2);
+  if (!parties.length) {
+    pane.innerHTML = '<div class="rp-note">No parties ticked for Report 2. Open ⚙ and tick <strong>R2</strong>, then set the colliery columns.</div>';
+    return;
+  }
+  if (!md) { pane.innerHTML = '<div class="rp-note">No data available.</div>'; return; }
+
+  const cutNow = rpCutLabel();
+  const head = document.createElement('div');
+  head.className = 'rp-note';
+  head.style.marginBottom = '8px';
+  head.innerHTML = `<strong>DAYWISE LIFTED QTY IN ROAD MODE of ${md.monLabel}${md.activeKey ? ' until ' + rpActiveDMY() : ''}${cutNow ? ' --- ' + cutNow : ''} (Figs. in Tonnes)</strong>`;
+  pane.appendChild(head);
+
+  parties.forEach(p => {
+    const code = String(p.code);
+    const cols = (p.cols || []);
+    const real = cols.filter(c => !c.isSubtotal);
+    const t = document.createElement('table');
+    t.className = 'rp-table';
+    const ncol = 2 + cols.length + 1;
+
+    let html = `<tr class="rp-title"><th colspan="${ncol}">${p.name || code}</th></tr>`;
+    html += '<tr class="rp-head"><th>MONTH</th><th>DATE</th>';
+    cols.forEach(c => html += `<th${c.isSubtotal ? ' class="rp-sub"' : ''}>${c.label || c.colCodes}</th>`);
+    html += '<th>TOTAL</th></tr>';
+
+    const splitCodes = c => (c.colCodes || '').split(',').map(x => x.trim()).filter(Boolean);
+
+    // previous month summary
+    if (md.prev.days) {
+      const pv = cols.map(c => rpSumPartyColl(md.prev.pc, code, splitCodes(c)));
+      const pt = real.reduce((s,c) => s + rpSumPartyColl(md.prev.pc, code, splitCodes(c)), 0);
+      html += `<tr><td class="rp-date">${md.prev.label}</td><td class="rp-date">TOTAL</td>`;
+      pv.forEach((v,i) => html += `<td class="rp-num${cols[i].isSubtotal ? ' rp-sub' : ''}">${rpNum(v)}</td>`);
+      html += `<td class="rp-num">${rpNum(pt)}</td></tr>`;
+      html += `<tr><td class="rp-date"></td><td class="rp-date">Avg/day</td>`;
+      pv.forEach((v,i) => html += `<td class="rp-num${cols[i].isSubtotal ? ' rp-sub' : ''}">${rpNum(v / md.prev.days)}</td>`);
+      html += `<td class="rp-num">${rpNum(pt / md.prev.days)}</td></tr>`;
+    }
+
+    const sums = cols.map(() => 0);
+    let gTot = 0, nDays = 0;
+    for (let d = 1; d <= md.dim; d++) {
+      const rec = md.days[d];
+      const dl = `${String(d).padStart(2,'0')}/${String(md.M).padStart(2,'0')}/${String(md.Y).slice(2)}`;
+      html += `<tr${rec && rec.live ? ' style="outline:2px solid #ff8c00;"' : ''}>`;
+      html += `<td class="rp-date">${d === 1 ? md.monLabel : ''}</td><td class="rp-date">${dl}</td>`;
+      if (!rec) {
+        cols.forEach(c => html += `<td class="rp-num${c.isSubtotal ? ' rp-sub' : ''}"></td>`);
+        html += '<td class="rp-num"></td></tr>';
+        continue;
+      }
+      nDays++;
+      let rowTot = 0;
+      cols.forEach((c, i) => {
+        const v = rpSumPartyColl(rec.pc, code, splitCodes(c));
+        sums[i] += v;
+        if (!c.isSubtotal) rowTot += v;
+        html += `<td class="rp-num${c.isSubtotal ? ' rp-sub' : ''}${v === 0 ? ' rp-zero' : ''}">${v ? rpNum(v) : '0'}</td>`;
+      });
+      gTot += rowTot;
+      html += `<td class="rp-num">${rpNum(rowTot)}</td></tr>`;
+    }
+
+    html += '<tr class="rp-total"><td class="rp-date"></td><td class="rp-date">TOTAL</td>';
+    sums.forEach(v => html += `<td class="rp-num">${rpNum(v)}</td>`);
+    html += `<td class="rp-num">${rpNum(gTot)}</td></tr>`;
+    html += '<tr class="rp-total"><td class="rp-date"></td><td class="rp-date">Avg/day</td>';
+    sums.forEach(v => html += `<td class="rp-num">${rpNum(nDays ? v / nDays : 0)}</td>`);
+    html += `<td class="rp-num">${rpNum(nDays ? gTot / nDays : 0)}</td></tr>`;
+
+    t.innerHTML = html;
+    pane.appendChild(t);
+  });
+}
+
+// ── Share the visible report as an image ────────────────
+async function shareRpReport() {
+  const pane = document.getElementById(_rpTab === 1 ? 'rpPane1' : 'rpPane2');
+  const tbl  = pane.querySelector('table');
+  if (!tbl) { alert('Nothing to share yet.'); return; }
+  const holder = document.createElement('div');
+  holder.style.cssText = 'position:fixed;left:-10000px;top:0;background:#ffffff;padding:24px 18px 30px;';
+  const strip = () => { const s = document.createElement('div'); s.style.cssText = 'height:8px;background:#00ffff;'; return s; };
+  holder.appendChild(strip());
+  pane.querySelectorAll('table').forEach(x => holder.appendChild(x.cloneNode(true)));
+  holder.appendChild(strip());
+  document.body.appendChild(holder);
+  try {
+    const canvas = await html2canvas(holder, { backgroundColor: '#ffffff', scale: 2, useCORS: true, logging: false });
+    const blob = await new Promise(r => canvas.toBlob(r, 'image/png'));
+    const fname = `Road_Power_Report_${(rpActiveDMY() || '').replace(/-/g,'_')}.png`;
+    const file = new File([blob], fname, { type: 'image/png' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'Road Power Report' });
+    } else {
+      downloadBlob(blob);
+    }
+  } catch(e) {
+    alert('Could not build the image: ' + e.message);
+  } finally {
+    holder.remove();
   }
 }
 
@@ -4690,5 +5557,114 @@ loadDbFromGitHub();
 
   </div>
 </div>
+<!-- ═══════════ ROAD POWER — SETTINGS PANE ═══════════ -->
+<div id="rpSettingsOverlay" class="stt-overlay" onclick="if(event.target===this)closeRpSettings()">
+  <div class="stt-panel">
+
+    <div class="stt-header">
+      <div>
+        <div class="stt-title">⚡ Road Power Report Settings</div>
+        <div class="stt-title-sub">Pick the power-sector parties and the columns for each report</div>
+      </div>
+      <button class="stt-close" onclick="closeRpSettings()">✕</button>
+    </div>
+
+    <div class="stt-body" style="grid-template-columns:1fr;">
+
+      <div class="stt-section">
+        <label class="stt-label">History Database File</label>
+        <input id="rp_histPath" class="stt-input" type="text"
+               placeholder="roadpower-history-test.json"
+               style="font-family:var(--mono);letter-spacing:.03em;">
+        <div class="stt-hint" style="margin-top:4px;">
+          JSON file inside the <strong>epass-db</strong> repo holding the day-wise history.
+          Keep the test app on a <em>different</em> filename from production.
+        </div>
+      </div>
+
+      <div class="stt-section">
+        <div class="stt-section-hdr">
+          <label class="stt-label">Parties</label>
+          <span class="rp-count" id="rpCount"></span>
+        </div>
+        <div class="rp-toolbar">
+          <input id="rpSearch" class="rp-search" type="search" placeholder="Search party name or code…" oninput="renderRpParties()">
+          <button class="rp-chip on" id="rpChipRecent" onclick="rpToggleChip('recent')">Recent</button>
+          <button class="rp-chip"    id="rpChipSel"    onclick="rpToggleChip('sel')">Selected</button>
+        </div>
+        <div class="rp-list-wrap">
+          <div class="rp-list-head">
+            <span>Party Code</span>
+            <span>Party Name</span>
+            <span class="c">Power</span>
+            <span class="c">R1</span>
+            <span class="c">R2</span>
+          </div>
+          <div class="rp-scroll" id="rpPartyBody"></div>
+        </div>
+        <div class="stt-hint" style="margin-top:6px;">
+          <strong>Power</strong> — treated as power sector, its figures are written to the history file.
+          <strong>R1</strong> — appears as a row in <em>Road Despatch to Power Sector</em>.
+          <strong>R2</strong> — gets a source-wise block in the second report.
+          Ticking R1 or R2 ticks Power automatically. One row per party code, so a party with several codes needs each code ticked.
+        </div>
+      </div>
+
+      <div class="stt-section">
+        <div class="stt-section-hdr">
+          <label class="stt-label">Report 2 — Colliery Columns per Party</label>
+        </div>
+        <div id="rpR2Body"></div>
+        <div class="stt-hint">
+          Codes: comma-separated colliery codes (e.g. 5046 or 5046,5075,5077).
+          Tick <strong>Sub</strong> for a subtotal column such as “Talcher Total” — subtotal columns are excluded from the row TOTAL.
+          A TOTAL column is added automatically.
+        </div>
+      </div>
+
+    </div>
+
+    <div id="rpSettingsStatus" class="stt-status"></div>
+
+    <div class="stt-footer">
+      <button class="stt-btn-cancel" onclick="closeRpSettings()">Cancel</button>
+      <button class="stt-btn-save" onclick="saveRpSettings()">Save</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══════════ ROAD POWER — REPORT VIEW ═══════════ -->
+<div id="rpViewOverlay" class="stt-overlay" onclick="if(event.target===this)closeRpView()">
+  <div class="stt-panel">
+
+    <div class="stt-header">
+      <div>
+        <div class="stt-title">⚡ Road Power Report</div>
+        <div class="stt-title-sub" id="rpViewSub">—</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;">
+        <button class="rp-mini-btn" onclick="openRpSettings()" title="Report settings">⚙</button>
+        <button class="stt-close" onclick="closeRpView()">✕</button>
+      </div>
+    </div>
+
+    <div class="rp-view-body">
+      <div class="rp-tabs">
+        <button class="rp-tab on" id="rpTab1" onclick="rpSwitch(1)">Power Sector</button>
+        <button class="rp-tab"    id="rpTab2" onclick="rpSwitch(2)">Source-wise</button>
+        <span style="flex:1"></span>
+        <button class="rp-mini-btn" id="rpSaveDayBtn" onclick="saveRpDay()">💾 Save Day</button>
+        <button class="rp-mini-btn" onclick="loadRpHistory(true).then(renderRpReports)">↻ Reload</button>
+        <button class="rp-mini-btn" onclick="shareRpReport()">Share</button>
+      </div>
+      <div id="rpStatus" class="rp-note"></div>
+      <div class="rp-tblwrap" id="rpPane1"></div>
+      <div class="rp-tblwrap" id="rpPane2" style="display:none;"></div>
+    </div>
+
+  </div>
+</div>
+
 </body>
 </html>
